@@ -125,9 +125,16 @@ Startsymbol direkt zu $a$ umgewandelt wird.
 	Alle anderen Wörter müssen mit $+$ oder $-$ beginnen, da $S \to +SS$
 und $S \to -SS$ die einzigen Produktionen mit nichtterminalen Symbolen sind
  und beide beginnen jeweils auf diesen Zeichen.
- \item	Sprache aller gültigen Klammerausdrücke.
+ \item	Sprache aller gültigen Klammerausdrücke. $S \to S (S) S$ produziert
+dabei jeveils einen gültigen Klammerausdruck. Ein weiteres $S \to S (S) S$ kann
+in, links von oder recht von diesem Klammerausdruck einen weiteren gültigen
+Klammerausdruck erzeugen. $S \to \varepsilon$ beendet die Produktion weiterer
+Klammerausdrücke.
  \item	Sprache, in der alle Wörter eine gleiche Anzahl an $a$s und $b$s in
-beliebiger Reihenfolge haben.
+beliebiger Reihenfolge haben. Die gleiche Anzahl wird dabei durch die
+Produktionen $S \to aSbS$ und $S \to bSaS$ garantiert, da diese dann aber
+beliebig in die Ergebnisse wieder einsetzbar sind und die Produktionen nur mit
+$S \to \varepsilon$ beendet werden, entsteht so eine beliebige Reihenfolge.
  \item	
 \end{enumerate}
 
