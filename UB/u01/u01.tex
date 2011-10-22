@@ -1,0 +1,199 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 1}
+\author{Christian Cikryt (4285814), Martin Lenders (4206090)}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\theenumi}{\alph{enumi})}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Martin Lenders, Christian Cikryt}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+\begin{enumerate}
+ \item	\begin{minipage}[t]{0.4\textwidth}
+	  \begin{align*}
+	    S & \to SS\star \tag{$S \to SS\star$} \\
+	    SS\star & \to Sa\star \tag{$S \to a$} \\
+	    Sa\star & \to SS+a\star \tag{$S \to SS+$}
+	  \end{align*}
+	\end{minipage}
+	\begin{minipage}[t]{0.4\textwidth}
+	  \begin{align*}
+	    SS+a\star & \to Sa+a\star \tag{$S \to a$} \\
+	    Sa+a\star & \to aa+a\star \tag{$S \to a$}
+	  \end{align*}
+	\end{minipage}
+ \item	\begin{minipage}[t]{0.8\textwidth}
+	  \centering
+	  \pstree{\Tr*{$S$}}{
+	    \pstree{\Tr*{$S$}}{
+	      \pstree{\Tr*{$S$}}{
+	      \Tr*{$a$}
+	      }
+	      \pstree{\Tr*{$S$}}{
+	      \Tr*{$a$}
+	      }
+	      \Tr*{$+$}
+	    }
+	    \pstree{\Tr*{$S$}}{
+	      \Tr*{$a$}
+	    }
+	    \Tr*{$\star$}
+	  }
+	\end{minipage}
+ \item	Die Grammatik erzeugt eine Sprache über dem Alphabet $\mathcal{T} = \{a,
+	+, \star\}$, deren Wörter mit $aa$ beginnen und mit $+$ oder $\star$
+  enden.
+	Der Rest des Wortes besteht jeweils aus beliebigen Buchstaben des
+  Alphabets.
+	Das einzige Wort, das Element dieser Sprache ist, dass nicht dieser
+Regel folgt ist $a$.
+	Die Wörter müssen jeweils mit $aa$ beginnen, da $S \to a$ die einzige
+	Produktion ist, die nur Terminalsymbole erzeugt ist und die beiden
+	verbleibenden Produktionen immer zwei Nichtterminale am Anfang erzeugen.
+	Daraus ergibt sich dann auch das gesonderte Wort $a$, wenn das
+Startsymbol direkt zu $a$ umgewandelt wird. 
+	Alle anderen Wörter müssen mit $+$ oder $\star$ enden, da $S \to SS+$
+und $S \to SS\star$ die einzigen Produktionen mit nichtterminalen Symbolen sind
+ und beide enden jeweils auf diesen Zeichen.
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+ \item	Sprache die aus Wörtern mit gleichvielen 0en wie 1en besteht, wobei die
+0en zuerst kommen, gefolgt von den 1en. 
+	$S \to 0S1$ erzeugt dabei beliebig viele $(0,1)$-Paare und die
+Produktion wird dann mit $S \to 01$ beendet.
+ \item	Sprache über dem Alphabet $\mathcal{T} = \{a,
+	+, -\}$, deren Wörter mit $aa$ enden und mit $+$ oder $-$
+  beginnen.
+	Der Rest des Wortes besteht jeweils aus beliebigen Buchstaben des
+  Alphabets.
+	Das einzige Wort, das Element dieser Sprache ist, dass nicht dieser
+Regel folgt ist $a$.
+	Die Wörter müssen jeweils mit $aa$ enden, da $S \to a$ die einzige
+	Produktion ist, die nur Terminalsymbole erzeugt ist und die beiden
+	verbleibenden Produktionen immer zwei Nichtterminale am Ende erzeugen.
+	Daraus ergibt sich dann auch das gesonderte Wort $a$, wenn das
+Startsymbol direkt zu $a$ umgewandelt wird. 
+	Alle anderen Wörter müssen mit $+$ oder $-$ beginnen, da $S \to +SS$
+und $S \to -SS$ die einzigen Produktionen mit nichtterminalen Symbolen sind
+ und beide beginnen jeweils auf diesen Zeichen.
+ \item	Sprache aller gültigen Klammerausdrücke.
+ \item	Sprache, in der alle Wörter eine gleiche Anzahl an $a$s und $b$s in
+beliebiger Reihenfolge haben.
+ \item	
+\end{enumerate}
+
+\section{}
+b, e
+
+\section{}
+\begin{enumerate}
+ \item	
+    \begin{align*}
+     E &\to EBE\ |\ I\ |\ N\\
+     B &\to \mathtt{+}\ |\ \mathtt{-}\ |\ \mathtt{\times}\ |\ \mathtt{/}\\
+     I &\to LI\ |\ LII\ |\ D\ |\ L \\
+     N &\to D\ |\ DN \\
+     L &\to \mathtt{A}\ |\ \dots\ |\ \mathtt{Z}\ |\ \mathtt{a}\ |\ \dots\ |\
+\mathtt{z}\ |\ \mathtt{\_}\\
+     D &\to \mathtt{0}\ |\ \dots\ |\ \mathtt{9} 
+    \end{align*}
+ \item	
+    \begin{align*}
+     E &\to EBE\ |\ UE\ |\ EU\ |\ I\ |\ N\\
+     B &\to \mathtt{+}\ |\ \mathtt{-}\ |\ \mathtt{\times}\ |\ \mathtt{/}\\
+     U &\to \mathtt{++}\ |\ \mathtt{--}\\
+     I &\to LI\ |\ LII\ |\ D\ |\ L \\
+     N &\to D\ |\ DN \\
+     L &\to \mathtt{A}\ |\ \dots\ |\ \mathtt{Z}\ |\ \mathtt{a}\ |\ \dots\ |\
+\mathtt{z}\ |\ \mathtt{\_}\\
+     D &\to \mathtt{0}\ |\ \dots\ |\ \mathtt{9} 
+    \end{align*}
+\end{enumerate}
+
+\section{}
+\subsection*{Induktionsanfang}
+Die Parsebäume für einen Produktionsschritt haben eine ungerade Anzahl an
+Knoten.
+\paragraph{Beweis:}
+\begin{center}
+ \begin{tabular}[b]{c|c|c}
+  \textbf{Parsebaum} & \textbf{\#Knoten} & \textbf{mod} \\\hline\hline
+  \pstree{\Tr*{num}}{
+    \Tr*{1} \Tr*{1}
+  } & 3 & $3 \mod 2 = 1$ \\\hline
+  \pstree{\Tr*{num}}{
+    \Tr*{1} \Tr*{0} \Tr*{0} \Tr*{1}
+  } & 5 & $5 \mod 2 = 1$ \\\hline
+  \pstree{\Tr*{num}}{
+    \Tr*{num} \Tr*{0}
+  } & 3 & $3 \mod 2 = 1$ \\\hline
+  \pstree{\Tr*{num}}{
+    \Tr*{num} \Tr*{num}
+  } & 3 & $3 \mod 2 = 1$
+ \end{tabular} \hspace{0.3\textwidth}$\square$
+\end{center}
+\subsection*{Induktionsvoraussetzung}
+Die Parsebäume für $n \in \mathbb{N}$ Produktionsschritte haben eine ungerade
+Anzahl an Knoten.
+\subsection*{Induktionsbehauptung}
+Die Parsebäume für $n+1 \in \mathbb{N}$ Produktionsschritt haben eine ungerade
+Anzahl an Knoten.
+\subsection*{Induktionsschritt} Erweitern wir einen Parsebaum, der nach IV eine
+ungerade Anzahl an Knoten hat um einen weiteren Produktionsschritt, werden alle
+num um einen weiteren Subbaum für einen Produktionsschritt erweitert. Diese
+Subbäume haben nach IA eine ungerade Anzahl an Knoten, wodurch, wenn wir die
+Wurzel abziehen (da diese durch num ja bereits im Baum ist) eine gerade Anzahl
+an Knoten jeweils zum Baum hinzufügen. Addieren wir eine gerade Zahl mit einer
+ungeraden, so ist die Summe ungerade.\hfill$\square$
+ 
+
+\end{document}
