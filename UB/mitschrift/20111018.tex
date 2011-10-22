@@ -1,0 +1,131 @@
+\chapter{Einführung}
+\section{Kontakt}
+\paragraph{Sprechstunde:} Di 13:30 -- 14:30 Uhr
+\paragraph{E-Mail:}	\href{mailto:fehr@inf.fu-berlin.de}{fehr@inf.fu-berlin.de}
+
+\section{Literatur}
+Vorlesung basiert im wesentlichen auf dem Dragon-Book (Aho, Ullman, Sethi, Lam)
+
+\section{Was ist Übersetzerbau?}
+\begin{itemize}
+ \item Übersetzung: Höhere Programmiersprache \emph{(Quellsprache)} in Maschinensprache \emph{(Zielsprache)}
+ \item \emph{Aufgabe des Übersetzerbauers:} Schreibe ein Programm, deren Eingabe ein Programm der Quellsprache als Eingabe erhält und als Ausgabe ein \textbf{äquivalentes} Programm (also mit gleicher Bedeutung, gleicher Semantik) der Zielsprache liefert.
+ \item natürliche Sprachen sind "`schillernd"' $\Rightarrow$ es gibt nicht immer eine genaue Übersetzung
+ \item formale Sprachen haben meist eine genau spezifizierte Übersetzung der Semantik (mathematisch formalisierbar)
+ \item moderne Programmiersprachen haben mitunter diese \emph{mathematische} Präzision nicht \\
+		$\Rightarrow$ unterschiedliche Interpretation bei unterschiedlichen Übersetzern
+\end{itemize}
+
+\section{Geschichte}
+\begin{psmatrix}[rowsep=0.5em]
+ 1940'er Jahre :-( & \framebox{Maschine} & \\
+ 1. Generation & & $\Rightarrow$ Assemblersprache & \framebox{\begin{minipage}{3cm} mnemotechnische \\ Bezeichnung \end{minipage}} :-$|$ \\
+ & Maschinenbefehle &  Übersetzer (1:1) & \begin{minipage}{3cm} Makros (1:n) \\ mit Parametern \end{minipage}
+\ncline{1,2}{3,2}\ncline{2,3}{3,3}\ncline{3,3}{3,4}
+\end{psmatrix}\\
+\hrule
+\begin{psmatrix}[rowsep=0em]
+ 1950'er Jahre & $\underset{\text{wiss. Berechn.}}{\text{FORTRAN}}$, COBOL, LISP \\
+ 3. Generation \\
+ & C, C++, Java, ...
+\end{psmatrix}\\
+
+\begin{psmatrix}[rowsep=0.5em]
+ && Impl.-Sprache \\
+ Programmierer :-) & [mnode=oval] \begin{minipage}{2cm} \centering höhere Pro"-gra"-mmier"-spra"-che \end{minipage} & \framebox{Übersetzer} & [mnode=oval] \begin{minipage}{2cm} \centering Maschinen-sprache \end{minipage}
+ \ncline{1,3}{2,3}
+ \ncline{->}{2,1}{2,2}\ncline{->}{2,2}{2,3}\ncline{->}{2,3}{2,4}
+\end{psmatrix}
+
+\section{Blick in die Box Übersetzer}
+\begin{itemize}
+ \item zwei Phasen: 
+		\begin{enumerate}
+		 \item Analysieren (lexikalisch, syntaktisch, Typüberprüfung, ...)\\
+				\begin{psmatrix}[rowsep=0.5em]
+					$\underbrace{\mathtt{173}}_{\text{Zahl}}$\verb! * (4 - 93)! \\
+ 					\psset{levelsep=1cm,nodesep=0.2em}
+					\pstree{\Tdia{*}}{%
+							\Tr*{173}
+							\pstree{\Tdia{-}}{
+ 								\Tr*{4}
+ 								\Tr*{93}}}
+				\end{psmatrix}
+		 \item Synthetisieren:
+				\begin{itemize}
+				 \item Zwischencode
+				 \item Optimierung
+				\hrule
+				 \item Codeerzeugung
+				 \item Optimierung
+				\end{itemize}
+			\begin{psmatrix}[rowsep=0.5em]
+			 [mnode=circle] $P_1$ && \framebox{$M_1$} \\
+			 [mnode=circle] $P_2$ && \framebox{$M_2$} \\
+			 $\vdots$ && $\vdots$ \\
+			 [mnode=circle] $P_n$ && \framebox{$M_m$} \\
+			 \ncline{->}{1,1}{1,3}\ncline{->}{1,1}{2,3}\ncline{->}{1,1}{4,3}
+			 \ncline{->}{2,1}{1,3}\ncline{->}{2,1}{2,3}\ncline{->}{2,1}{4,3}
+			 \ncline{->}{4,1}{1,3}\ncline{->}{4,1}{2,3}\ncline{->}{4,1}{4,3}
+			 & $n \cdot m$ Übersetzer &
+			\end{psmatrix}\hfill
+			\begin{psmatrix}[rowsep=0.5em]
+			 [mnode=circle] $P_1$ && \framebox{$M_1$} \\
+			 $\vdots$ & \framebox{\begin{minipage}{1cm}abstr. Masch.\end{minipage}} & $\vdots$ \\
+			 [mnode=circle] $P_n$ & (Zwischenspr.) & \framebox{$M_n$} \\
+			 \ncline{->}{1,1}{2,2}\ncline{->}{2,2}{1,3}
+			 \ncline{->}{3,1}{2,2}\ncline{->}{2,2}{3,3}
+			 & $n + m$ Übersetzer &
+			\end{psmatrix}
+			\hrule
+			\begin{center}
+				Frontend (Quellsprache) $\Leftrightarrow$ Backend (Zielsprache)
+			\end{center}
+			\begin{description}
+			 \item[Frontend] Analyse, Zwischencodesynthese- optimierung
+			 \item[Backend] Codeerzeugung- und optimierung
+			\end{description}
+		\end{enumerate}
+\end{itemize}
+
+\begin{psmatrix}[rowsep=1em]
+	[name=Quellprogramm] \verb!pos = pos + dauer * 60! & \emph{(Quellprogramm)}\\
+	[name=lex_ana] \framebox{lexikalische Analyse} & \tiny\begin{minipage}{5cm}
+										Symboltabelle \\
+										\begin{tabular}{|r|c|}
+											\multicolumn{2}{c}{\vdots}\\\hline
+											14 & \verb!pos! \\\hline
+											15 & \verb!dauer! \\\hline
+											\multicolumn{2}{c}{\vdots}
+										\end{tabular}
+	                                   \end{minipage}\\
+	[name=Tokenstrom] \verb!<id, 14><=><id,14><+><id,15><*><int,60>!& \emph{(Tokenstrom)}\\
+	[name=syn_ana] \framebox{Syntaxanalyse} & \tiny\begin{minipage}{5cm}
+								 $P \rightarrow D;A$\\
+								 \begin{tabular}{|c|c|}
+								  \pstree[levelsep=0.5cm, treesep=0.5cm, nodesep=0.2em]{\Tr*{$;$}}{\Tr*{$D$}\Tr*{$A$}} &
+								  \pstree[levelsep=0.5cm, treesep=0.5cm, nodesep=0.2em]{\Tr*{$=$}}{\Tr*{$D$}\Tr*{$;$}\Tr*{$A$}} \\
+									Syntaxbaum & Parsebaum
+								 \end{tabular}
+	                             \end{minipage} \\
+	[name=Syntaxbaum] \psset{levelsep=1cm, nodesep=0.2em} \pstree{\Tdia{=}}{\Tr{\texttt{<id, 14>}} \pstree{\Tdia{+}}{\Tr{\texttt{<id, 14>}} \pstree{\Tdia{*}}{\Tr{\texttt{<id,15>}} \Tr{\texttt{<int,60>}}}}} & \emph{(Syntaxbaum)}\\
+	[name=tmp_gen] \framebox{Zwischencodeerzeugnung} \\
+	[name=Zwischencode] \begin{minipage}{5cm}
+					\begin{lstlisting}[basicstyle=\tt]
+t1 = inttofloat # 60
+t2 = id15 * t1
+t3 = id14 * t2
+id14 = t3
+					\end{lstlisting}
+	               \end{minipage} & \emph{(Zwischencode)}\\
+    [name=tmp_opt] \framebox{Codeoptimierung} \\
+	[name=opt_Zwischencode] \begin{minipage}{5cm}
+					\begin{lstlisting}[basicstyle=\tt]
+t1 = id15 * 60
+id14 = id14 + t1
+					\end{lstlisting}
+	               \end{minipage} & \emph{(opt. Zwischencode)}
+	\psset{arrows=->}\ncline{Quellprogramm}{lex_ana}\ncline{lex_ana}{Tokenstrom}\ncline{Tokenstrom}{syn_ana}
+	\ncline{syn_ana}{Syntaxbaum}\ncline{Syntaxbaum}{tmp_gen}\ncline{tmp_gen}{Zwischencode}\ncline{Zwischencode}{tmp_opt}
+	\ncline{tmp_opt}{opt_Zwischencode}
+\end{psmatrix}

@@ -1,0 +1,129 @@
+\chapter{Ein einfacher syntaxgerichteter Übersetzer (Frontend)}
+\paragraph{Definition:} Ein Viertupel $G = (\mathcal{N}, \mathcal{T}, S, \mathcal{P})$ heißt \textbf{kontextfreie Grammatik}, wenn
+\begin{enumerate}
+ \renewcommand{\theenumi}{(\roman{enumi})}
+ \item $\mathcal{N}$ ist ein Alphabet (endl. Menge) von \emph{Nichtterminalen}, 
+ \item $\mathcal{T}$ ist ein Alphabet (endl. Menge) von \emph{Terminalen}, 
+ \item $S \in \mathcal{N}$ ist ein \emph{Startsymbol},
+ \item $\mathcal{P}$ ist eine endliche Menge von \emph{Produktionen} der Form $A \to \alpha$, wobei $A \in \mathcal{N}$ und $\alpha \in (\mathcal{N} \cup \mathcal{T})^*$
+\end{enumerate}
+
+\paragraph{Konventionen:} 
+\begin{itemize}
+ \item $\varepsilon$ bezeichnet das leere Wort.
+ \item Der Kopf der ersten Produktion ist das Startsymbol
+ \item Wenn nur $\mathcal P$ angegeben wird, lassen sich $\mathcal T$, $\mathcal N$ und $S$ daraus generieren.
+\end{itemize}
+
+\paragraph{Beispiel:}
+\begin{minipage}[t]{0.2\linewidth}
+\begin{align*}
+ S &\to aSb \\
+ A &\to \varepsilon \\
+ B &\to SA
+\end{align*}
+\end{minipage}
+
+\paragraph{Definition:} Sei $G = (\mathcal{N}, \mathcal{T}, S, \mathcal{P})$ eine kontextfreie Grammatik. 
+	Ein Wort $\gamma$ lässt sich in einem Schritt bezüglich $G$ aus $\beta$ \textbf{herleiten}, wenn es Produktionen $A \to \alpha$ gibt mit $\beta = \alpha_1A\alpha_2$ und $\gamma = \alpha_1\alpha\alpha_2$.
+
+Geschrieben:
+\begin{minipage}[t]{0.5\linewidth}
+\begin{align*}
+ \beta &\xrightarrow[G]{} \gamma \\
+ \alpha_1A\alpha_2 &\xrightarrow[G]{} \alpha_1\alpha\alpha_2 & \text{$\alpha_1$, $\alpha_2$ heißt Kontext}
+\end{align*}
+\end{minipage}
+\begin{itemize}
+ \item $\gamma$ lässt sich bzgl $G$ aus $\beta$ herleiten $\gamma \xrightarrow[G]{*} \beta$
+\end{itemize}
+
+\paragraph{Definition:}
+$\mathcal{L}(G) := \{w | w \in \mathcal{T}^*\text{ mit } S  \xrightarrow[G]{*} w \}$
+ist die \textbf{von $\boldsymbol{G}$ erzeugte Sprache}.
+
+\paragraph{Definition:} Jeder Produktion wird ein elementarer \textbf{Parsebaum zugeordnet}.\\
+$A \to X_1X_2\dots X_n$ wird zugeordnet:
+\begin{minipage}[t]{0.5\linewidth}
+ \pstree{\Tr*{$A$}}{
+	\Tr*{$X_1$} \Tr*{$X_2$} \Tr*{$\dots$} \Tr*{$X_n$}
+ }
+\end{minipage}
+Ein Baum mit inneren Knoten aus $\mathcal{N}$ heißt Parsebaum bezüglich $G$, genau dann wenn die Wurzel mit $S$ markiert ist und alle inneren Knoten zusammen mit ihren Kindern elementare Parsebäume bezüglich $G$ sind.
+
+\paragraph{Beispiel:}
+\begin{minipage}[t]{0.2\linewidth}
+\begin{align*}
+ \mathtt{expr} &\to \mathtt{expr} + \mathtt{digit}\ |\ \mathtt{expr} - \mathtt{digit}\ |\ \mathtt{digit} \\
+ \mathtt{digit} &\to 0\ |\ 1\ |\ \dots\ |\ 9 \\
+\end{align*}
+\end{minipage}
+\[9 - 5 + 2 \in \mathcal{L}(G)\]
+$\mathtt{expr} \xrightarrow[G]{} \mathtt{expr} + \mathtt{digit} \xrightarrow[G]{} \mathtt{expr} + 2 \xrightarrow[G]{} \mathtt{expr} - \mathtt{digit} + 2 \dots 9-5+2$\\
+oder $\mathtt{expr} \xrightarrow[G]{} \mathtt{expr} + \mathtt{digit} \xrightarrow[G]{} \mathtt{expr} - \mathtt{digit} + \mathtt{digit} \dots 9-5+2$
+\begin{minipage}[t]{0.5\linewidth}
+ \psset{levelsep=0.5cm}
+ \pstree{\Tr*{\tt expr}}{
+	\pstree{\Tr*{\tt expr}}{
+		\pstree{\Tr*{\tt expr}}{
+			\pstree{\Tr*{\tt digit}}{
+				\Tr*{9}
+			}
+		}
+		\Tr*{$-$}
+		\pstree{\Tr*{\tt digit}}{
+			\Tr*{5}
+		}
+	}
+	\Tr*{$+$}
+	\pstree{\Tr*{\tt digit}}{
+		\Tr*{2}
+	}
+ }
+\end{minipage}
+
+\paragraph{Einsicht:} Jeder Parsebaum repräsentiert eine \textit{Menge} von Herleitungen.\\
+Alternative Grammtik $G_m$:
+\begin{align*}
+ A &\to D\ |\ A+A\ |\ A-A \\
+ D &\to 0\ |\ 1\ |\ \dots\ |\ 9 \\
+\end{align*}
+\paragraph{Lemma:} $\mathcal{L}(G) = \mathcal{L}(G_m)$\\
+Es gibt $w \in \mathcal{L}(G_m)$, so dass es zwei verschiedene Parsebäume zu $w$ gibt.
+
+\paragraph{Definition:} Eine Grammatik $G$ heißt \textbf{mehrdeutig}, wenn ein Wort $\alpha$ aus $S$ hergeleitet werden kann, so dass es zu $\alpha$ mehr als einen Parsebaum gibt.
+
+Zusammen mit einer Tabelle aller Operatoren, geordnet nach Priorität in aufsteigender Reihenfolge und ihren Assoziativitäten, lässt sich eine \emph{eindeutige} Grammatik erzeugen, die äquivalent ist.
+
+\paragraph{Verfahren:}
+\begin{itemize}
+ \item Ordne jedem Niveau ein eigenes Nichtterminal, sowie ein neues für die Grundbausteine der Grammatik (im Beispiel $\mathtt{factor}$)
+	\begin{center}
+	\begin{tabular}{c|l|l}
+	\textbf{Ops} & \textbf{Assoziativität} & Nichtterminal \\
+	\hline\hline
+	$+-$ & links & \texttt{expr} \\
+	$*/$ & links & \texttt{term} \\
+	\hline
+	&&\texttt{factor}
+	\end{tabular}
+	\end{center}
+ \item Beginne von unten nach oben und ordne jeweils angemessene Produktionen hinzu
+	\begin{align*}
+		\mathtt{factor} &\to \mathtt{digit}\ |\ (\mathtt{expr}) \\
+		\mathtt{term} &\to \mathtt{term} * \mathtt{factor}\ |\ \mathtt{term} / \mathtt{factor}\ |\ \mathtt{factor} \\
+		\mathtt{expr} &\to \mathtt{expr} + \mathtt{term}\  |\  \mathtt{expr} - \mathtt{term}\ |\ \mathtt{term}
+	\end{align*}
+ \item Drehe das Regelwerk um:
+	\begin{align*}
+		\mathtt{expr} &\to \mathtt{expr} + \mathtt{term}\  |\  \mathtt{expr} - \mathtt{term}\ |\ \mathtt{term} \\
+		\mathtt{term} &\to \mathtt{term} * \mathtt{factor}\ |\ \mathtt{term} / \mathtt{factor}\ |\ \mathtt{factor} \\
+		\mathtt{factor} &\to \mathtt{digit}\ |\ (\mathtt{expr}) \\
+	\end{align*}
+\end{itemize}
+
+
+
+
+
+
