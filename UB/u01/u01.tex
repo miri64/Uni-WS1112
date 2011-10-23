@@ -170,15 +170,23 @@ b, d und e
 \paragraph{Zu zeigen:}
 Alle Binärzahlen, die durch folgende Grammatik erzeugt werden, sind durch 3 teilbar:
 
-num $\Rightarrow$ 11 | 1001 | num 0 | num num
+num $\to$ 11 | 1001 | num 0 | num num
 
 \paragraph{Beweis:}
 Der Beweis erfolgt durch vollständige Induktion über die Höhe Parsebaum.
 
 \subsection*{Induktionsanfang}
 Für einen Parsebaum der Höhe $n = 1$ , ergeben sich die folgenden zwei Parsebäume, die jeweils durch 3 teilbare Binärzahlen darstellen.
-\paragraph{Beweis:}
+\begin{center}
+ \pstree{\Tr{num}}{
+  \Tr{1} \Tr{1}
+ } \hspace*{3cm}
+ \pstree{\Tr{num}}{
+  \Tr{1} \Tr{0} \Tr{0} \Tr{1}
+ }
+\end{center}
 
+\paragraph{Beweis:}
 \begin{enumerate}
  \item $11$: entspricht 3 und ist durch 3 teilbar.
  \item $1001$: entspricht 9 und ist durch 3 teilbar.
