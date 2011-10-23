@@ -167,40 +167,35 @@ b, d und e
 \end{enumerate}
 
 \section{}
-\subsection*{Induktionsanfang}
-Die Parsebäume für einen Produktionsschritt haben eine ungerade Anzahl an
-Knoten.
-\paragraph{Beweis:}
-\begin{center}
- \begin{tabular}[b]{c|c|c}
-  \textbf{Parsebaum} & \textbf{\#Knoten} & \textbf{mod} \\\hline\hline
-  \pstree{\Tr*{num}}{
-    \Tr*{1} \Tr*{1}
-  } & 3 & $3 \mod 2 = 1$ \\\hline
-  \pstree{\Tr*{num}}{
-    \Tr*{1} \Tr*{0} \Tr*{0} \Tr*{1}
-  } & 5 & $5 \mod 2 = 1$ \\\hline
-  \pstree{\Tr*{num}}{
-    \Tr*{num} \Tr*{0}
-  } & 3 & $3 \mod 2 = 1$ \\\hline
-  \pstree{\Tr*{num}}{
-    \Tr*{num} \Tr*{num}
-  } & 3 & $3 \mod 2 = 1$
- \end{tabular} \hspace{0.3\textwidth}$\square$
-\end{center}
-\subsection*{Induktionsvoraussetzung}
-Die Parsebäume für $n \in \mathbb{N}$ Produktionsschritte haben eine ungerade
-Anzahl an Knoten.
-\subsection*{Induktionsbehauptung}
-Die Parsebäume für $n+1 \in \mathbb{N}$ Produktionsschritt haben eine ungerade
-Anzahl an Knoten.
-\subsection*{Induktionsschritt} Erweitern wir einen Parsebaum, der nach IV eine
-ungerade Anzahl an Knoten hat um einen weiteren Produktionsschritt, werden alle
-num um einen weiteren Subbaum für einen Produktionsschritt erweitert. Diese
-Subbäume haben nach IA eine ungerade Anzahl an Knoten, wodurch, wenn wir die
-Wurzel abziehen (da diese durch num ja bereits im Baum ist) eine gerade Anzahl
-an Knoten jeweils zum Baum hinzufügen. Addieren wir eine gerade Zahl mit einer
-ungeraden, so ist die Summe ungerade.\hfill$\square$
- 
+\paragraph{Zu zeigen:}
+Alle Binärzahlen, die durch folgende Grammatik erzeugt werden, sind durch 3 teilbar:
 
+num $\Rightarrow$ 11 | 1001 | num 0 | num num
+
+\paragraph{Beweis:}
+Der Beweis erfolgt durch vollständige Induktion über die Höhe Parsebaum.
+
+\subsection*{Induktionsanfang}
+Für einen Parsebaum der Höhe $n = 1$ , ergeben sich die folgenden zwei Parsebäume, die jeweils durch 3 teilbare Binärzahlen darstellen.
+\paragraph{Beweis:}
+
+\begin{enumerate}
+ \item $11$: entspricht 3 und ist durch 3 teilbar.
+ \item $1001$: entspricht 9 und ist durch 3 teilbar.
+\end{enumerate}
+
+\subsection*{Induktionsvoraussetzung}
+Es gilt für eine durch einen Parsebaum der Höhe $n$ repräsentierte Binärzahl, dass sie durch 3 teilbar ist, für ein $n \in \mathbb{N}$.
+\subsection*{Induktionsbehauptung}
+Dann gilt auch für eine durch einen Parsebaum der Höhe $n + 1$ repräsentierte Binärzahl, dass sie durch 3 teilbar ist.
+\subsection*{Induktionsschritt}
+Ein Parsebaum der Höhe $n + 1$ besteht nach obiger Grammatik entweder aus zwei Parsebäumen der Höhe $n$ oder einem Parsebaum der Höhe $n$ mit angehängter Null.
+Laut Induktionsvoraussetzung ist die durch einen Parsebaum der Höhe $n$ (für ein $n \in \mathbb{N}$) repräsentierte Binärzahl durch 3 teilbar.
+Nun gilt es nur noch zuzeigen, dass zwei hintereinander gehängte, durch 3 teilbare Binärzahlen ebenfalls durch 3 teilbar sind und dass das Anhängen einer Null die Teilbarkeit durch 3 erhält.
+
+Wir beginnen mit dem Anhängen der Null. Dieses entspricht einer Mulitplikation mit 2, so dass die entstehende Zahl offensichtlich immer noch durch 3 teilbar ist.
+Das Hintereinanderhängen von 2 Zahl gemäß, der Regel $num \Rightarrow num num$ ist ein wenig komplizierter. Dazu stützen wir uns auf den Satz, dass eine Binärzahl durch 3 teilbar ist, wenn ihre alternierende Quersumme es ist.
+Von beiden Teilen wissen wir laut Induktionsvoraussetzung, dass deren alternierende Quersumme durch 3 teilbar ist. Die erste alternierende Quersumme sei $a * 3$ und die zweite $b * 3$. Durch das Hintereinanderhängen ergibt sich für die resultierende,
+alternierende Quersumme entweder $a * 3 + b * 3 = 3 * (a + b)$ (falls die erste Binärzahl eine gerade Länge hat) oder $a * 3 - b * 3 = 3 * (a - b)$ (bei ungerader Länge). Da in jedem Fall die alternierende Quersumme durch 3 teilbar ist, haben wir bewiesen, dass
+unter Rückgriff auf die Induktionsvoraussetzung die Induktionsbehauptung gilt. Aufgrund des Induktionsanfangs gilt somit für alle $n \in \mathbb{N}$ (Höhe des Parsebaums), dass die von der Grammatik erzeugten Binärzahlen durch 3 teilbar sind.
 \end{document}
