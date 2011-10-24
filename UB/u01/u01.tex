@@ -13,7 +13,7 @@
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
 \title{Übersetzerbau - Übungsblatt 1}
-\author{Christian Cikryt (4285814), Martin Lenders (4206090)}
+\author{Christian Cikryt (4285814; Tut.: Mo. 16-18 Uhr), Martin Lenders (4206090)}
 \date{\today}
 
 \newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
@@ -87,7 +87,8 @@
 	    \Tr*{$\star$}
 	  }
 	\end{minipage}
- \item	Die Grammatik erzeugt eine Sprache über dem Alphabet $\mathcal{T} = \{a,
+ \item	Kurz gesagt lassen sich mit der Grammatik arithmetische Ausdrücke in Postfix-Notation mit $+$ und $*$ darstellen.
+	Umschrieben: Die Grammatik erzeugt eine Sprache über dem Alphabet $\mathcal{T} = \{a,
 	+, \star\}$, deren Wörter mit $aa$ beginnen und mit $+$ oder $\star$
   enden.
 	Der Rest des Wortes besteht jeweils aus beliebigen Buchstaben des
@@ -122,7 +123,8 @@ Regel folgt ist $a$.
 	verbleibenden Produktionen immer zwei Nichtterminale am Ende erzeugen.
 	Daraus ergibt sich dann auch das gesonderte Wort $a$, wenn das
 Startsymbol direkt zu $a$ umgewandelt wird. 
-	Alle anderen Wörter müssen mit $+$ oder $-$ beginnen, da $S \to +SS$
+	Präfixnotation arithmetischer Ausdrücke mit $+$ und $-$.
+Alle anderen Wörter müssen mit $+$ oder $-$ beginnen, da $S \to +SS$
 und $S \to -SS$ die einzigen Produktionen mit nichtterminalen Symbolen sind
  und beide beginnen jeweils auf diesen Zeichen.
  \item	Sprache aller gültigen Klammerausdrücke. $S \to S (S) S$ produziert
@@ -135,11 +137,11 @@ beliebiger Reihenfolge haben. Die gleiche Anzahl wird dabei durch die
 Produktionen $S \to aSbS$ und $S \to bSaS$ garantiert, da diese dann aber
 beliebig in die Ergebnisse wieder einsetzbar sind und die Produktionen nur mit
 $S \to \varepsilon$ beendet werden, entsteht so eine beliebige Reihenfolge.
- \item	
+ \item	Die Sprache der regulären Ausdrücke (auf $*$, $+$ und die Klammern beschränkt).
 \end{enumerate}
 
 \section{}
-b, d und e
+c (der Baum lässt sich spiegeln), d (Teilbäume können rechts oder links angehangen werden) und e (der Baum lässt sich spiegeln).
 
 \section{}
 \begin{enumerate}
