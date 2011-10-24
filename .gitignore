@@ -1,1 +1,7 @@
-*.aux *.dvi *.log *.pdf *.ps *.tex~ *.tex.backup
+*.aux 
+*.dvi 
+*.log 
+*.pdf 
+*.ps 
+*~ 
+*.tex.backup
