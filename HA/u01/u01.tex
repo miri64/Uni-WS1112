@@ -64,7 +64,35 @@
 
 \section{Varianten Mergesort}
 \begin{enumerate}
-\item 
+\item \begin{description}
+       \item[Selection Sort] sortiert die Elemente einer Liste, indem er eine
+Auswahl (\textit{Selection}), die zu Beginn des Algorithmus leer ist, auffüllt,
+indem er die Verbleibende Liste nach ihrem kleinsten Element durchsucht und
+durch eine Vertauschun in die Auswahl aufnimmt.
+
+\textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
+herum sortiert, da der Algorithmus so bei jedem Durchlauf den aktuellen
+Suchraum von vorne bis hinten durchsuchen muss. Im ersten Durchlauf sind das
+also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit für den Worst Case ist
+also
+\[
+ \sum\limits_{i = 1}^{n} i = \frac{n \cdot (n + 1)}{2} \in O(n^2).
+\]
+
+
+       \item[Mergesort] sortiert die Elemente einer Liste, indem er eine Liste
+in seine Elemente zerlegt und rekursiv diese wieder zusammensetzt, wobei er
+jedes mal beim zusammensetzen die neu entstandenen Teillisten sortiert.
+
+\textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
+herum sortiert, da der Algorithmus so bei jedem Durchlauf den aktuellen
+Suchraum von vorne bis hinten durchsuchen muss. Im ersten Durchlauf sind das
+also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit für den Worst Case ist
+also
+\[
+ \sum\limits_{i = 1}^{n} i = \frac{n \cdot (n + 1)}{2} \in O(n^2).
+\]
+      \end{description}
 \item 
 \item 
 \end{enumerate}
