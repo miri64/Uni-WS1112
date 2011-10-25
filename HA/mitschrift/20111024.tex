@@ -90,6 +90,29 @@ Dann kann man das Auswahlproblem in $O(n)$ Zeit läsen, wenn $\mathtt{Splitter}$
 				Wir wollen: $\frac{3}{10} n - 3 \overset{!}{\geq} \frac{1}{4} n \Rightarrow n \geq 60$. \hfill$\square$
 				\end{center}
 			\end{itemize}
+		\hspace{2cm}
+		\begin{minipage}{0.7\textwidth}
+		\begin{algorithmic}
+		\STATE \textbf{Algorithm} $\operatorname{Select}(S, K)$
+			\IF{$|S| < 100$} %
+				\STATE $\operatorname{brute\_force}$
+			\ENDIF
+			\STATE \rnode{SPLITTER_B}{}\vspace*{-1em}
+			\STATE Unterteile $S$ in 5er-Gruppen
+			\STATE $S \gets$ \{Median jeder 5er-Gruppe\}
+			\STATE \rnode{SPLITTER_E}{}$q \gets \operatorname{Select}\left(S', \left\lceil\frac{|S'| + 1}{2}\right\rceil\right)$
+			\STATE $S_< \gets \{s \in S\ |\ s < q\}$
+			\STATE $S_> \gets \{s \in S\ |\ s > q\}$
+			\IF{$\left|S_<\right| \geq k|$} %
+				\RETURN $\operatorname{Select}(S_<,k)$
+			\ELSIF{$\left|S_<\right| = k - 1$} %
+				\RETURN $q$
+			\ELSE %
+				\RETURN $\operatorname{Select}(S_>,k - \left|S_<\right| - 1)$
+			\ENDIF
+		\end{algorithmic}
+		\end{minipage}
+		\psbrace*[rot=180,nodesepA=-1.8cm,nodesepB=0.5em](SPLITTER_B)(SPLITTER_E){SPLITTER}
 		\begin{verbatim}
         Algorithmus: Select(S,K)
             if |S| < 100 then
