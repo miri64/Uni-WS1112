@@ -12,8 +12,8 @@
 
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
-\newcommand{\Authors}{Martin Lenders, ...}
-\title{Höhere Algorithmik - 1. Übungsblatt}
+\newcommand{\Authors}{Martin Lenders, Ralf M\"uller-Zimmermann}
+\title{H\"ohere Algorithmik - 1. \"Ubungsblatt}
 \author{\Authors}
 \date{\today}
 
@@ -59,22 +59,46 @@
 \section{Sammelbilder}
 \begin{enumerate}
 \item 
+	\underline{Zu zeigen:} $E[X] = \sum\limits_{i = 1}^{n} E[X_{i}]$\\
+	\underline{Herleitung:} \begin{align*}
+		\sum\limits_{i = 1}^{n} E\left[X_{i}\right] &= \sum\limits_{i = 1}^{n}\left(\sum\limits_{j = 1}^{\infty}j * P\left(X_{i} = j\right)\right)\\
+		&=\sum\limits_{j = 1}^{\infty}\left(\sum\limits_{i = 1}^{n}j * P\left(X_{i} = j\right)\right)\\
+		&=\sum\limits_{j = 1}^{\infty}j * \left(\sum\limits_{i = 1}^{n}P\left(X_{i} = j\right)\right)\\
+		&= E\left[\sum\limits_{i = 1}^{n}X_{i}\right]\\
+		&= E\left[X\right]
+	\end{align*}
+	
 \item 
+	\underline{Gesucht:} $E[X_{i}]$\\
+	\underline{Herleitung:} \begin{align*}
+		E\left[X_{i}\right] &= \frac{1}{p_{i}}\\
+		p_{i} &= \frac{n-i}{n}\\
+		\\
+		\Rightarrow E\left[X_{i}\right] &= \frac{n}{n-i}	
+	\end{align*}
 \item 
+	\underline{Zu zeigen:} $E[X] = O(n\ log\ n)$\\
+	\underline{Herleitung:} \begin{align*}
+		E\left[X\right] &= \sum\limits_{i = 1}^{n}E\left[X_{i}\right]\\
+		&= \sum\limits_{i = 1}^{n}\frac{n}{n - i}\\
+		&= n * \left(1 + \frac{1}{2} + \frac{1}{3} + \cdots + \frac{1}{n}\right)\\
+		&= n * \sum\limits_{i = 1}^{n}\frac{1}{i}\\
+		&= n\ log\ n
+	\end{align*}
 \end{enumerate}
 
 \section{Varianten Mergesort}
 \begin{enumerate}
 \item \begin{description}
        \item[Selection Sort] sortiert die Elemente einer Liste, indem er eine
-Auswahl (\textit{Selection}), die zu Beginn des Algorithmus leer ist, auffüllt,
+Auswahl (\textit{Selection}), die zu Beginn des Algorithmus leer ist, auff\"ullt,
 indem er die Verbleibende Liste nach ihrem kleinsten Element durchsucht und
 durch eine Vertauschun in die Auswahl aufnimmt.
 
 \textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
 herum sortiert, da der Algorithmus so bei jedem Durchlauf den aktuellen
 Suchraum von vorne bis hinten durchsuchen muss. Im ersten Durchlauf sind das
-also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit für den Worst Case ist
+also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit f\"ur den Worst Case ist
 also
 \[
  \sum\limits_{i = 1}^{n} i = \frac{n \cdot (n + 1)}{2} \in O(n^2).
@@ -88,7 +112,7 @@ jedes mal beim zusammensetzen die neu entstandenen Teillisten sortiert.
 \textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
 herum sortiert, da der Algorithmus so bei jedem Durchlauf den aktuellen
 Suchraum von vorne bis hinten durchsuchen muss. Im ersten Durchlauf sind das
-also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit für den Worst Case ist
+also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit f\"ur den Worst Case ist
 also
 \[
  \sum\limits_{i = 1}^{n} i = \frac{n \cdot (n + 1)}{2} \in O(n^2).
