@@ -1,6 +1,3 @@
-/**
- * @author Christian Cikryt
- */
 public class SelectionSort extends Sort{
 
 	public void sort(Comparable[] a, int left, int right) {

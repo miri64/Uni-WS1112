@@ -4,9 +4,6 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Christian Cikryt
- */
 public class SortTest {
 
 	@Test

@@ -1,6 +1,3 @@
-/**
- * @author Christian Cikryt
- */
 public class MMergeSort extends MergeSort {
 
 	private int m;
