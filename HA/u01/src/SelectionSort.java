@@ -1,18 +1,28 @@
 public class SelectionSort extends Sort{
 
-	public void sort(Comparable[] a, int left, int right) {
+	public int sort(Comparable[] a, int left, int right) {
+		int compareCount	= 0;
 		for (int i = left; i < right; i++) {
-			int indexOfMinimum = min(a, i, right);
+			int[] returnArray = min(a, i, right);
+			int indexOfMinimum = returnArray[0];
+			compareCount += returnArray[1];
 			swapAtIndices(a, i, indexOfMinimum);
 		}
+		return compareCount;
 	}
 
-	private static int min(Comparable[] a, int startIndex, int endIndex) {
+	private static int[] min(Comparable[] a, int startIndex, int endIndex) {
 		int minIndex = startIndex;
-		for (int i = startIndex; i <= endIndex; i++)
+		int compareCount = 0;
+		for (int i = startIndex; i <= endIndex; i++) {
 			if (a[i].compareTo(a[minIndex]) == -1)
 				minIndex = i;
-		return minIndex;
+			compareCount++;
+		}
+		int[] res = new int[2];
+		res[0] = minIndex;
+		res[1] = compareCount;
+		return res;
 	}
 
 	private static void swapAtIndices(Comparable[] a, int index1, int index2) {
