@@ -1,0 +1,130 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Christian Cikryt, Ralf M\"uller-Zimmermann}
+\title{H\"ohere Algorithmik - 1. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{(\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{$\boldsymbol{O}$-Notation}
+\section{Sammelbilder}
+\begin{enumerate}
+\item 
+	\underline{Zu zeigen:} $E[X] = \sum\limits_{i = 1}^{n} E[X_{i}]$\\
+	\underline{Herleitung:} \begin{align*}
+		\sum\limits_{i = 1}^{n} E\left[X_{i}\right] &= \sum\limits_{i = 1}^{n}\left(\sum\limits_{j = 1}^{\infty}j * P\left(X_{i} = j\right)\right)\\
+		&=\sum\limits_{j = 1}^{\infty}\left(\sum\limits_{i = 1}^{n}j * P\left(X_{i} = j\right)\right)\\
+		&=\sum\limits_{j = 1}^{\infty}j * \left(\sum\limits_{i = 1}^{n}P\left(X_{i} = j\right)\right)\\
+		&= E\left[\sum\limits_{i = 1}^{n}X_{i}\right]\\
+		&= E\left[X\right]
+	\end{align*}
+	
+\item 
+	\underline{Gesucht:} $E[X_{i}]$\\
+	\underline{Herleitung:} \begin{align*}
+		E\left[X_{i}\right] &= \frac{1}{p_{i}}\\
+		p_{i} &= \frac{n-i}{n}\\
+		\\
+		\Rightarrow E\left[X_{i}\right] &= \frac{n}{n-i}	
+	\end{align*}
+\item 
+	\underline{Zu zeigen:} $E[X] = O(n \log n)$\\
+	\underline{Herleitung:} \begin{align*}
+		E\left[X\right] &= \sum\limits_{i = 1}^{n}E\left[X_{i}\right]\\
+		&= \sum\limits_{i = 1}^{n}\frac{n}{n - i}\\
+		&= n * \left(1 + \frac{1}{2} + \frac{1}{3} + \cdots + \frac{1}{n}\right)\\
+		&= n * \sum\limits_{i = 1}^{n}\frac{1}{i}\\
+		&= n \log n
+	\end{align*}
+\end{enumerate}
+
+\section{Varianten Mergesort}
+\begin{enumerate}
+\item \begin{description}
+       \item[Selection Sort] sortiert die Elemente eines Arrays, indem jeweils das kleinste Element der unsortierten Restarrays mit dem Element nach dem sortierten Teil getauscht wird und der sortierte Anteil somit um 1 wächst.
+
+\textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
+herum sortiert. Der Algorithmus muss so bei jedem Durchlauf den aktuellen
+Suchraum von vorne bis hinten durchsuchen, um das jeweils Minimum zu finden. Um das Minimum einer $n$-elementigen Liste zu finden, werden $n-1$ Vergleiche benötigt. Dies muss $n-1$-mal
+berechnet werden, da nach $n-1$ Tauschoperationen das Maximum bereits am Ende des Arrays steht. Für den Worst-Case werden als die folgende Anzahl an Vergleichen durchgeführt:
+\[
+ \sum\limits_{i = 2}^{n} i - 1 = \sum\limits_{i = 1}^{n - 1} i = \frac{1}{2} \left(n^2 - 2n + 1\right) \in O(n^2).
+\]
+
+
+       \item[Mergesort] sortiert die Elemente eines Arrays, indem das Array in zwei gleichgroße Teile aufteilt und diese rekursiv und anschließend aus den zwei sortierten Teilen eine sortierte Gesamtfolge verschmilzt.
+
+\textbf{Worst-Case-Szenario:} Im schlimmsten Fall sind bei jeder Verschmelzung die Teile gleich groß und die Elemente müssen wechselweise eingefügt werden, also das Verschmelzen wird nicht dadurch abgekürzt, dass ab einem gewissen Punkt
+mehr als ein Element eines Teiles übernommen werden kann (z.B. weil die andere Folge bereits erschöpft ist).
+Dann werden für das Verschmelzen von zwei $n/2$-elementigen Teilen $n - 1$ Vergleiche benötigt, bei drei $n/3$-elementigen Teilen ebenfalls $n - 1$ usw.
+So werden bei jedem Rekursionsschritt $n - 1$ Vergleiche durchgeführt.
+Da angenommen wird, dass $n$ eine 2er Potenz ist, wird das Verschmelzen bei einer $n$-elementigen Folge $log_2 n$ mal aufgerufen. Insgesamt werden folgende Anzahl an Vergleichen durchgeführt:
+\begin{equation*}
+ \sum\limits_{i = 1}^{log_2 n} (n - 1) = (n - 1)  * log_2 n
+\end{equation*}
+
+      \end{description}
+\item \begin{enumerate}
+       \item Es sei $m < M$, so dass $m$ die größte Zahl ist, die kleiner als $M$ ist und die mit $2^x, x \in \mathbb{N}$ multipliziert $n$ ergibt.
+	     Ferner wird angenommen, dass $n$ und $M$ 2er-Potenzen sind.
+	     Dann gilt für die Anzahl der Vergleiche, dass $log_2 n - log_2 (M - 1)$-mal verschmolzen wird. Zuvor wurden die Elementar-Folgen der Länge $M/2$ mit SelectionSort sortiert, was $1/2 * (m - 1)^2$ Vergleiche erfordert.
+	     Insgesamt gilt somit für die Anzahl an Vergleichen:
+	     \[
+	      (log_2 n - log_2 (M-1)) * (n - 1) + 1/2 * (m - 1)^2
+	     \]
+
+       \item 
+      \end{enumerate}
+\item 
+\end{enumerate}
+\end{document}
