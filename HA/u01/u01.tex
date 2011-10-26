@@ -21,6 +21,7 @@
 
 \renewcommand{\thesection}{Aufgabe \arabic{section}}
 \renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{(\roman{enumii}}
 
 \definecolor{lgray}{gray}{0.95}
 \definecolor{purple}{rgb}{0.498,0,0.3333}
@@ -111,7 +112,26 @@ jedes mal beim zusammensetzen die neu entstandenen Teillisten sortiert.
 
 \textbf{Worst-Case-Szenario:} 
       \end{description}
-\item 
+\item \begin{enumerate}
+       \item Für den Fall das $n < M$ ist die Anzahl der Vergleiche entsprechend der von Selectionsort.
+             Für $n \geq M$ ide die Anzahl entsprechend der Anzahl von Vergleichen nach Mergesort.
+             \begin{align*}
+              V_{\text{Mergesort}}(n) &= \begin{cases}
+                                         n+1, & n = 2 \\
+                                         2 \cdot T\left(\frac{n}{2}\right), & n > 2
+                                        \end{cases}\\
+              V_{\text{Mergesort}}(n) &= 2 \cdot T\left(\frac{n}{2}\right)\\
+                                      &= 2 \cdot \left[2 \cdot T\left(\frac{n}{4}\right)\right]\\
+                                      &= ...\\
+                                      &= 2^{\log_2 (n-1)} \cdot T\left(\frac{n}{2^{\log_2 (n-1)}}\right)\\
+                                      &= 3n-3\\
+            \Rightarrow V_{\text{$M$-Mergesort}}(n) &= \begin{cases}
+                              \frac{1}{2} \left(n^2 + n\right),& n < M \\
+                              3n - 3, & n \geq M
+                             \end{cases}
+             \end{align*}
+       \item 
+      \end{enumerate}
 \item 
 \end{enumerate}
 \end{document}
