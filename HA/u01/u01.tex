@@ -99,10 +99,10 @@ durch eine Vertauschun in die Auswahl aufnimmt.
 \textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
 herum sortiert, da der Algorithmus so bei jedem Durchlauf den aktuellen
 Suchraum von vorne bis hinten durchsuchen muss. Im ersten Durchlauf sind das
-also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit f\"ur den Worst Case ist
+also $n-1$ Elemente, im zweiten $n-2$ usw. Die Laufzeit f\"ur den Worst Case ist
 also
 \[
- \sum\limits_{i = 1}^{n} i = \frac{1}{2} \left(n^2 + n\right) \in O(n^2).
+ \sum\limits_{i = 1}^{n-1} i = \frac{(n-1) \cdot n}{2} = \frac{1}{2} \left(n^2 - n\right) \in O(n^2).
 \]
 
 
@@ -110,26 +110,17 @@ also
 in seine Elemente zerlegt und rekursiv diese wieder zusammensetzt, wobei er
 jedes mal beim zusammensetzen die neu entstandenen Teillisten sortiert.
 
-\textbf{Worst-Case-Szenario:} 
+\textbf{Worst-Case-Szenario:}  Im schlimmsten Fall müssen die Elemente bei jedem Verschmelzen wechselweise eingefügt werden.
+Für das Verschmelzen von zwei $k$-elementigen Listen sind also $2k-2$ Vergleiche nötig, womit für einen Rekursionsschritt mit einer $n$-elementigen $n - 1$ Vergleiche durchgeführt werden.
+Das Verschmelzen bei einer $n$-elementigen Folge wird $\log_2 n$ mal aufgerufen.
+Die Laufzeit für den Worst Case ist also
+\[
+ (n-1) \cdot \log_2 n \in O(n \log n)
+\]
       \end{description}
 \item \begin{enumerate}
-       \item Für den Fall das $n < M$ ist die Anzahl der Vergleiche entsprechend der von Selectionsort.
-             Für $n \geq M$ ide die Anzahl entsprechend der Anzahl von Vergleichen nach Mergesort.
-             \begin{align*}
-              V_{\text{Mergesort}}(n) &= \begin{cases}
-                                         n+1, & n = 2 \\
-                                         2 \cdot T\left(\frac{n}{2}\right), & n > 2
-                                        \end{cases}\\
-              V_{\text{Mergesort}}(n) &= 2 \cdot T\left(\frac{n}{2}\right)\\
-                                      &= 2 \cdot \left[2 \cdot T\left(\frac{n}{4}\right)\right]\\
-                                      &= ...\\
-                                      &= 2^{\log_2 (n-1)} \cdot T\left(\frac{n}{2^{\log_2 (n-1)}}\right)\\
-                                      &= 3n-3\\
-            \Rightarrow V_{\text{$M$-Mergesort}}(n) &= \begin{cases}
-                              \frac{1}{2} \left(n^2 + n\right),& n < M \\
-                              3n - 3, & n \geq M
-                             \end{cases}
-             \end{align*}
+       \item Wir nehmen an, dass $n$ und $M$ Zweierpotenzen sind. Für den normalen Mergesort würden wir $\log_2 n$-mal die Listen verschmelzen (s. 3a). Davon entfallen aber nun die Rekursionsschritte auf die Teillisten, die der Selectionsort nun übernimmt, wir haben also nur $\log_2 n - \log_2 (M-1) = \log_2\left(\frac{n}{M-1}\right)$ Verschmelzungen. Der Selectionsort sortiert alle Teillisten der Länge $m = \frac{M}{2}$ und benötigt dafür $\frac{1}{2}(m^2-m)$ Vergleiche (s. 3a). Die Gesamtanzahl an Vergleichen ist daher:
+             \[\log_2\left(\frac{n}{M-1}\right) + \frac{1}{2}\left[\frac{M^2}{4}-\frac{M}{2}\right] \in O(\log_2 n)\]
        \item 
       \end{enumerate}
 \item 
