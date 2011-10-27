@@ -1,10 +1,7 @@
-/**
- * @author Christian Cikryt
- */
 public abstract class Sort {
-	public void sort(Comparable[] a) {
-		sort(a, 0, a.length - 1);
+	public int sort(Comparable[] a) {
+		return sort(a, 0, a.length - 1);
 	}
 
-	public abstract void sort(Comparable[] a, int left, int right);
+	public abstract int sort(Comparable[] a, int left, int right);
 }

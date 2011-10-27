@@ -98,7 +98,7 @@ herum sortiert. Der Algorithmus muss so bei jedem Durchlauf den aktuellen
 Suchraum von vorne bis hinten durchsuchen, um das jeweils Minimum zu finden. Um das Minimum einer $n$-elementigen Liste zu finden, werden $n-1$ Vergleiche benötigt. Dies muss $n-1$-mal
 berechnet werden, da nach $n-1$ Tauschoperationen das Maximum bereits am Ende des Arrays steht. Für den Worst-Case werden als die folgende Anzahl an Vergleichen durchgeführt:
 \[
- \sum\limits_{i = 2}^{n} i - 1 = \sum\limits_{i = 1}^{n - 1} i = \frac{1}{2} \left(n^2 - 2n + 1\right) \in O(n^2).
+ \sum\limits_{i = 2}^{n} i - 1 = \sum\limits_{i = 1}^{n - 1} i = \frac{1}{2} \left(n * (n - 1)\right) = \frac{n^2 - n}{2} \in O(n^2).
 \]
 
 
@@ -116,10 +116,10 @@ Da angenommen wird, dass $n$ eine 2er Potenz ist, wird das Verschmelzen bei eine
       \end{description}
 \item \begin{enumerate}
        \item Es wird angenommen, dass $n$ und $M$ 2er-Potenzen sind.
-	     Dann gilt für die Anzahl der Vergleiche, dass $log_2 n - log_2 (M - 1)$-mal verschmolzen wird. Zuvor wurden die Elementar-Folgen der Länge $M/2$ mit SelectionSort sortiert, was $1/2 * (m - 1)^2$ Vergleiche erfordert.
+	     Dann gilt für die Anzahl der Vergleiche, dass $log_2 n - log_2 (M - 1)$-mal verschmolzen wird. Zuvor wurden die Elementar-Folgen der Länge $M/2$ mit SelectionSort sortiert, was $\frac{(M/2)^2 - (M/2)}{2}$ Vergleiche erfordert.
 	     Insgesamt gilt somit für die Anzahl an Vergleichen:
 	     \[
-	      (log_2 n - log_2 (M-1)) * (n - 1) + 1/2 * (m - 1)^2
+	      (log_2 n - log_2 (M-1)) * (n - 1) + \frac{M^2 - M}{2}
 	     \]
 
        \item 
