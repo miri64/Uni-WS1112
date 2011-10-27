@@ -1,0 +1,100 @@
+\section{Traversierung "`depth-first-postorder"'}
+\begin{lstlisting}
+proc visit(Node N) {
+	foreach (Child C of N, from left to right) {
+		visit(C);
+	}
+	handle Node N;
+}
+\end{lstlisting}
+
+\paragraph{Kritik:} Unnötiges Kopieren, Platzbedarf
+\paragraph{Eigenschaft $\boldsymbol{E}$} Der Attributwert (Übersetzung) eines inneren Knotens ergibt sich aus der Konkatenation der Attributwerte aller Kinderknoten unter Beibehalt der Reihenfolge und mit möglichen Einfügungen.
+\paragraph{Definition:} Ein Syntaxgerichtete Definition (SGD) heißt \emph{einfach}, wenn sie die Eigenschaft $E$ besitzt.
+\paragraph{Idee:} Erzeuge Übersetzung inkrementell beim Traversieren des Baumes.
+\begin{lstlisting}
+print('9')
+print('5')
+print('2')
+print('+')
+print('-')
+\end{lstlisting}
+\subsection{Übersetungsschema}
+Eine kontextfreie Grammatik, in deren rechte Produktionsseiten Programmfragmente (semantische Aktionen, hier Druckbefehle) eingestreut sind, heißt Übersetungsschema. \hfill$\square$
+\paragraph{Konvention:} Programmfragmente seien in $\{\}$ eingeschlossen.
+
+Die erzeugte Sprache bleibt unverändert!
+
+Semantische Aktionen heißen auch \emph{Pseudoterminale}. Im Parsebaum mit gestrichelten Kanten.
+
+\subsubsection*{Beispiel}
+\begin{align*}
+E &\to E + T \{\texttt{print('+')}\}\ |\ E + T \{\texttt{print('+')}\ |\ T\} \\
+T &\to E * F \{\texttt{print('*')}\}\ |\ E / F \{\texttt{print('/')}\ |\ F\} \\
+F &\to (E)\ |\ D\\
+D &\to \{\texttt{print('0')}\}0\ |\ ...\ |\ \{\texttt{print('9')}\}9 
+\end{align*}
+\begin{center}
+ \def\dedge{\ncline[linestyle=dashed]}
+ \pstree{\Tr{$E$}}{
+  \pstree{\Tr{$E$}}{
+   \pstree{\Tr{$E$}}{
+    \pstree{\Tr{$T$}}{
+     \pstree{\Tr{$F$}}{
+      \pstree{\Tr{$D$}}{
+       \Tr[edge=\dedge]{\texttt{print('9')}}
+       \Tr{9}
+      }
+     }
+    }
+    \Tr{$+$}
+    \pstree{\Tr{$T$}}{
+     \pstree{\Tr{$F$}}{
+      \pstree{\Tr{$F$}}{
+       \Tr[edge=\dedge]{\{\texttt{print('5')}\}}
+       \Tr{5}
+      }
+     }
+    }
+    \Tr[edge=\dedge]{\{\texttt{print('+')}\}}
+   }
+  }
+  \Tr{$-$}
+  \pstree{\Tr{$T$}}{
+   \pstree{\Tr{$F$}}{
+    \pstree{\Tr{$D$}}{
+     \Tr[edge=\dedge]{\{\texttt{print('2')}\}}
+     \Tr{2}
+    }
+   }
+  }
+  \Tr[edge=\dedge]{\{\texttt{print('-')}\}}
+ }
+\end{center}
+Die Übersetzung wird erzeugt durch Ausführung der semantischen Aktionen bei deren Besuch im Rahmen der Depth-First-Traversierung (left-to-right).
+
+Maschinenprogramm der abstrakten Stapelmaschine
+
+{\color{red} \texttt{print(\dq push 9\dq)...\texttt{print(\dq sub\dq)}}}
+
+\subsection{Java Bytecode}
+\begin{center}
+\begin{tabular}{c|c|c|c|l}
+ \textbf{Mnemonic} & \texttt{Op-Code} & Argumente & Stack vorher / nachher & Beschreibung \\\hline\hline
+ ipush & \texttt{0x10} & 1 byte & $\to \texttt{value}$ & pushes a byte onto the stack as integer-value \\\hline
+ iadd & \texttt{0x60} && $V_1, V_2 \to \texttt{result}$ & add two ints together \\\hline
+ isub & \texttt{0x64} && $V_1, V_2 \to \texttt{result}$ & subtracts two ints \\\hline
+ imul & \texttt{0x68} && $V_1, V_2 \to \texttt{result}$ & multiply two ints together \\\hline
+ idiv & \texttt{0x6c} && $V_1, V_2 \to \texttt{result}$ & divide two ints \\\hline
+\end{tabular}
+\end{center}
+
+\paragraph{Übersetungsschema:} Arithmetische Austrücke in Java Bytecode.
+\begin{align*}
+ E &\to E + T \{\texttt{print(\dq 60\dq)}\} \\
+  &\vdots \\
+ D &\to 0\{\texttt{print(\dq 1000\dq)}\}\\
+  &\vdots\\
+ D &\to 9\{\texttt{print(\dq 1009\dq)}\}\\
+\end{align*}
+
