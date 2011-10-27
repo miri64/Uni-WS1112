@@ -15,4 +15,9 @@ public class MMergeSort extends MergeSort {
 			return super.sort(a, left, right);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "MMergeSort";
+	}
 }

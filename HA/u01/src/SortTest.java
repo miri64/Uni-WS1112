@@ -8,9 +8,8 @@ import static org.junit.Assert.assertTrue;
 public class SortTest {
 
 	@Test
-	public void testSortArrays() {
-
-		testSortArray(generateTestArray(50000, 2000));
+	public void testSortArrays(int length, int m) {
+		testSortArray(generateTestArray(length, 2000), m);
 	}
 
 	public Comparable[] generateTestArray(int length, int greatestNumber) {
@@ -24,8 +23,8 @@ public class SortTest {
 
 	}
 
-	public void testSortArray(Comparable[] a) {
-		Sort[] algorithms = {new MergeSort(), new SelectionSort(), new MMergeSort(3)};
+	public void testSortArray(Comparable[] a, int m) {
+		Sort[] algorithms = {new MergeSort(), new MMergeSort(m)};
 		long time;
 		for (Sort s : algorithms) {
 			Comparable[] toSort = Arrays.copyOf(a, a.length);
@@ -39,8 +38,9 @@ public class SortTest {
 		long start = System.currentTimeMillis();
 		int compareCount = s.sort(a);
 		long end = System.currentTimeMillis();
-		System.out.println("Number of compares with "+ s + " = "+ compareCount);
-		return end - start;
+		long duration = end - start;
+		System.out.println("Number of compares with "+ s + " = "+ compareCount + ". Time: " + duration + "ms.");
+		return duration;
 	}
 
 	public boolean isSorted(Comparable[] a) {

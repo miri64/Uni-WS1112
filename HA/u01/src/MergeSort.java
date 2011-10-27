@@ -42,4 +42,9 @@ public class MergeSort extends Sort {
 		for (int i = left; i <= right; i++)
 			to[resultPos + i] = from[i];
 	}
+
+	@Override
+	public String toString() {
+		return "MergeSort";
+	}
 }

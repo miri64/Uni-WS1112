@@ -8,11 +8,11 @@
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{multicol}
-\usepackage{pst-tree}
+%\usepackage{pst-tree}
 
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
-\newcommand{\Authors}{Christian Cikryt, Ralf M\"uller-Zimmermann}
+\newcommand{\Authors}{Christian Cikryt (Tut. Di. 14-16), Jakob Pfender (Mi. 14-16)}
 \title{H\"ohere Algorithmik - 1. \"Ubungsblatt}
 \author{\Authors}
 \date{\today}
@@ -50,13 +50,37 @@
 	extendedchars=true,
 	inputencoding=utf8/latin1
 }
-\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+%\psset{nodesep=2pt,levelsep=2em,treesep=2em}
 
 \begin{document}
 
 \maketitle
 
 \section{$\boldsymbol{O}$-Notation}
+\begin{itemize}
+      \item $n^{\frac{1}{\log n}} = n^{\frac{log_n 2}{log_n n}} \\
+	= n^{log_ 2} = 2 < c * \ln n \Rightarrow n^{\frac{1}{log n}} \in O(\ln n)$
+      \item $\ln n < \ln n * \ln n = \frac{log_2 n}{log_2 \mathrm{e}} * \frac{log_2 n}{log_2 \mathrm{e}} = c * log_2 (n) * log_2 (n) \\
+	\Rightarrow \ln n \in O(\ln^2 n)$
+      \item $\log^2 n < \sqrt{n} \Rightarrow log^2 n \in O(\sqrt{n})\\ $
+	$e^{n}$ steigt schneller als $n^2 \Rightarrow$ Die Umkehrfunktionen haben umgekehrte Eigenschaft.
+      \item $(\sqrt{2})^{\log n} = \sqrt{2^{\log n}} = \sqrt{n} < n < n^2 \Rightarrow \sqrt{2}^{log n} \in O(n^2)$\\
+      \item $n^2$
+       \item $4^{\log n} = 2^{\log n} * 2^{\log n} = n * n = n^2 \Rightarrow 4^{log n} \in \theta(n^2)$\\
+	
+	\item $2^n > n^2 \Rightarrow n^2 \in O(2^n)$\\
+		Exponential Funktion steigt stärker als Quadratfunktion.
+	\item $n^{\log \log n}$\\
+	    $n^n > 2^n \Rightarrow 2^n \in O(n^{\log \log n}$
+	\item $(\lceil \log (n) \rceil )!$\\
+		Aufgrund des Verschachtelten Aufrufs des Logarithmus gilt $n^{\log \log n} \in O((\lceil \log (n) \rceil )!)$.
+		Da z.\,B. auch gilt $n! > \frac{n}{2}^{\frac{n}{2}}$
+	\item $2^{(2^n)}$\\
+		Steigt exponentiell exponentiell.
+	Da $<$ transitiv ist, gilt dies auch für die Wachstumsklassen.
+	
+\end{itemize}
+
 \section{Sammelbilder}
 \begin{enumerate}
 \item 
@@ -110,20 +134,33 @@ Dann werden für das Verschmelzen von zwei $n/2$-elementigen Teilen $n - 1$ Verg
 So werden bei jedem Rekursionsschritt $n - 1$ Vergleiche durchgeführt.
 Da angenommen wird, dass $n$ eine 2er Potenz ist, wird das Verschmelzen bei einer $n$-elementigen Folge $log_2 n$ mal aufgerufen. Insgesamt werden folgende Anzahl an Vergleichen durchgeführt:
 \begin{equation*}
- \sum\limits_{i = 1}^{log_2 n} (n - 1) = (n - 1)  * log_2 n
+ \sum\limits_{i = 1}^{log_2 n} (n - 1) = (n - 1)  * log_2 n \in O(n \log n)
 \end{equation*}
 
       \end{description}
 \item \begin{enumerate}
        \item Es wird angenommen, dass $n$ und $M$ 2er-Potenzen sind.
 	     Dann gilt für die Anzahl der Vergleiche, dass $log_2 n - log_2 (M - 1)$-mal verschmolzen wird. Zuvor wurden die Elementar-Folgen der Länge $M/2$ mit SelectionSort sortiert, was $\frac{(M/2)^2 - (M/2)}{2}$ Vergleiche erfordert.
+	      Es entfallen allso die Rekursionsschritte, die der Selectionsort nun übernimmt.
 	     Insgesamt gilt somit für die Anzahl an Vergleichen:
 	     \[
 	      (log_2 n - log_2 (M-1)) * (n - 1) + \frac{M^2 - M}{2}
 	     \]
 
-       \item 
+       \item Der Vergleich der Laufzeiten und die Berechnung eines optimalen Ms erfolgt durch Auflösung der quadratischen Ungleichung nach M bzw. durch Auffinden eines Minimums des Polynoms.
+	    \[
+	      (log_2 n - log_2 (M-1)) * (n - 1) + \frac{M^2 - M}{2} < (n - 1) * log_2 n \Leftrightarrow \frac{M^2 - M}{2} - log_2 (M - 1) * (n - 1) < 0
+	     \] 
       \end{enumerate}
-\item 
+\item
+  Die Auswertung des Algorithmus geschah durch zufällig erzeugte Arrays unterschiedlicher Länge (10, 1000, 50000, 1000000) und unterschiedlichen Werten für M (2, 3, 5, 10, 20, 40, 50, 60).
+  Interessanterweise brauchte MMergeSort immer mindestens so viele Vergleich wie MergeSort und zwar auch nur genauso viele wenn mit $M = 2$, SelectionSort außen vorgelassen wurde.
+  Bezüglich der Laufzeit sah es schon anders aus, hier wurde das Optimum für die jeweiligen Größen ermittelt, indem bei gleichbleibender Länge die Werte von M variiert wurde und die Laufzeit gemessen wurde.
+  Das Optimum lag dabei zwischen 10 und 60 und kommt aufgrund von Schwankungen nicht genauer bestimmt werden. MMergeSort war durch weg um $\frac{1}{3}$ schneller als MergeSort.
+  Die Konstante der Laufzeit ist bei den Schwankungen trotz mehrmaliger Durchläufe und Mittelung nicht genau genug bestimmbar, als dass sich die Angabe eines konkreten Wertes Sinn ergäbe.
+      \lstinputlisting[caption=Sort.java]{src/Sort.java}
+      \lstinputlisting[caption=SelectionSort.java]{src/SelectionSort.java}
+      \lstinputlisting[caption=MergeSort.java]{src/MergeSort.java}
+      \lstinputlisting[caption=MMergeSort.java]{src/MMergeSort.java}
 \end{enumerate}
 \end{document}

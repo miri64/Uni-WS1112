@@ -30,4 +30,9 @@ public class SelectionSort extends Sort{
 		a[index1] = a[index2];
 		a[index2] = temp;
 	}
+
+	@Override
+	public String toString() {
+		return "SelectionSort";
+	}
 }
