@@ -121,8 +121,13 @@ Die Laufzeit für den Worst Case ist also
       \end{description}
 \item \begin{enumerate}
        \item Wir nehmen an, dass $n$ und $M$ Zweierpotenzen sind. Für den normalen Mergesort würden wir $\log_2 n$-mal die Listen verschmelzen (s. 3a). Davon entfallen aber nun die Rekursionsschritte auf die Teillisten, die der Selectionsort nun übernimmt, wir haben also nur $\log_2 n - \log_2 (M-1) = \log_2\left(\frac{n}{M-1}\right)$ Verschmelzungen. Der Selectionsort sortiert alle Teillisten der Länge $m = \frac{M}{2}$ und benötigt dafür $\frac{1}{2}(m^2-m)$ Vergleiche (s. 3a). Die Gesamtanzahl an Vergleichen ist daher:
-             \[\log_2\left(\frac{n}{M-1}\right) + \frac{1}{2}\left[\frac{M^2}{4}-\frac{M}{2}\right] \in O(\log_2 n)\]
-       \item 
+             \[\log_2\left(\frac{n}{M-1}\right) + \frac{1}{2}\left[\frac{M^2}{4}-\frac{M}{2}\right] \in O(n \log n)\]
+       \item Wir ziehen für den Laufzeitvergleich zusätzlich zu den Vergleichen des $M$-Mergesorts auch noch die $\frac{n}{M-1}-1$ Verschmelzungen mit ein:
+             \[
+             \]
+             \begin{align*}
+              \log_2\left(\frac{n}{M-1}\right) \cdot \left(\frac{n}{M-1}-1\right) + \frac{1}{2}\left[\frac{M^2}{4}-\frac{M}{2}\right] &< (n-1) \cdot \log_2 n \\
+             \end{align*}
       \end{enumerate}
 \item 
 \end{enumerate}
