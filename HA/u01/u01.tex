@@ -159,7 +159,9 @@ Die Laufzeit für den Worst Case ist also
               \log_2\left(\frac{n}{M-1}\right) \cdot \left(\frac{n}{M-1}-1\right) + \frac{1}{2}\left[\frac{M^2}{4}-\frac{M}{2}\right] &< (n-1) \cdot \log_2 n \\
              \end{align*}
       \end{enumerate}
-\item foobar
+\item Es wurden mit zufälligen Listen der Längen 10, 1000, 50000, 1000000 und mit $M \in \{2,3,5,10,20,40,50,60\}$ die Algorithmen ausgewertet. $M$-Mergesort benötigte dabei mindestens genauso viele Vergleiche wie Mergesort, allerdings war es in der Laufzeit deutlich besser. Es lief, mit Abweichungen, etwa um $\frac{4}{3}$-mal schneller als Mergesort.
+Das optimale $M$ wurde durch Änderung des Parameters $M$, bei mehreren Durchläufen auf ein Liste konstanter Länge, ermittelt. Aufgrund der Varianz konnte das optimale $M$ zwischen 10 und 60 eingeordnet werden, allerdings nicht genau bestimmt werden.
+Die Konstante konnte sich aufgrund der Leistung unserer Rechner nicht bestimmen lassen (in Nanosekunden kamen mitunter sogar negative Laufzeiten zu stande o.O).
       \lstinputlisting[caption=Sort.java]{src/Sort.java}
       \lstinputlisting[caption=SelectionSort.java]{src/SelectionSort.java}
       \lstinputlisting[caption=MergeSort.java]{src/MergeSort.java}
