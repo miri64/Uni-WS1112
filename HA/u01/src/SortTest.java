@@ -1,14 +1,30 @@
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class SortTest {
 
 	@Test
-	public void testSortArrays(int length, int m) {
+	public void testParseArray() {
+		String input = "[1,10,20]";
+		int[] expected = {1, 10, 20 };
+		assertTrue(Arrays.equals(expected, SortMain.parseArrayString(input)));
+	}
+	public void testSortWithDifferentLengths(int[] lengths, int[] ms) {
+		for (int n : lengths) {
+			testSortWithDiffentMs(n, ms);
+		}
+	}
+
+	public void testSortWithDiffentMs(int length, int[] ms) {
+		for (int m : ms)
+			sortArrays(length, m);
+	}
+
+	public void sortArrays(int length, int m) {
 		testSortArray(generateTestArray(length, 2000), m);
 	}
 
@@ -18,7 +34,6 @@ public class SortTest {
 		for (int i = 0; i < res.length; i++) {
 			res[i] = randomGenerator.nextInt(greatestNumber);
 		}
-		//System.out.println(Arrays.toString(res));
 		return res;
 
 	}
@@ -26,10 +41,11 @@ public class SortTest {
 	public void testSortArray(Comparable[] a, int m) {
 		Sort[] algorithms = {new MergeSort(), new MMergeSort(m)};
 		long time;
+		System.out.println("Array length: " + a.length + ". M:" + m);
 		for (Sort s : algorithms) {
 			Comparable[] toSort = Arrays.copyOf(a, a.length);
 			time = measureTimeToSort(toSort, s);
-			assertTrue(isSorted(toSort));
+			// assertTrue(isSorted(toSort));
 		}
 	}
 

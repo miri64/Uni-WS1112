@@ -71,16 +71,16 @@
 	\item $2^n > n^2 \Rightarrow n^2 \in O(2^n)$\\
 		Exponential Funktion steigt stärker als Quadratfunktion.
 	\item $n^{\log \log n}$\\
-	    $n^n > 2^n \Rightarrow 2^n \in O(n^{\log \log n}$
+	    $n^n > 2^n \Rightarrow 2^n \in O(n^{\log \log n})$
 	\item $(\lceil \log (n) \rceil )!$\\
 		Aufgrund des Verschachtelten Aufrufs des Logarithmus gilt $n^{\log \log n} \in O((\lceil \log (n) \rceil )!)$.
 		Da z.\,B. auch gilt $n! > \frac{n}{2}^{\frac{n}{2}}$
-	\item $2^{(2^n)}$\\
+	\item $2^n > n \Leftrightarrow 2^{(2^n)} > 2^n$\\
 		Steigt exponentiell exponentiell.
-	Da $<$ transitiv ist, gilt dies auch für die Wachstumsklassen.
+	
 	
 \end{itemize}
-
+Da $<$ transitiv ist, gilt dies auch für die Wachstumsklassen.
 \section{Sammelbilder}
 \begin{enumerate}
 \item 
@@ -154,6 +154,7 @@ Da angenommen wird, dass $n$ eine 2er Potenz ist, wird das Verschmelzen bei eine
       \end{enumerate}
 \item
   Die Auswertung des Algorithmus geschah durch zufällig erzeugte Arrays unterschiedlicher Länge (10, 1000, 50000, 1000000) und unterschiedlichen Werten für M (2, 3, 5, 10, 20, 40, 50, 60).
+  Man kann unser Programm mit \lstinline!java -jar merge.jar [2,3,5,10,20,40,50,60] [10,1000,50000,100000]! direkt aufrufen, um es übersichtlich angezeigt zu bekommen.
   Interessanterweise brauchte MMergeSort immer mindestens so viele Vergleich wie MergeSort und zwar auch nur genauso viele wenn mit $M = 2$, SelectionSort außen vorgelassen wurde.
   Bezüglich der Laufzeit sah es schon anders aus, hier wurde das Optimum für die jeweiligen Größen ermittelt, indem bei gleichbleibender Länge die Werte von M variiert wurde und die Laufzeit gemessen wurde.
   Das Optimum lag dabei zwischen 10 und 60 und kommt aufgrund von Schwankungen nicht genauer bestimmt werden. MMergeSort war durch weg um $\frac{1}{3}$ schneller als MergeSort.
