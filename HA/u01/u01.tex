@@ -64,21 +64,27 @@
 		Steigt linear exponentiell.
 	\item $n^{\log \log n}$\\
 		Steigt logarithmisch exponentiell.
-	\item $(\lceil \log (n) \rceil )!$\\
-		Die Fakult\"atsfunktion steigt schneller als die Quadratfunktion. Unabh\"angig von der Wachstumsgeschwindigkeit des Wertes vor der Fakult\"at, wird die Quadratfunktion irgendwann eigeholt.
-	\item $n^2$
-	\item $4^{\log n} = 2^{\log n} * 2^{\log n} = n * n = n^2$\\
-		Steigen quadratisch.
+	\item $(\lceil \log (n) \rceil )! \in O(n!)$
+	\item $n^2$\\
+		Die Fakult\"atsfunktion steigt schneller als die Quadratfunktion. Unabh\"angig von der Wachstumsgeschwindigkeit des Wertes vor der Fakult\"at, wird die Quadratfunktion irgendwann eigeholt.\\
+		$\Rightarrow  (\lceil \log (n) \rceil )! \in \Omega(n^2)$\\
+		$n^n > 2^n \Rightarrow n^{\log \log n} \in \Omega(n^2)$
+	\item $4^{\log n} = 2^{\log n} * 2^{\log n} = n \cdot n = n^2 \Rightarrow n^2 \in \Theta(4^{\log n})$\\
 	\item $(\sqrt{2})^{\log n} = \sqrt{2^{\log n}} = \sqrt{n}$\\
-		$e^{n}$ steigt schneller als $n^2 \Rightarrow$ Die Umkehrfunktionen haben umgekehrte Eigenschaft.
-	\item $\log^2 n = \frac{\ln^2 n}{\ln^2 2}$\\
+		$e^{n}$ steigt schneller als $n^2 \Rightarrow$ Die Umkehrfunktionen haben umgekehrte Eigenschaft. $\Rightarrow n^2 \in \Omega((\sqrt{2})^{\log n})$
+	\item $\log^2 n = \frac{\ln^2 n}{\ln^2 2} = c \cdot \ln n$\\
 		Der Nenner ist konstant, daher wird der Z\"ahler f\"ur grosse $n$ nicht mehr so stark beeinflusst, sodass er $\ln n$ \"uberholt.
 	\item $\ln n$\\
-		Steigt logarithmisch.
-	\item $n^{\frac{1}{\log n}}\\
-		\log_2 n = x \Leftrightarrow 2^x = n\\
-		\Rightarrow (2^x)^{\frac{1}{x}} = 2^{x * \frac{1}{x}} = 2$\\
-			Konstant
+		\begin{align*}
+		\ln n &= \frac{\log_2 n}{\log_2 e} = c \cdot \log^2 n\\
+		&\Rightarrow \log^2 \in \Theta(\ln n)
+		\end{align*}
+	\item $n^{\frac{1}{\log n}}$
+		\begin{align*}
+		\log_2 n = x &\Leftrightarrow 2^x = n\\
+		&\Rightarrow (2^x)^{\frac{1}{x}} = 2^{x \cdot \frac{1}{x}} = 2 \tag{Konstant} \\
+		2 < c \cdot \ln n &\Rightarrow \ln n \in \Omega(n^{\frac{1}{\log n}})
+		\end{align*}
 \end{itemize}
 
 \section{Sammelbilder}
