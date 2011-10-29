@@ -1,6 +1,3 @@
-/**
- * @author Christian Cikryt
- */
 public class MMergeSort extends MergeSort {
 
 	private int m;
@@ -11,11 +8,16 @@ public class MMergeSort extends MergeSort {
 	}
 
 	@Override
-	public void sort(Comparable[] a, int left, int right) {
-		if (left - right + 1 < m) {
-			helperSort.sort(a, left, right);
+	public int sort(Comparable[] a, int left, int right) {
+		if (right - left+ 1 < m) {
+			return helperSort.sort(a, left, right);
 		} else {
-			super.sort(a, left, right);
+			return super.sort(a, left, right);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "MMergeSort";
 	}
 }

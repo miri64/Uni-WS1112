@@ -1,0 +1,205 @@
+\section{Syntaxgerichtete Übersetzungen-Übersetzungsschemata (Kern des Front-End)}
+\psset{levelsep=0.7cm,nodesep=0.2em}
+\begin{minipage}{0.5\textwidth}
+ \centering
+ \pstree{\Tr*{$P$}}{
+  \Tr*{$D$} \pstree{\Tr*{$A$}}{
+   \pstree{\Tr*{$=$}}{
+    \Tr*{\texttt{id}} \pstree{\Tr*{\texttt{expr}}}{
+     \pstree{\Tr*{\texttt{expr}}}{\Tr*{\texttt{term}}} \Tr*{$+$} \Tr*{\texttt{term}}
+    }
+   } \Tr*{$;$} \Tr*{\texttt{stmt}}
+  }
+ }
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{align*}
+ \Rightarrow t_0 &= x + 3 \\
+ t_1 &= t_0 * 2\\
+ &\vdots
+\end{align*}
+\end{minipage}
+
+\paragraph{Grundidee:}
+\[\mathtt{expr} \to \mathtt{expr} + \mathtt{term} \tag{Produktion}\]
+\[
+	\pstree{\Tr*{\mathtt{expr}}}{
+	 \Tr*{\mathtt{expr_1}} \Tr*{+} \Tr*{\mathtt{term}}
+	} \tag{primitiver Baum}
+\]
+\begin{verbatim}
+trans(expr_1); trans(term); Beachte '+'
+-> trans(expr)
+\end{verbatim}
+\begin{itemize}
+ \item Geeignete Attibute sind den Symbolen zugeordnet
+ \item Regeln sind den Produktionen zuzuordnen
+\end{itemize}
+\paragraph{Fingerübung:} (Schreibweise kennenlernen)
+\begin{center}
+$G_B$
+\framebox{
+\begin{minipage}{4cm}\begin{align*}
+ E &\to E + Z\ |\ Z \\
+ Z &\to Z0 | Z1 | 0 | 1
+\end{align*}
+\end{minipage}} Addition über Binärzahlen\\[0.5em]
+$10 + 11 + 1$
+\begin{minipage}{5cm}
+ \psset{treesep=0.5cm,levelsep=0.7cm}
+ \pstree{\Tr*{$E\color{red}.w = 6$}}{
+  \pstree{\Tr*{$E\color{red}.w = 5$}}{
+   \pstree{\Tr*{$E\color{red}.w = 2$}}{
+    \pstree{\Tr*{$Z\color{red}.w = 2$}}{
+     \pstree{\Tr*{$Z\color{red}.w = 1$}}{
+      \Tr*{1}
+     }
+     \Tr*{0}
+    }
+   }
+   \Tr*{+}
+   \pstree{\Tr*{$Z\color{red}.w = 3$}}{
+    \pstree{\Tr*{$Z\color{red}.w = 1$}}{
+     \Tr*{1}
+    }
+    \Tr*{1}
+   }
+  }
+  \Tr*{+}
+  \pstree{\Tr*{$Z\color{red}.w = 1$}}{
+   \Tr*{1}
+  } 
+ }
+\end{minipage}
+\hspace{1cm}
+\begin{minipage}{9cm}
+ Übersetuzung in zugehörigen Wert in Dezimalschreibweise\\
+ Attribut: {\color{red}$w$} für Wert, zugeordnet jedem Nichtterminal \\[3em]
+ $\Rightarrow$ Dekorierter Parsebaum
+\end{minipage}
+\end{center}
+\begin{center}
+ \begin{tabular}{r|l|l}
+  & \textbf{Produktion} & \textbf{semantische Regeln} \\\hline
+  1 & $E \to E_1 + Z$ & $E.w = E_1.w + Z.w$ \\
+  2 & $E \to Z$ & $E.w = Z.w$ \\
+  3 & $Z \to Z_1 0$ & $Z.w = Z_1.w \cdot 2$ \\
+  4 & $Z \to Z_1 1$ & $Z.w = Z_1.w \cdot 2 + 1$ \\
+  5 & $Z \to 0$ & $Z.w = 0$ \\
+  6 & $Z \to 1$ & $Z.w = 1$
+ \end{tabular}
+\end{center}
+\begin{itemize}
+ \item Synthetische Attrbute (von unten nach oben)
+ \item Depth-first, postorder-Auswertung
+\end{itemize}
+\paragraph{Motivation}
+\begin{align*}
+ 9 - (5 + 2) \tag{Infix}\\
+ 9\ 5\ 2 + - \tag{Postfix}
+\end{align*}
+
+\section{Infix $\to$ Postfix}
+\begin{center}
+ \begin{tabular}{r|l|l}
+  \#&\textbf{Produktion}	& \textbf{Semantische Regeln} \\\hline\hline
+  1& $E \to E_1 + T$		& $E.p = E_1.p\ \|\ T.p\ \|\ \texttt{'+'}$ \\\hline
+  2&$E \to E_1 - T$ 		& $E.p = E_1.p\ \|\ T.p\ \|\ \texttt{'-'}$\\\hline
+  3&$E \to T$ 				& $E.p = T.p$\\\hline
+  4&$T \to D$ 				& $T.p = D.p$\\\hline
+  5&$T \to (E)$ 			& $T.p = E.p$\\\hline
+  6&$D \to 0$ 				& $D.p = \texttt{'0'}$\\\hline
+  $\vdots$&$\vdots$			& $\vdots$\\\hline
+  15&$D \to 9$ 				& $D.p = \texttt{'9'}$
+ \end{tabular}
+\end{center}\pagebreak
+für $9 - (5 + 2)$
+\begin{center}
+\pstree{\Tr*{$E\color{red}.p = \texttt{\dq952+-\dq}$}}{
+	\pstree{\Tr*{$E\color{red}.p = \texttt{'9'}$}}{
+		\pstree{\Tr*{$T\color{red}.p = \texttt{'9'}$}}{
+			\pstree{\Tr*{$D\color{red}.p = \texttt{'9'}$}}{
+				\Tr*{$9$}
+			}
+		}
+	}
+	\Tr*{$-$}
+	\pstree{\Tr*{$T\color{red}.p = \texttt{\dq52+\dq}$}}{
+		\Tr*{$($}
+		\pstree{\Tr*{$E\color{red}.p = \texttt{\dq52+\dq}$}}{
+			\pstree{\Tr*{$E\color{red}.p = \texttt{'5'}$}}{
+				\pstree{\Tr*{$T\color{red}.p = \texttt{'5'}$}}{
+					\pstree{\Tr*{$D\color{red}.p = \texttt{'5'}$}}{
+						\Tr*{$5$}
+					}
+				}
+			}
+			\Tr*{$+$}
+			\pstree{\Tr*{$T\color{red}.p = \texttt{'2'}$}}{
+				\pstree{\Tr*{$D\color{red}.p = \texttt{'2'}$}}{
+					\Tr*{$2$}
+				}
+			}
+		}
+		\Tr*{$)$}
+	}
+}
+\end{center}
+Wähle \emph{ein} Attribut $p$ für Postfixnotation und ordne es allen Nichtterminalen zu.
+
+\section{Abstrakte Stapelmaschine}
+\begin{psmatrix}
+&&& [mnode=circle,name=plus] +\\
+\begin{minipage}{2cm}
+\begin{verbatim}
+push 0
+push 9
+add
+sub
+\end{verbatim}
+\end{minipage} & 
+\begin{minipage}{1cm}
+\begin{tabular}{|c|}
+ \\\hline
+ $m$ \\\hline
+ $n$ \\\hline
+ $l$ 
+\end{tabular}\\
+Stack
+\end{minipage} & 
+\begin{minipage}{1cm}
+\begin{tabular}{|c|}
+ \rnode{k}{$k$}\\\hline
+ \rnode{m}{$m$}\\\hline
+ $n$ \\\hline
+ $l$ 
+\end{tabular}\\
+Stack
+\end{minipage} & 
+\begin{minipage}{1cm}
+\begin{tabular}{|c|}
+ \rnode{m_plus_k}{\color{white}$\cdot$}\\
+ $m + k$ \\\hline
+ $n$ \\\hline
+ $l$ 
+\end{tabular}\\
+Stack
+\end{minipage}
+\ncline{->}{2,1}{2,2}\naput{top}
+\ncline{->}{2,2}{2,3}\naput{\texttt{push k}}
+\ncline{->}{2,3}{2,4}\naput{\texttt{add}}
+\nccurve{->}{k}{plus}
+\nccurve{->}{m}{plus}
+\ncline{->}{plus}{m_plus_k}
+\end{psmatrix}
+
+
+
+
+
+
+
+
+
+
+

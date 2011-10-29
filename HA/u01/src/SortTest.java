@@ -1,36 +1,62 @@
-import org.junit.Test;
-
-import java.util.Arrays;
-
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Christian Cikryt
- */
+import java.util.Arrays;
+import java.util.Random;
+
+import org.junit.Test;
+
 public class SortTest {
 
 	@Test
-	public void testSortArrays() {
-		Integer[] a1 = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, 100, 100};
-		testSortArray(a1);
+	public void testParseArray() {
+		String input = "[1,10,20]";
+		int[] expected = {1, 10, 20 };
+		assertTrue(Arrays.equals(expected, SortMain.parseArrayString(input)));
+	}
+	public void testSortWithDifferentLengths(int[] lengths, int[] ms) {
+		for (int n : lengths) {
+			testSortWithDiffentMs(n, ms);
+		}
 	}
 
-	public void testSortArray(Comparable[] a) {
-		Sort[] algorithms = {new MergeSort(), new SelectionSort(), new MMergeSort(2)};
+	public void testSortWithDiffentMs(int length, int[] ms) {
+		for (int m : ms)
+			sortArrays(length, m);
+	}
+
+	public void sortArrays(int length, int m) {
+		testSortArray(generateTestArray(length, 2000), m);
+	}
+
+	public Comparable[] generateTestArray(int length, int greatestNumber) {
+		Integer[] res = new Integer[length];
+		Random randomGenerator = new Random();
+		for (int i = 0; i < res.length; i++) {
+			res[i] = randomGenerator.nextInt(greatestNumber);
+		}
+		return res;
+
+	}
+
+	public void testSortArray(Comparable[] a, int m) {
+		Sort[] algorithms = {new MergeSort(), new MMergeSort(m)};
 		long time;
+		System.out.println("Array length: " + a.length + ". M:" + m);
 		for (Sort s : algorithms) {
 			Comparable[] toSort = Arrays.copyOf(a, a.length);
 			time = measureTimeToSort(toSort, s);
-			assertTrue(isSorted(toSort));
+			// assertTrue(isSorted(toSort));
 		}
 	}
 
 	public long measureTimeToSort(Comparable[] a, Sort s) {
 		System.gc();
 		long start = System.currentTimeMillis();
-		s.sort(a);
+		int compareCount = s.sort(a);
 		long end = System.currentTimeMillis();
-		return end - start;
+		long duration = end - start;
+		System.out.println("Number of compares with "+ s + " = "+ compareCount + ". Time: " + duration + "ms.");
+		return duration;
 	}
 
 	public boolean isSorted(Comparable[] a) {

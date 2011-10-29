@@ -12,8 +12,8 @@
 
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
-\newcommand{\Authors}{Martin Lenders, ...}
-\title{Höhere Algorithmik - 1. Übungsblatt}
+\newcommand{\Authors}{Martin Lenders (Mi. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
+\title{H\"ohere Algorithmik - 1. \"Ubungsblatt}
 \author{\Authors}
 \date{\today}
 
@@ -21,6 +21,7 @@
 
 \renewcommand{\thesection}{Aufgabe \arabic{section}}
 \renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{(\roman{enumii}}
 
 \definecolor{lgray}{gray}{0.95}
 \definecolor{purple}{rgb}{0.498,0,0.3333}
@@ -39,7 +40,7 @@
 	breaklines=true,
 	numbers=left,
 	emphstyle=\textit, 
-	language=Python,
+	language=Java,
 	keywordstyle=\color{purple}\textbf, 
 	identifierstyle=\color{identifier},
 	stringstyle=\color{string},
@@ -56,28 +57,83 @@
 \maketitle
 
 \section{$\boldsymbol{O}$-Notation}
+\begin{itemize}
+	\item $2^{(2^n)}$\\
+		Steigt exponentiell exponentiell.
+	\item $2^n$\\
+		Steigt linear exponentiell.
+	\item $n^{\log \log n}$\\
+		Steigt logarithmisch exponentiell.
+	\item $(\lceil \log (n) \rceil )! \in O(n!)$
+	\item $n^2$\\
+		Die Fakult\"atsfunktion steigt schneller als die Quadratfunktion. Unabh\"angig von der Wachstumsgeschwindigkeit des Wertes vor der Fakult\"at, wird die Quadratfunktion irgendwann eigeholt.\\
+		$\Rightarrow  (\lceil \log (n) \rceil )! \in \Omega(n^2)$\\
+		$n^n > 2^n \Rightarrow n^{\log \log n} \in \Omega(n^2)$
+	\item $4^{\log n} = 2^{\log n} * 2^{\log n} = n \cdot n = n^2 \Rightarrow n^2 \in \Theta(4^{\log n})$\\
+	\item $(\sqrt{2})^{\log n} = \sqrt{2^{\log n}} = \sqrt{n}$\\
+		$e^{n}$ steigt schneller als $n^2 \Rightarrow$ Die Umkehrfunktionen haben umgekehrte Eigenschaft. $\Rightarrow n^2 \in \Omega((\sqrt{2})^{\log n})$
+	\item $\log^2 n = \frac{\ln^2 n}{\ln^2 2} = c \cdot \ln n$\\
+		Der Nenner ist konstant, daher wird der Z\"ahler f\"ur grosse $n$ nicht mehr so stark beeinflusst, sodass er $\ln n$ \"uberholt.
+	\item $\ln n$\\
+		\begin{align*}
+		\ln n &= \frac{\log_2 n}{\log_2 e} = c \cdot \log^2 n\\
+		&\Rightarrow \log^2 \in \Theta(\ln n)
+		\end{align*}
+	\item $n^{\frac{1}{\log n}}$
+		\begin{align*}
+		\log_2 n = x &\Leftrightarrow 2^x = n\\
+		&\Rightarrow (2^x)^{\frac{1}{x}} = 2^{x \cdot \frac{1}{x}} = 2 \tag{Konstant} \\
+		2 < c \cdot \ln n &\Rightarrow \ln n \in \Omega(n^{\frac{1}{\log n}})
+		\end{align*}
+\end{itemize}
+
 \section{Sammelbilder}
 \begin{enumerate}
-\item 
-\item 
-\item 
+\item \begin{description}
+		\item[Zu zeigen:] $E[X] = \sum\limits_{i = 1}^{n} E[X_{i}]$
+		\item[Herleitung:]	\begin{align*}
+								\sum\limits_{i = 1}^{n} E\left[X_{i}\right] &= \sum\limits_{i = 1}^{n}\left(\sum\limits_{j = 1}^{\infty}j * P\left(X_{i} = j\right)\right)\\
+								&=\sum\limits_{j = 1}^{\infty}\left(\sum\limits_{i = 1}^{n}j * P\left(X_{i} = j\right)\right)\\
+								&=\sum\limits_{j = 1}^{\infty}j * \left(\sum\limits_{i = 1}^{n}P\left(X_{i} = j\right)\right)\\
+								&= E\left[\sum\limits_{i = 1}^{n}X_{i}\right]\\
+								&= E\left[X\right]
+							\end{align*}
+	\end{description}
+
+\item \begin{description}
+		\item[Gesucht:] $E[X_{i}]$
+		\item[Herleitung:] \begin{align*}
+		E\left[X_{i}\right] &= \frac{1}{p_{i}}\\
+		p_{i} &= \frac{n-i}{n}\\
+		\\
+		\Rightarrow E\left[X_{i}\right] &= \frac{n}{n-i}	
+	\end{align*}\end{description}
+\item \begin{description}
+		\item[Zu zeigen:] $E[X] = O(n \log n)$ 
+		\item[Herleitung:] \begin{align*}
+		E\left[X\right] &= \sum\limits_{i = 1}^{n}E\left[X_{i}\right]\\
+		&= \sum\limits_{i = 1}^{n}\frac{n}{n - i}\\
+		&= n * \left(1 + \frac{1}{2} + \frac{1}{3} + \cdots + \frac{1}{n}\right)\\
+		&= n * \sum\limits_{i = 1}^{n}\frac{1}{i}\\
+		&= n \log n
+	\end{align*}\end{description}
 \end{enumerate}
 
 \section{Varianten Mergesort}
 \begin{enumerate}
 \item \begin{description}
        \item[Selection Sort] sortiert die Elemente einer Liste, indem er eine
-Auswahl (\textit{Selection}), die zu Beginn des Algorithmus leer ist, auffüllt,
+Auswahl (\textit{Selection}), die zu Beginn des Algorithmus leer ist, auff\"ullt,
 indem er die Verbleibende Liste nach ihrem kleinsten Element durchsucht und
 durch eine Vertauschun in die Auswahl aufnimmt.
 
 \textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
 herum sortiert, da der Algorithmus so bei jedem Durchlauf den aktuellen
 Suchraum von vorne bis hinten durchsuchen muss. Im ersten Durchlauf sind das
-also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit für den Worst Case ist
+also $n-1$ Elemente, im zweiten $n-2$ usw. Die Laufzeit f\"ur den Worst Case ist
 also
 \[
- \sum\limits_{i = 1}^{n} i = \frac{n \cdot (n + 1)}{2} \in O(n^2).
+ \sum\limits_{i = 1}^{n-1} i = \frac{(n-1) \cdot n}{2} = \frac{1}{2} \left(n^2 - n\right) \in O(n^2).
 \]
 
 
@@ -85,16 +141,30 @@ also
 in seine Elemente zerlegt und rekursiv diese wieder zusammensetzt, wobei er
 jedes mal beim zusammensetzen die neu entstandenen Teillisten sortiert.
 
-\textbf{Worst-Case-Szenario:} Im schlimmsten Fall ist die Liste falsch
-herum sortiert, da der Algorithmus so bei jedem Durchlauf den aktuellen
-Suchraum von vorne bis hinten durchsuchen muss. Im ersten Durchlauf sind das
-also $n$ Elemente, im zweiten $n-1$ usw. Die Laufzeit für den Worst Case ist
-also
+\textbf{Worst-Case-Szenario:}  Im schlimmsten Fall müssen die Elemente bei jedem Verschmelzen wechselweise eingefügt werden.
+Für das Verschmelzen von zwei $k$-elementigen Listen sind also $2k-2$ Vergleiche nötig, womit für einen Rekursionsschritt mit einer $n$-elementigen $n - 1$ Vergleiche durchgeführt werden.
+Das Verschmelzen bei einer $n$-elementigen Folge wird $\log_2 n$ mal aufgerufen.
+Die Laufzeit für den Worst Case ist also
 \[
- \sum\limits_{i = 1}^{n} i = \frac{n \cdot (n + 1)}{2} \in O(n^2).
+ (n-1) \cdot \log_2 n \in O(n \log n)
 \]
       \end{description}
-\item 
-\item 
+\item \begin{enumerate}
+       \item Wir nehmen an, dass $n$ und $M$ Zweierpotenzen sind. Für den normalen Mergesort würden wir $\log_2 n$-mal die Listen verschmelzen (s. 3a). Davon entfallen aber nun die Rekursionsschritte auf die Teillisten, die der Selectionsort nun übernimmt, wir haben also nur $\log_2 n - \log_2 (M-1) = \log_2\left(\frac{n}{M-1}\right)$ Verschmelzungen. Der Selectionsort sortiert alle Teillisten der Länge $m = \frac{M}{2}$ und benötigt dafür $\frac{1}{2}(m^2-m)$ Vergleiche (s. 3a). Die Gesamtanzahl an Vergleichen ist daher:
+             \[\log_2\left(\frac{n}{M-1}\right) + \frac{1}{2}\left[\frac{M^2}{4}-\frac{M}{2}\right] \in O(n \log n)\]
+       \item Wir ziehen für den Laufzeitvergleich zusätzlich zu den Vergleichen des $M$-Mergesorts auch noch die $\frac{n}{M-1}-1$ Verschmelzungen mit ein:
+             \[
+             \]
+             \begin{align*}
+              \log_2\left(\frac{n}{M-1}\right) \cdot \left(\frac{n}{M-1}-1\right) + \frac{1}{2}\left[\frac{M^2}{4}-\frac{M}{2}\right] &< (n-1) \cdot \log_2 n \\
+             \end{align*}
+      \end{enumerate}
+\item Es wurden mit zufälligen Listen der Längen 10, 1000, 50000, 1000000 und mit $M \in \{2,3,5,10,20,40,50,60\}$ die Algorithmen ausgewertet. $M$-Mergesort benötigte dabei mindestens genauso viele Vergleiche wie Mergesort, allerdings war es in der Laufzeit deutlich besser. Es lief, mit Abweichungen, etwa um $\frac{4}{3}$-mal schneller als Mergesort.
+Das optimale $M$ wurde durch Änderung des Parameters $M$, bei mehreren Durchläufen auf ein Liste konstanter Länge, ermittelt. Aufgrund der Varianz konnte das optimale $M$ zwischen 10 und 60 eingeordnet werden, allerdings nicht genau bestimmt werden.
+Die Konstante konnte sich aufgrund der Leistung unserer Rechner nicht bestimmen lassen (in Nanosekunden kamen mitunter sogar negative Laufzeiten zu stande o.O).
+      \lstinputlisting[caption=Sort.java]{src/Sort.java}
+      \lstinputlisting[caption=SelectionSort.java]{src/SelectionSort.java}
+      \lstinputlisting[caption=MergeSort.java]{src/MergeSort.java}
+      \lstinputlisting[caption=MMergeSort.java]{src/MMergeSort.java}
 \end{enumerate}
 \end{document}
