@@ -175,9 +175,113 @@
 
 \section{}
 \begin{enumerate}
- \item	
- \item	
- \item	
+ \item  Das Attribut $i$ eines Nichtterminals sei seine Infix-Schreibweise, $\concat$ sei der String-Konkatinierungsoperator.
+        \begin{center}
+            \begin{tabular}{l|l}
+                \textbf{Produktion} & \textbf{Sematische Regel} \\\hline
+                $E \to T$                       & $E.i := T.i$ \\
+                $E \to E_1 T +$                 & $E.i := E_1.i \concat \str{ + } \concat T.i$ \\
+                $E \to E_1 T -$                 & $E.i := \concat E_1.i \concat \str{ - } \concat T.i$ \\
+                $T \to P$                       & $T.i := P.i$ \\
+                $T \to T_1 P \star$             & $T.i := T_1.i \concat \str{ * } \concat P.i$\\
+                $T \to T_1 P /$                 & $T.i := T_1.i \concat \str{ / } \concat P.i$\\
+                $T \to T_1 P \operatorname{mod}$& $T.i := T_1.i \concat \str{ \% } \concat P.i$\\
+                $P \to N$                       & $P.i := N.i$\\
+                $P \to E$                       & $P.i := \str{(} \concat E.i \concat \str{)}$\\
+                $N \to D$                       & $N.i := D.i$\\
+                $N \to N_1D$                    & $N.i := N_1.i \concat D.i$\\
+                $D \to 0$                       & $D.i := \str{0}$\\
+                $D \to 1$                       & $D.i := \str{1}$\\
+                $\vdots$                        & $\vdots$\\
+                $D \to 9$                       & $D.i := \str{9}$\\
+            \end{tabular}
+        \end{center}\pagebreak
+ \item	\hspace{0cm}\\
+        \begin{center}
+            \psset{treesep=1.5cm}
+            \pstree[treesep=3cm]{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$i = \str{9 - 5 + 2}$}}{
+                \pstree[treesep=1.5cm]{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$i = \str{9 - 5}$}}{
+                    \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$i = \str{9 - 5}$}}{
+                        \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                            \pstree{\Tr{$T$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                                \pstree{\Tr{$P$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                                    \pstree{\Tr{$N$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                                        \pstree{\Tr{$D$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                                            \Tr{5}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        \pstree{\Tr{$T$}\nput{20}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                            \pstree{\Tr{$P$}\nput{20}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                                \pstree{\Tr{$N$}\nput{20}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                                    \pstree{\Tr{$D$}\nput{20}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                                        \Tr{5}
+                                    }
+                                }
+                            }
+                        }
+                        \Tr{$-$}
+                    }
+                }
+                \pstree[treesep=1.5cm]{\Tr{$T$}\nput{20}{\pssucc}{\color{blue}$i = \str{2}$}}{
+                    \pstree{\Tr{$P$}\nput{20}{\pssucc}{\color{blue}$i = \str{2}$}}{
+                        \pstree{\Tr{$N$}\nput{20}{\pssucc}{\color{blue}$i = \str{2}$}}{
+                            \pstree{\Tr{$D$}\nput{20}{\pssucc}{\color{blue}$i = \str{2}$}}{
+                                \Tr{2}
+                            }
+                        }
+                    }
+                }
+                \Tr{$+$}
+            }
+        \end{center}
+        \begin{center}
+            \psset{treesep=2cm}
+            \pstree[treesep=4cm]{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$i = \str{9 - 5 * 2}$}}{
+                \pstree[treesep=2cm]{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                    \pstree{\Tr{$T$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                        \pstree{\Tr{$P$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                            \pstree{\Tr{$N$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                                \pstree{\Tr{$D$}\nput{160}{\pssucc}{\color{blue}$i = \str{9}$}}{
+                                    \Tr{9}
+                                }
+                            }
+                        }
+                    }
+                }
+                \pstree[treesep=2cm]{\Tr{$T$}\nput{20}{\pssucc}{\color{blue}$i = \str{5 * 2}$}}{
+                    \pstree{\Tr{$T$}\nput{160}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                        \pstree{\Tr{$P$}\nput{160}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                            \pstree{\Tr{$N$}\nput{160}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                                \pstree{\Tr{$D$}\nput{160}{\pssucc}{\color{blue}$i = \str{5}$}}{
+                                    \Tr{5}
+                                }
+                            }
+                        }
+                    }
+                    \pstree{\Tr{$P$}\nput{20}{\pssucc}{\color{blue}$i = \str{2}$}}{
+                        \pstree{\Tr{$N$}\nput{20}{\pssucc}{\color{blue}$i = \str{2}$}}{
+                            \pstree{\Tr{$D$}\nput{20}{\pssucc}{\color{blue}$i = \str{2}$}}{
+                                \Tr{2}
+                            }
+                        }
+                    }
+                    \Tr{$\star$}
+                }
+                \Tr{$-$}
+            }
+        \end{center}
+ \item	\begin{align*}
+         E &\to T\ |\ E + \print{ + } T\ |\ E - \print{ - } T\\
+         E &\to +T\ |\ -\print{-(}T\print{)} \\
+         T &\to P\ |\ T \star \print{ * } P\ |\ T / \print{ / } P\\
+         T &\to T \operatorname{mod} \print{ \% } P\\
+         P &\to N\ |\ \print{(}E\print{)} \\
+         N &\to D\ |\ ND \\
+         D &\to \print{0}0\ |\ ...\ |\ \print{9}9 \\
+        \end{align*}
 \end{enumerate}
 
 \section{}
