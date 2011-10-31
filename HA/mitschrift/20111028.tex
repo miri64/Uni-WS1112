@@ -1,13 +1,13 @@
-\chapter{Berechnungsmodell}
+\section{Berechnungsmodell}
 \begin{itemize}
  \item Bei der Analyse von Algorithmen zählen wir "`elementare Schritte"'
  \item Was ist das?
  \item Berechnungsmodell: abstraktes, mathematisches Modell von Rechnern, um Begriffe \emph{Berechenbarkeit}, \emph{Algorithmus}, \emph{Laufzeit}, \emph{Speicherplatz}, etc. zu definieren
-      \paragraph{Beispiele} Turingmaschine, $\mu$-Rekurion, Game of Live, $\lambda$-Kalkül, Markov-Modelle, ...
+      \paragraph*{Beispiele} Turingmaschine, $\mu$-Rekurion, Game of Live, $\lambda$-Kalkül, Markov-Modelle, ...
  \item Für uns: \textbf{Registermaschine} (\emph{R}andom \emph{A}ccess \emph{M}aschine)
 \end{itemize}
-\section{Registermaschine}
-\paragraph{Definition} Für eine \emph{Registermaschine} gilt folgendes:
+\subsection{Registermaschine}
+\Defi Für eine \emph{Registermaschine} gilt folgendes:
     \begin{itemize}
     \item $\infty$ viele register $R_0, R_1, R_2, ...$
           \[
@@ -53,15 +53,15 @@
     \end{itemize}
 	\emph{Church-Turing-These}: intuitive berechenbar = RAM-berechenbar
 
-\section{Laufzeit \& Speicherplatz}
-\paragraph{Definition} Gegeben ein RAM-Programm, das eine Funktion $f$ berechnet. Sei $x \in \mathbb{Z}^*$ eine Eingabe, dann ist:
+\subsection{Laufzeit \& Speicherplatz}
+\Defi Gegeben ein RAM-Programm, das eine Funktion $f$ berechnet. Sei $x \in \mathbb{Z}^*$ eine Eingabe, dann ist:
 \begin{center}
  \begin{tabular}{rp{0.7\textwidth}}
   $T(x)$: & (\emph{Laufzeit}) Gesamtkosten der Arbeitsschritte, bis das Programm \texttt{HALT} bei Eingabe $x$ erreicht. \\
   $S(x)$: & (\emph{Speicherplatz}) Gesamter Platzbedarf, bis das Programm \texttt{HALT} bei Eingabe $x$ erreicht. 
  \end{tabular}
 \end{center}
- \paragraph{Was heißt das konkret?} 2 Interpretationen:
+ \paragraph*{Was heißt das konkret?} 2 Interpretationen:
 	\begin{itemize}
 	 \item \textbf{Einheitskostenmaß} (EKM)
 		\begin{itemize}

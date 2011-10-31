@@ -1,19 +1,4 @@
-\begin{itemize}
- \item Auswahlproblem\\
-		Gegeben: 
-		\begin{description}
-		 \item $S$, Menge, total geordnet, $n$ Elemente paarweise verschieden.
-		 \item $k \in \{1, ..., n\}$
-		\end{description}
-		Gesucht:
-		\begin{description}
-		 \item Element $s \in S$ mit $\operatorname{Rg}(s) = k$, d. h. $S$ enthält $k -1$ viele Elemente kleiner als $k$
-		\end{description}
-\end{itemize}
-\paragraph{Lemma:} Angenommen es  existiert Funktion $\mathtt{SPLITTER}(S)$ die ein Element $q \in S$ liefert, so dass \[\operatorname{Rg}(q) \in \left\{\left\lceil\frac{1}{4} n\right\rceil, ..., \left\lfloor\frac{3}{4}n\right\rfloor\right\}.\]
-Dann kann man das Auswahlproblem in $O(n)$ Zeit läsen, wenn $\mathtt{Splitter}$ nichts kostet.
-
-\paragraph{Wie implementiert man \texttt{SPLITTER}?}
+\paragraph*{Wie implementiert man \texttt{SPLITTER}?}
 \begin{description}
  \item[1. Möglichkeit:] Wähle den \texttt{SPLITTER} zufällig. Mit Wahrscheinlichkeit $\frac{1}{2}$ erwischen wir einen guten Splitter.
 		Im Durchschnitt ist das wohl gut genug. \\
@@ -28,7 +13,7 @@ Dann kann man das Auswahlproblem in $O(n)$ Zeit läsen, wenn $\mathtt{Splitter}$
 			\end{description}
 		\end{description}
  \item[3. Möglichkeit] Unterteile $S$ in 5er Gruppen. Nimm aus jeder 5er Gruppe den Median. $S'$ ist die Menge der Mediane.
-		\paragraph{Beispiel}
+		\Bsp
 		\[
 		\begin{matrix}
 		 S & \rnode{51l}{7} & 1 & 5 & 9 & \rnode{51r}{18} \\&\\
@@ -41,8 +26,8 @@ Dann kann man das Auswahlproblem in $O(n)$ Zeit läsen, wenn $\mathtt{Splitter}$
 		\ncbox[nodesep=2px]{51l}{51r}7
 		\ncbox[nodesep=2px]{52l}{52r}15
 		\]
-		\paragraph{Lemma:} Der Median von $S'$ ist ein guter Splitter von $S$, wenn $n$ groß genug ist.
-		\paragraph{Beweis:} Betrachte $S'$ als von links nach rechts sortiert (für den Beweis) und zugehörige 5er Gruppen.
+		\Lemma Der Median von $S'$ ist ein guter Splitter von $S$, wenn $n$ groß genug ist.
+		\Bew Betrachte $S'$ als von links nach rechts sortiert (für den Beweis) und zugehörige 5er Gruppen.
 			
 			Die Lage im Bild.
 		\begin{center}
@@ -93,7 +78,7 @@ Dann kann man das Auswahlproblem in $O(n)$ Zeit läsen, wenn $\mathtt{Splitter}$
 		\hspace{2cm}
 		\begin{minipage}{0.7\textwidth}
 		\begin{algorithmic}
-		\STATE \textbf{Algorithm} $\operatorname{Select}(S, K)$
+		\STATE \textbf{Algorithm} $\operatorname{Select}(S, k)$
 			\IF{$|S| < 100$} %
 				\STATE $\operatorname{brute\_force}$
 			\ENDIF
@@ -103,7 +88,7 @@ Dann kann man das Auswahlproblem in $O(n)$ Zeit läsen, wenn $\mathtt{Splitter}$
 			\STATE \rnode{SPLITTER_E}{}$q \gets \operatorname{Select}\left(S', \left\lceil\frac{|S'| + 1}{2}\right\rceil\right)$
 			\STATE $S_< \gets \{s \in S\ |\ s < q\}$
 			\STATE $S_> \gets \{s \in S\ |\ s > q\}$
-			\IF{$\left|S_<\right| \geq k|$} %
+			\IF{$\left|S_<\right| \geq k$} %
 				\RETURN $\operatorname{Select}(S_<,k)$
 			\ELSIF{$\left|S_<\right| = k - 1$} %
 				\RETURN $q$
@@ -113,29 +98,13 @@ Dann kann man das Auswahlproblem in $O(n)$ Zeit läsen, wenn $\mathtt{Splitter}$
 		\end{algorithmic}
 		\end{minipage}
 		\psbrace*[rot=180,nodesepA=-1.8cm,nodesepB=0.5em](SPLITTER_B)(SPLITTER_E){SPLITTER}
-		\begin{verbatim}
-        Algorithmus: Select(S,K)
-            if |S| < 100 then
-                brute_force
-         /  Unterteile S in 5er Gruppen
-Splitter |  S <- {Median jeder 5er-Gruppe}
-         \  q <- Select(S', ceil((|S'| + 1))/2)
-            S_< <- {s in S for s < q}
-            S_> <- {s in S for s > q}
-            if |S_<| >= k then
-                return SELECT(S_<, k)
-            else if |S_<| = k - 1 then
-                return q
-            else
-                return SELECT(S_>, k - |S_<| - 1)
-        \end{verbatim}
-		\paragraph{Laufzeitanalyse}
+		\paragraph*{Laufzeitanalyse}
 		\[T(n) \leq \begin{cases}
 		             O(1), & n < 100 \\
 					 O(n) + T\left(\left\lceil\frac{n}{5}\right\rceil\right) + T\left(\frac{3}{4} n\right), & \text{sonst}
 		            \end{cases}\]
-		\paragraph{Behauptung} $T(n) = O(n)$
-		\paragraph{Beweis durch Induktion}
+		\Beh $T(n) = O(n)$
+		\paragraph*{Beweis durch Induktion}
 			\begin{description}
 			 \item[Behauptung] $\exists$ Konstante $\alpha > 0$, so dass $T(n) < \alpha n$ ist.
 			 \item für $n < 100$: $\checkmark$
@@ -171,7 +140,7 @@ Splitter |  S <- {Median jeder 5er-Gruppe}
 			\textsc{Tarjan} & Turing-Award 1986 
 		 \end{tabular}
 		\end{center}
-		\paragraph{Bemerkung:}
+		\paragraph*{Bemerkung:}
 		\begin{itemize}
 		 \item Algorithmus kurz, elegant, optimal.
 		 \item Technik: \emph{Prune \& Search} (Abschneiden \& Suchen), eliminiert in jdem Schritt Anteil der Kandidaten
