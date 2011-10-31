@@ -302,8 +302,96 @@
 
 \section{}
 \begin{enumerate}
- \item	
- \item	
- \item	
+ \item  Das Attribut $p$ eines Nichtterminals sei seine Präfix-Schreibweise, $\concat$ sei der String-Konkatinierungsoperator.
+        \begin{center}
+            \begin{tabular}{l|l}
+                \textbf{Produktion} & \textbf{Sematische Regel} \\\hline
+                $E \to K$                       & $E.p := K.p$ \\
+                $E \to E_1 \lor K$              & $E.p := \str{or } \concat E_1.p \concat \str{ } \concat K.p$ \\
+                $K \to N$                       & $K.p := N.p$ \\
+                $K \to K_1 \land N$             & $K.p := \str{and } \concat K_1.p \concat \str{ } \concat N.p$\\
+                $N \to T$                       & $N.p := T.p$\\
+                $N \to \neg T$                  & $N.p := \str{not } \concat T.p$\\
+                $T \to A$                       & $T.p := A.p$\\
+                $T \to (E)$                     & $T.p := E.p$\\
+                $A \to f$                       & $A.p := \str{f}$\\
+                $A \to t$                       & $A.p := \str{t}$\\
+            \end{tabular}
+        \end{center}
+ \item  \hspace{0cm}\\
+        \begin{center}
+            \psset{treesep=1.5cm}
+            \pstree{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$p = \str{not or t f}$}}{
+                \pstree{\TR*{$K$}\nput{20}{\pssucc}{\color{blue}$p = \str{not or t f}$}}{
+                    \pstree{\TR*{$N$}\nput{20}{\pssucc}{\color{blue}$p = \str{not or t f}$}}{
+                        \TR*{$\neg$}
+                        \pstree[treesep=3cm]{\TR*{$T$}\nput{20}{\pssucc}{\color{blue}$p = \str{or t f}$}}{
+                            \TR*{$($}
+                            \pstree[treesep=1.5cm]{\TR*{$E$}\nput{0}{\pssucc}{\color{blue}$p = \str{or t f}$}}{
+                                \pstree[treesep=1.5cm]{\TR*{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{t}$}}{
+                                    \pstree[treesep=1.5cm]{\TR*{$K$}\nput{160}{\pssucc}{\color{blue}$p = \str{t}$}}{
+                                        \pstree[treesep=1.5cm]{\TR*{$N$}\nput{160}{\pssucc}{\color{blue}$p = \str{t}$}}{
+                                            \pstree[treesep=1.5cm]{\TR*{$A$}\nput{160}{\pssucc}{\color{blue}$p = \str{t}$}}{
+                                                \TR*{$t$}
+                                            }
+                                        }
+                                    }
+                                }
+                                \TR*{$\lor$}
+                                \pstree[treesep=1.5cm]{\TR*{$K$}\nput{20}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                                    \pstree[treesep=1.5cm]{\TR*{$N$}\nput{20}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                                        \pstree[treesep=1.5cm]{\TR*{$A$}\nput{20}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                                            \TR*{$f$}
+                                        }
+                                    }
+                                }
+                            }
+                            \TR*{$)$}
+                        }
+                    }
+                }
+            }
+        \end{center}
+        \begin{center}
+            \psset{treesep=2cm}
+            \pstree{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$p = \str{or f and f t}$}}{
+                \pstree{\TR*{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                    \pstree{\TR*{$K$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                        \pstree{\TR*{$N$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                            \pstree{\TR*{$A$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                                \TR*{$f$}
+                            }
+                        }
+                    }
+                }
+                \TR*{$\lor$}
+                \pstree{\TR*{$K$}\nput{20}{\pssucc}{\color{blue}$p = \str{and f t}$}}{
+                    \pstree{\TR*{$K$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                        \pstree{\TR*{$N$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                            \pstree{\TR*{$N$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                                \pstree{\TR*{$A$}\nput{160}{\pssucc}{\color{blue}$p = \str{f}$}}{
+                                    \TR*{$f$}
+                                }
+                            }
+                        }
+                    }
+                    \TR*{$\land$}
+                    \pstree{\TR*{$N$}\nput{20}{\pssucc}{\color{blue}$p = \str{t}$}}{
+                        \pstree{\TR*{$N$}\nput{20}{\pssucc}{\color{blue}$p = \str{t}$}}{
+                            \pstree{\TR*{$A$}\nput{20}{\pssucc}{\color{blue}$p = \str{t}$}}{
+                                \TR*{$t$}
+                            }
+                        }
+                    }
+                }
+            }
+        \end{center}
+ \item  \begin{align*}
+            E &\to K\ |\ \print{or } E \lor\print{ } K \\
+            K &\to N\ |\ \print{and } K \land\print{ } N \\
+            N &\to T\ |\ \print{not } \neg T\\
+            T &\to A\ |\ (E)\\
+            A &\to \print{t} t\ |\ \print{f} f
+        \end{align*}
 \end{enumerate}
 \end{document}
