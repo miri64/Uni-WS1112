@@ -62,23 +62,21 @@
 \newcommand{\str}[1]{\texttt{\dq #1\dq}}
 \newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
 \newcommand\dplus{\ensuremath{\mathbin{+\mkern-50mu+}}}
+\newcommand\concat{\ensuremath{\mathbin{+\mkern-5mu+}}}
 \begin{enumerate}
- \newcommand\concat{\ensuremath{\mathbin{+\mkern-5mu+}}}
- \item  Das Attribut $p$ eines Nichtterminals sei seine Postfix-Schreibweise, $\concat$ sei der String-Konkatinierungsoperator.
+ \item  Das Attribut $p$ eines Nichtterminals sei seine Präfix-Schreibweise, $\concat$ sei der String-Konkatinierungsoperator.
         \begin{center}
             \begin{tabular}{l|l}
                 \textbf{Produktion} & \textbf{Sematische Regel} \\\hline
                 $E \to T$                       & $E.p := T.p$ \\
-                $E \to E_1 + T$                 & $E.p := E_1.p \concat \str{ } \concat T.p \concat \str{ +}$ \\
-                $E \to E_1 - T$                 & $E.p := E_1.p \concat \str{ } \concat T.p \concat \str{ -}$ \\
-                $E \to +T$                      & $E.p := T.p$ \\
-                $E \to -T$                      & $E.p := \str{-} \concat T.p$ \\
+                $E \to E_1 + T$                 & $E.p := \str{+ } \concat E_1.p \concat \str{ } \concat T.p$ \\
+                $E \to E_1 - T$                 & $E.p := \str{- } \concat E_1.p \concat \str{ } \concat T.p$ \\
                 $T \to P$                       & $T.p := P.p$ \\
-                $T \to T_1 \star P$             & $T.p := T_1.p \concat \str{ } \concat P.p \concat \str{ *}$\\
-                $T \to T_1 / P$                 & $T.p := T_1.p \concat \str{ } \concat P.p \concat \str{ /}$\\
-                $T \to T_1 \operatorname{mod} P$& $T.p := T_1.p \concat \str{ } \concat P.p \concat \str{ \%}$\\
+                $T \to T_1 \star P$             & $T.p := \str{* } \concat T_1.p \concat \str{ } \concat P.p$\\
+                $T \to T_1 / P$                 & $T.p := \str{/ } \concat T_1.p \concat \str{ } \concat P.p$\\
+                $T \to T_1 \operatorname{mod} P$& $T.p := \str{\% } \concat T_1.p \concat \str{ } \concat P.p$\\
                 $P \to N$                       & $P.p := N.p$\\
-                $P \to (E.p)$                   & $P.p := E.p$\\
+                $P \to (E)$                     & $P.p := E.p$\\
                 $N \to D$                       & $N.p := D.p$\\
                 $N \to N_1D$                    & $N.p := N_1.p \concat D.p$\\
                 $D \to 0$                       & $D.p := \str{0}$\\
@@ -90,9 +88,9 @@
  \item  \hspace{0cm}\\
         \begin{center}
             \psset{treesep=1.5cm}
-            \pstree{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$p = \str{9 5 - 2 +}$}}{
-                \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{9 5 -}$}}{
-                    \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{9 5 -}$}}{
+            \pstree{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$p = \str{+ - 9 5 2}$}}{
+                \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{- 9 5}$}}{
+                    \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{- 9 5}$}}{
                         \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{9}$}}{
                             \pstree{\Tr{$T$}\nput{160}{\pssucc}{\color{blue}$p = \str{9}$}}{
                                 \pstree{\Tr{$P$}\nput{160}{\pssucc}{\color{blue}$p = \str{9}$}}{
@@ -130,7 +128,7 @@
         \end{center}
         \begin{center}
             \psset{treesep=2cm}
-            \pstree{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$p = \str{9 5 2 * -}$}}{
+            \pstree{\TR*{$E$}\nput{20}{\pssucc}{\color{blue}$p = \str{- 9 * 5 2}$}}{
                 \pstree{\Tr{$E$}\nput{160}{\pssucc}{\color{blue}$p = \str{9}$}}{
                     \pstree{\Tr{$T$}\nput{160}{\pssucc}{\color{blue}$p = \str{9}$}}{
                         \pstree{\Tr{$P$}\nput{160}{\pssucc}{\color{blue}$p = \str{9}$}}{
@@ -143,7 +141,7 @@
                     }
                 }
                 \Tr{$-$}
-                \pstree{\Tr{$T$}\nput{20}{\pssucc}{\color{blue}$p = \str{5 2 *}$}}{
+                \pstree{\Tr{$T$}\nput{20}{\pssucc}{\color{blue}$p = \str{* 5 2}$}}{
                     \pstree{\Tr{$T$}\nput{160}{\pssucc}{\color{blue}$p = \str{5}$}}{
                         \pstree{\Tr{$P$}\nput{160}{\pssucc}{\color{blue}$p = \str{5}$}}{
                             \pstree{\Tr{$N$}\nput{160}{\pssucc}{\color{blue}$p = \str{5}$}}{
@@ -165,10 +163,10 @@
             }
         \end{center}
  \item	\begin{align*}
-         E &\to T\ |\ E + \print{ } T \print{ +}\ |\ E - \print{ } T \print{ -}\\
+         E &\to T\ |\ \print{+ } E + \print{ } T\ |\  \print{- } E - \print{ } T\\
          E &\to +T\ |\ -\print{-}T \\
-         T &\to P\ |\ T \star \print{ } P \print{ *}\ |\ T / \print{ } P \print{ /}\\
-         T &\to T \operatorname{mod} \print{ } P \print{ \%}\\
+         T &\to P\ |\ \print{* }T \star \print{ } P\ |\ \print{/ }T / \print{ } P\\
+         T &\to \print{\% }T \operatorname{mod} \print{ } P\\
          P &\to N\ |\ (E) \\
          N &\to D\ |\ ND \\
          D &\to \print{0}0\ |\ ...\ |\ \print{9}9 \\
