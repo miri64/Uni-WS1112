@@ -81,13 +81,13 @@
 		 \begin{center}
 		 \begin{tabular}{rl}
 			\begin{minipage}{6cm}
-			 \begin{tabular}{rcccl}
-				& \footnotesize 7 & \footnotesize 2 & \footnotesize 3 & \footnotesize= 12\,Bits \\
-				Schritt 1: & 100 & 2 & 5 & \\
-				& \footnotesize 3 & \footnotesize 4 & \footnotesize 1 & \footnotesize= 8\,Bits \\
-				Schritt 1: & 5 & 10 & 1 & \\
-				& \footnotesize 8 & \footnotesize 1 & \footnotesize 1 &\footnotesize= 10\,Bits \\
-				Schritt 1: & 200 & 1 & 1 & 
+			 \begin{tabular}{r|c|c|c|l}
+				\multicolumn{1}{c}{} & \multicolumn{1}{c}{\footnotesize 7} & \multicolumn{1}{c}{\footnotesize 2} & \multicolumn{1}{c}{\footnotesize 3} & \footnotesize= 12\,Bits \\\cline{2-4}
+				Schritt 1: & 100 & 2 & 5 & \\\cline{2-4}
+				\multicolumn{1}{c}{} & \multicolumn{1}{c}{\footnotesize 3} & \multicolumn{1}{c}{\footnotesize 4} & \multicolumn{1}{c}{\footnotesize 1} & \footnotesize= 8\,Bits \\\cline{2-4}
+				Schritt 2: & 5 & 10 & 1 & \\\cline{2-4}
+				\multicolumn{1}{c}{} & \multicolumn{1}{c}{\footnotesize 8} & \multicolumn{1}{c}{\footnotesize 1} & \multicolumn{1}{c}{\footnotesize 1} &\footnotesize= 10\,Bits \\\cline{2-4}
+				Schritt 3: & 200 & 1 & 1 & \\\cline{2-4}
 			 \end{tabular}
 			\end{minipage}
 		  & $S(x) = 12\,\text{Bits}$
@@ -95,3 +95,26 @@
 		 \end{center}
 		\end{itemize}
 	\end{itemize}
+\paragraph*{pragmatische Entscheidung}
+\begin{itemize}
+\item   EKM normalerweise bei kombinatorischen Algorithmen\\
+        $\Rightarrow$ Suchen, Sortieren, Zeichenketten, Graphen
+\item   LKM normalerweise bei zahlentheoretischen Algorithmen (Primzahlzest)
+\end{itemize}
+Vorsicht bei schmutzigen Tricks im EKM!
+
+\paragraph*{Bisher:} Laufzeit für eine feste Eingabe
+\paragraph*{Wollen:} Allgemeine Aussage
+\begin{itemize}\renewcommand{\labelitemi}{$\hookrightarrow$}
+\item   fassen Eingaben nach "`Größe"' zusammen
+\item   wie verhält sich der Algorithmus bei bestimmter Eingabegröße?
+\end{itemize}
+\textbf{Worst-Case-Laufzeit:} schlimmstmögliche Laufzeit für eine Eingabegröße
+\begin{align*}
+T_{\text{wc}}(n) &= \max T(x) \\
+S_{\text{wc}}(n) &= \max S(x)
+\end{align*}
+$x$ Eingabe, $|x| = n$ $\rightarrow$ Problemabhängig
+
+
+
