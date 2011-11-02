@@ -68,36 +68,62 @@
 
 \section{Analyse des BFPRT-Algorithmus}
 Sei $k > 0$ eine ungerade Zahl. So ist die Laufzeit des BFPRT-Algorithmus mit einer Aufteilung in $k$er-Blöcke für $n \geq 100$
-\[T(n) \leq cn + T\left(\left\lceil\frac{n}{k}\right\rceil\right) + T\left(\frac{3n}{4}\right)\tag{s. VL}\]
+\[T_k(n) \leq cn + T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) + T_k\left(\frac{3n}{4}\right)\tag{s. VL}\]
 für $n < 100$ wird immer Bruteforce verwendet. Die Laufzeit dafür ist nicht von $k$ abhängig und immer $O(1)$.
 
 \begin{description}
-\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T(n+1) < \alpha (n+1)$
+\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_k(n+1) \leq \alpha (n+1)$
 \item[Induktionsanfang] ($n < 100$)
     \begin{itemize}
-     \item Für $n < 100$ ist $T(n) = O(1) \Rightarrow$ es lässt sich immer ein $\alpha$ finden, so dass $\alpha n > T(n)$ (da $T(n)$ konstant und damit nicht von $n$ abhängig).
+     \item Für $n < 100$ ist $T_k(n) = O(1) \Rightarrow$ es lässt sich immer ein $\alpha$ finden, so dass $\alpha n \geq T_k(n)$ (da $T(n)$ konstant und damit nicht von $n$ abhängig).
     \end{itemize}
-\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T(n) < \alpha n$
+\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T_k(n) \leq \alpha n$
 \item[Induktionsschritt]
-\begin{align*}
- T(n)   &\leq cn + T\left(\left\lceil\frac{n}{k}\right\rceil\right) + T\left(\frac{3n}{4}\right) \\
-        &\overset{\text{IA}}{\leq} cn + \alpha \left\lceil\frac{n}{k}\right\rceil + \alpha \frac{3n}{4} \\
-        &\leq cn + \alpha \left(\frac{n}{k} + 1\right) + \alpha \frac{3n}{4}\\
-        &= cn + \alpha n \left(\frac{1}{k} + \frac{3}{4}\right) + \alpha \\
-        &= cn + \alpha n \left(\frac{3k + 4}{4k}\right) + \alpha \\
-        &\overset{!}{\leq} \alpha n
-\end{align*}
-\begin{align*}
- \alpha n &\geq cn + \alpha n \frac{3k + 4}{4k} + \alpha \tag*{| da $k > 0$}\\
- \alpha n \frac{k - 4}{4k} &\geq cn + \alpha \tag*{| $\cdot \frac{4k}{n}$}\\
- \alpha (k - 4) &\geq 4kc + \underbrace{\frac{4k\alpha}{n}}_{\leq \frac{\alpha}{k}}\\
- \Rightarrow 4kc + \frac{\alpha}{k} &\geq 4kc + \frac{4k\alpha}{n}
-\end{align*}
-\begin{align*}
-  \alpha &\geq 4kc + \frac{\alpha}{k} \\
-  \Leftrightarrow \alpha &\geq k^2c
-\end{align*}
+\[
+\begin{array}{rl|rl}
+ T_k(n)   &\leq cn + T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) + T_k\left(\frac{3n}{4}\right) &
+                \alpha n &\geq cn + \alpha n \frac{3k + 4}{4k} + \alpha\\
+        &\overset{\text{IA}}{\leq} cn + \alpha \left\lceil\frac{n}{k}\right\rceil + \alpha \frac{3n}{4} &
+                \alpha n \frac{k - 4}{4k} &\geq cn + \alpha\\
+        &\leq cn + \alpha \left(\frac{n}{k} + 1\right) + \alpha \frac{3n}{4} &
+                \alpha (k - 4) &\geq 4kc + \underbrace{\frac{4k\alpha}{n}}_{\leq \frac{\alpha}{k}} \qquad \text{(für $k < n$)} \\
+        &= cn + \alpha n \left(\frac{1}{k} + \frac{3}{4}\right) + \alpha  &
+                \alpha (k - 4) &\geq 4kc + \frac{\alpha}{k}\\
+        &= cn + \alpha n \left(\frac{3k + 4}{4k}\right) + \alpha &
+                \frac{\alpha (k^2 - 4k) - \alpha}{k} &\geq 4kc\\
+        &\overset{!}{\leq} \alpha n &
+                \alpha (k^2 - 4k - 1) &\geq 4k^2c\\
+        && \alpha &\geq \frac{4k^2}{k^2 - 4k - 1} c
+\end{array}
+\]
+$k$ und $c$ sind in unserem Fall beides Konstanten. Der BFPRT-Algorithmus läuft also für alle gegebenen $k$ (also auch $3$ und $7$) in $O(n)$ Zeit.
 \end{description}
+
+\begin{description}
+\item[Zu zeigen:] Die Laufzeit des BFPRT-Algorithmus mit 3er-Blöcken $T_3(n)$ liegt in $\Omega(n)$\\
+    $\overset{+ \text{Beweis oben}}{\Rightarrow}$ $T_3(n) = \Theta(n)$
+\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_3(n+1) \geq \alpha (n+1)$
+\item[Induktionsanfang] ($n < 100$)
+    \begin{itemize}
+     \item Für $n < 100$ ist $T_3(n) = \Omega(1) \Rightarrow$ es lässt sich immer ein $\alpha$ finden, so dass $\alpha n \leq T_3(n)$ (da $T_3(n)$ konstant und damit nicht von $n$ abhängig).
+    \end{itemize}
+\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T_3(n) \geq \alpha n$
+\item[Induktionsschritt]
+\[
+\begin{array}{rl|rl}
+ T_3(n) &\geq cn + T_3\left(\left\lceil\frac{n}{3}\right\rceil\right) + T_3\left(\frac{3n}{4}\right) &
+            \alpha n &\leq cn + \alpha n \left(\frac{13}{12}\right) \\
+        &\overset{\text{IA}}{\geq} cn + \alpha \left\lceil\frac{n}{3}\right\rceil + \alpha \frac{3n}{4} &
+            - \frac{1}{12} \alpha n &\leq cn \\
+        &\geq cn + \alpha \frac{n}{3} + \alpha \frac{3n}{4} &
+            \alpha &\geq -12 c \\
+        &= cn + \alpha n \left(\frac{13}{12}\right) \\
+        &\overset{!}{\geq} \alpha n
+\end{array}
+\]
+Da $\alpha > 0$ sein soll, können wir alle güligen $\alpha$ wählen $\Rightarrow T_3(n) = \Theta(n)$ 
+\end{description}
+
 
 \section{Schmutzige Tricks mit dem Einheitskostenmaß}
 \begin{enumerate}
