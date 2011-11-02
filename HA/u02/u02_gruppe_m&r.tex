@@ -20,7 +20,7 @@
 \newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
 
 \renewcommand{\thesection}{Aufgabe \arabic{section}}
-\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\labelenumi}{(\theenumi)}
 \renewcommand{\theenumi}{\alph{enumi}}
 \renewcommand{\labelenumii}{(\theenumii)}
 \renewcommand{\theenumii}{\roman{enumii}}
@@ -72,12 +72,12 @@ Sei $k > 0$ eine ungerade Zahl. So ist die Laufzeit des BFPRT-Algorithmus mit ei
 für $n < 100$ wird immer Bruteforce verwendet. Die Laufzeit dafür ist nicht von $k$ abhängig und immer $O(1)$.
 
 \begin{description}
-\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_k(n+1) \leq \alpha (n+1)$
+\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_k(n) \leq \alpha n$
+\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T_k(n-1) \leq \alpha (n-1)$
 \item[Induktionsanfang] ($n < 100$)
     \begin{itemize}
      \item Für $n < 100$ ist $T_k(n) = O(1) \Rightarrow$ es lässt sich immer ein $\alpha$ finden, so dass $\alpha n \geq T_k(n)$ (da $T(n)$ konstant und damit nicht von $n$ abhängig).
     \end{itemize}
-\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T_k(n) \leq \alpha n$
 \item[Induktionsschritt]
 \[
 \begin{array}{rl|rl}
@@ -102,12 +102,12 @@ $k$ und $c$ sind in unserem Fall beides Konstanten. Der BFPRT-Algorithmus läuft
 \begin{description}
 \item[Zu zeigen:] Die Laufzeit des BFPRT-Algorithmus mit 3er-Blöcken $T_3(n)$ liegt in $\Omega(n)$\\
     $\overset{+ \text{Beweis oben}}{\Rightarrow}$ $T_3(n) = \Theta(n)$
-\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_3(n+1) \geq \alpha (n+1)$
+\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_3(n) \geq \alpha n$
+\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T_3(n-1) \geq \alpha (n-1)$
 \item[Induktionsanfang] ($n < 100$)
     \begin{itemize}
      \item Für $n < 100$ ist $T_3(n) = \Omega(1) \Rightarrow$ es lässt sich immer ein $\alpha$ finden, so dass $\alpha n \leq T_3(n)$ (da $T_3(n)$ konstant und damit nicht von $n$ abhängig).
     \end{itemize}
-\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T_3(n) \geq \alpha n$
 \item[Induktionsschritt]
 \[
 \begin{array}{rl|rl}
