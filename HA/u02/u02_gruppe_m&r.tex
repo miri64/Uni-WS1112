@@ -1,0 +1,93 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Martin Lenders (Mi. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
+\title{H\"ohere Algorithmik - 1. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Gewichteter Median}
+\begin{enumerate}
+\item   
+\item   
+\item   
+\end{enumerate}
+
+
+\section{Analyse des BFPRT-Algorithmus}
+
+
+\section{Schmutzige Tricks mit dem Einheitskostenmaß}
+\begin{enumerate}
+\item   \renewcommand{\labelenumii}{(\theenumii)}
+        \renewcommand{\theenumii}{\arabic{enumii}}
+        \begin{enumerate}
+        \item   $a = b \Leftrightarrow x = y$ ist trivial, da gilt, wenn 
+                $x = y \Leftrightarrow \forall i \in \{1, ..., n\}{:}\ x_i = y_i$\\
+                \[\Rightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} = \sum\limits_{i=1}^{n} y_{i}u^{n-i+1}\]
+        \item   $a < y \Leftrightarrow x$ ist lexikographisch kleiner als $y$:\\
+                (Beweis durch Induktion über die Anzahl der sich unterscheidenden Elemente $m$, $1 \leq m \leq n$)
+                \begin{description}
+                \item[Induktionsanfang] $(m=1)$ Sei $x_1 < y_1$ und $\forall k \in \{2, ..., n\}{:}\ x_k = y_k$. Dann ist
+                    \[x_1 u^{n} < y_1 u^{n}\]
+                    während alle anderen Werte nach (1) 
+                    $\forall k \in \{2, ..., n\}{:}\ x_k u^{n-k+1} = y_k u^{n-k+1}$
+                    \[\Rightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1}\]
+                \item[Induktionsvoraussetzung] $(1 < m \leq n)$ Sei ein Wert $j \in \{1, ..., n\}$, 
+                \end{description}
+        \end{enumerate}
+\item   
+\end{enumerate}
+\end{document}

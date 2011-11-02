@@ -21,6 +21,7 @@
 \usepackage{listings}
 \usepackage{algorithmic}
 \usepackage{hyperref}
+\usepackage{epigraph}
 
 % Grafik
 \usepackage[usenames]{pstricks}
@@ -81,19 +82,21 @@
 
 % Eigene Befehle
 \newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
-\newcommand{\Defi}{\paragraph*{Definition}}
-\newcommand{\Lemma}{\paragraph*{Lemma}}
-\newcommand{\Satz}{\paragraph*{Satz}}
-\newcommand{\Bew}{\paragraph*{Beweis}}
-\newcommand{\Bsp}{\paragraph*{Beispiel}}
+\newcommand{\Defi}{\paragraph*{Definition:}}
+\newcommand{\Lemma}{\paragraph*{Lemma:}}
+\newcommand{\Satz}{\paragraph*{Satz:}}
+\newcommand{\Beh}{\paragraph*{Behauptung:}}
+\newcommand{\Bew}{\paragraph*{Beweis:}}
+\newcommand{\Bsp}{\paragraph*{Beispiel:}}
 
 % Neudefinitionen
 \renewcommand{\thepart}{\Alph{part}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\renewcommand{\algorithmiccomment}[1]{// #1}
 
 \title{Mitschrift\\{\LARGE Höhere Algorithmik}}
 \author{gehalten von Prof. Dr. Wolfgang Mulzer \\ mitgeschrieben von Martin Lenders}
-\subject{Achtung: Dieses Dokument ist \emph{nur} eine Mitschrift der Vorlesung "Übersetzerbau" WiSe2011/12.
+\subject{Achtung: Dieses Dokument ist \emph{nur} eine Mitschrift der Vorlesung "Höhere Algorithmik" WiSe2011/12.
 	Sie wurde während der Vorlesung angefertigt. Es wird aber seitens des Autors keine Garantie auf
 	Vollständigkeit und Richtigkeit des Inhalts gegeben.}
 
@@ -102,4 +105,35 @@
 \tableofcontents
 \input{20111021}
 \input{20111024}
+\input{20111028}
+\input{20111031}
+
+\section{Teile und Herrsche}
+\section{Dynamisches Programmieren}
+\section{Abschneiden und Suchen}
+\section{Gierige Algorithmen}
+\section{Lineares Programmieren}
+\section{Hashing und Fingerprinting}
+\section{untere Schranken}
+\chapter{Paradigmen}
+\section{Worst-Case Analyse}
+\section{Average-Case Analyse}
+\section{Probabilistische Algorithmen}
+\section{Amortisierte Analyse}
+\section{Online-Algorithmen und kompetitive Analyse}
+\section{Approximationsalgorithmen}
+\section{Map-Reduce ????}
+\chapter{Algorithmen und Datenstrukturen}
+\section{Suchen, Sortieren und Auswählen}
+\section{Viterbi-Algorithmus}
+\section{TSP}
+\section{Datenstrukturen: Splaybäume, Erdbebenheaps, Disjoint Set Union, Bloom Filter}
+\section{Graphenalgorithmen: Flüsse, Paarungen, Schnitte, minimale aufspannende Bäume, kürzeste Wege}
+\section{Simplex Algorithmus mit Anwendungen, Ellipsoid Algorithmus}
+\section{Internet-Algorithmen: Page-Rank, konsistentes Hashing}
+\section{Ski-Rental, Paging}
+\chapter{Komplexität}
+\section{Klassenzoo: LOGSPACE, P, NP, coNP, PSPACE, etc}
+\section{NP-Vollständigkeit, Satz von Cook, Reduktionskonzept}
+\section{Umgang mit schweren Problemen}
 \end{document}

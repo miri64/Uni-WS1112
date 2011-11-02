@@ -1,3 +1,82 @@
-\chapter{Einleitung}
+\chapter{Organisatorisches}
 \section{Klausur}
 24.04.2012 10-12 Uhr
+
+\chapter{Grundlagen}
+\epigraph{
+    \textit{"`All of Computer Science is Algorithms."'}
+}{Don Knuth}
+
+
+\section{Höhere Algorithmen: Ein Beispiel}
+Problem aus der Statistik:
+\begin{itemize}
+\item   \textbf{Gegeben:} viele Zahlen/Daten
+\item   \textbf{Gesucht:} repräsentativer Wert
+\item   Idee 1: Nimm den Durchschnitt; Problem: Anfällig für Ausreißer
+\item   Idee 2: Der Median
+\end{itemize}
+
+\Defi Sei ein Element $s$ einer total geordneten Menge $S$. $s$ hat den \emph{Rang} $k$, wenn $S$ genau $k-1$ Elemente
+    enthält, die kleiner sind als $s$. Wir schreiben $\operatorname{Rg}_S(s)$ für den Rang.
+    
+\Defi Wenn $|S| = n$, so heißt ein Element $s$ \emph{Median}, wenn 
+        $\operatorname{Rg}_S(s) = \left\lceil \frac{n+1}{2} \right\rceil$.
+
+\subsection{Algorithmisches Problem}
+\begin{itemize}
+\item   Gegeben: $S$, $|S| = n$, paarweise verschiedene Zahlen.
+\item   Algorithmus: Sortiere $S$. Gib Element an Position $\left\lceil \frac{n+1}{2} \right\rceil$ aus.
+\item   Laufzeit: Mit Heapsort, Mergesort $\Theta(n \log n)$
+\item   Frage: Geht es besser?
+\end{itemize}
+Angenommen es  existiert Funktion $\mathtt{SPLITTER}(S)$, die ein Element $q \in S$ liefert, so dass 
+\[
+\operatorname{Rg}(q) \in \left\{\left\lceil\frac{1}{4} n\right\rceil, ..., \left\lfloor\frac{3}{4}n\right\rfloor\right\}.
+\]
+\Lemma  Angenommen, wir können \texttt{SPLITTER} ohne weitere Kosten benutzen. Dann können wir den Median in $O(n)$ Zeit berechnen.
+\Bew    Lösen ein allgemeines Problem \\
+    $\operatorname{Select}(S, k)$: finde Elemente mit Rank $k$ ("`Auswahl-Problem"') 
+\paragraph*{Idee:} Berechne \texttt{SPLITTER}, teile anhand des \texttt{SPLITTER}s, verfahre rekursiv.
+\Bsp \[S: \{6, 9, 4, 12, 7, 11, 23, 8, -1\}\]
+Finde 5. Element:
+\begin{minipage}[t]{\linewidth}
+\texttt{SPLITTER:} 9 \\
+$S_< = \{6, 4, 7, 8, -1\}$\\
+$S_= = \{9\}$\\
+$S_> = \{12, 11, 23\}$
+\end{minipage}
+\begin{algorithmic}
+\STATE \textbf{Algorithm} $\operatorname{Select}(S, k):$
+    \IF{$|S| < 100$} %
+        \STATE $\operatorname{brute\_force}$\hspace{2cm}\COMMENT{Anker}
+    \ENDIF
+    \STATE $q \gets \texttt{SPLITTER}\left(S\right)$
+    \STATE $S_< \gets \{s \in S\ |\ s < q\}$
+    \STATE $S_> \gets \{s \in S\ |\ s > q\}$
+    \IF{$\left|S_<\right| \geq k$} %
+        \RETURN $\operatorname{Select}(S_<,k)$
+    \ELSIF{$\left|S_<\right| = k - 1$} %
+        \RETURN $q$
+    \ELSE %
+        \RETURN $\operatorname{Select}(S_>,k - \left|S_<\right| - 1)$
+    \ENDIF
+\end{algorithmic}
+\paragraph*{Laufzeitanalyse:}
+Da $\operatorname{Rg}(q) \in \left[\left\lceil\frac{1}{4}n\right\rceil, \left\lfloor\frac{3}{4}n\right\rfloor\right]$, gilt $|S_<, S_>| \leq \frac{3}{4} n$. Also gilt für die Laufzeit
+\[
+T(n) \leq \begin{cases}
+    O(1), & n < 100 \\
+    O(n) + T\left(\frac{3}{4} n\right), & \text{sonst}
+\end{cases}\]
+\Beh $T(n) = O(n)$\\
+Durch Einsetzen:
+\begin{align*}
+ T(n)   &\leq c \cdot n + T\left(\frac{3}{4} n\right) \\
+        &\leq c \cdot n + c \cdot \frac{3}{4} n + T\left(\left(\frac{3}{4}\right)^2 n\right) \\
+        &\leq c \cdot n + c \cdot \frac{3}{4} n + \left(\frac{3}{4}\right)^2 n + T\left(\left(\frac{3}{4}\right)^3 n\right) \\
+        & \vdots\\
+        &\leq c \cdot n \cdot \sum\limits_{i=0}^\infty + O(1) \tag*{geometrische Reihe: 
+                $\sum\limits_{i = 0}^{\infty} x^i = \frac{1}{1-x}$, wenn $|x| < 1$}\\
+        &= 4cn + O(1)
+\end{align*}

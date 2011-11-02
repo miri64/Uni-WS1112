@@ -1,0 +1,134 @@
+\chapter{Syntaxanalyse (Parser)}
+\begin{description}
+    \item[Eingabe] (nach lexik. Analyse): Folge von Symbolen (Terminalsymbole, Tokennamen)
+    \item[Ausgabe] Parsebaum
+\end{description}
+\Bsp $E \to E+0\ |\ E+1\ |\ 0\ |\ 1$
+\begin{description}
+ \item[Eingabe] $1+0$
+ \item[Ausgabe] \pstree{\Tr{$E$}}{
+                    \pstree{\Tr{$E$}}{
+                        \Tr{1}
+                    }
+                    \Tr{$+$}
+                    \Tr{0}
+                }
+\end{description}
+\Satz Kontextfreie Sprachen werden von \emph{nichtdeterministischen} Kellerautomaten erkannt.
+\paragraph*{Beweisidee}
+\begin{description}
+ \item[Eingabe]
+      \begin{center}
+           \begin{pspicture}(0,0)(3.5,2.5)
+                \psframe(0,2)(2.5,2.5)
+                \psline(0.5,2)(0.5,2.5)
+                \psline(1,2)(1,2.5)
+                \psline(1.5,2)(1.5,2.5)
+                \psline(2,2)(2,2.5)
+                \psline{->}(0.25,1.75)(0.25,2.25)
+                \uput{3pt}[-90](0.25,1.75){Lookahead}
+                \psline(3,2.5)(3,0)(3.5,0)(3.5,2.5)
+                \psline(3,2)(3.5,2)
+                \psline(3,1.5)(3.5,1.5)
+                \psline(3,1)(3.5,1)
+                \psline(3,0.5)(3.5,0.5)
+                \rput(3.25,0.25){$S$}
+           \end{pspicture}
+     \end{center}
+
+     \begin{description}
+     \item[Keller] $\mathcal{K} = \mathcal T \cup \mathcal{N}$
+     \item[Startzustand] Zu analysierendes Wort $w = a_1...a_n$ auf Eingabe, Lookahead = $a_1$, Keller enthält nur $S$
+     \item[Überführung] $\Delta{:}\ \mathcal T \times \mathcal K \to (\text{Aktion}, \text{Ausgabe})$; Ausgabe: Knoten $S$
+         \begin{align*}
+          \Delta(a, A) &= (\operatorname{push}(\bar \alpha).{}\operatorname{pop}, \operatorname{mkTree(\alpha)})
+              \tag{$A \to \alpha \in P$, nichtdeterministisch aus allen $A$-Produktionen gewählt.}\\
+          \Delta(a,a) &= (\operatorname{move}.{}\operatorname{pop}, \operatorname{nextNode})\\
+          \Delta(a,b) &= (-, \text{error})
+         \end{align*}
+     \end{description}
+    Erkennung mit leerer Eingabe und leerem Keller.
+ \item[Ausgabe] \pstree{\Tr{$S$}}{\Tfan[linestyle=dashed]}
+ \item[Laufzeit] $O(n^3)$ (inakzeptabe! + Stackoverflows sind recht einfach herstellbar)
+\end{description}
+$\Rightarrow$ Transformiere die Grammatik $G$, so dass lineare Laufzeit möglich ist.
+\begin{itemize}
+    \item Geht nicht immer, aber bei herkömmlichen höheren Programmiersprachen ist es machbar!
+\end{itemize}
+\paragraph*{Verfahren der Syntaxanalyse} Top-Down vs. Bottom-Up
+\begin{center}
+    \pstree{\Tr{$E$}}{
+        \pstree{\Tr{$E$}}{
+            \Tr{1}
+        }\Tr{+}\Tr{0}
+    }
+\end{center}
+\begin{center}
+ \begin{tabular}{p{0.45\linewidth}|p{0.45\linewidth}}
+  \textbf{Top-Down} & \textbf{Bottom-Up} \\\hline\hline
+   Gut für Parser, die per Hand geschrieben werden & größere Sprachklasse, Verwendung bei \emph{Generatoren}, z. B. Yacc
+ \end{tabular}
+\end{center}
+
+Gängiges Top-Down-Verfahren: Rekursiver Abstieg und Lookahead der Länge 1.
+
+\section{Prädiktives Parsen}
+\Bsp (Ausschnitt Kontrollstrukturen)
+\begin{align*}
+    \texttt{stmt} &\to \underline{\texttt{expr};}\ |\ \underline{\texttt{if}}\ (\underline{\texttt{expr}})\ \texttt{stmt}\ |\ \underline{\texttt{for}}\ (\texttt{optexpr}; \texttt{optexpr}; \texttt{optexpr})\ \texttt{stmt}\ |\ \underline{\text{other}} \\
+     \texttt{optexpr} &\to \varepsilon\ |\ \underline{\texttt{expr}}
+\end{align*}
+Hilfsmethode
+\begin{lstlisting}[language=Java]
+void match(Terminal t) {
+    if (t == loojahead) lookahead = nextTerminal;
+    else report ("syntax error")
+}
+\end{lstlisting}
+Schreibe zu jedem \emph{Nichtterminal} eine \emph{rekursive Prozedur}, die anhand des lookahead die Regel auswählt und anschließend "`die rechte Regelseite ausführt"'.
+
+Ein Beispielparser für oben genannte Grammatik lautet:
+\begin{lstlisting}[keywords={void, case, break},emphstyle=\underline,emph={expr,if,for,other}]
+void stmt() {
+    case expr:
+        match(expr); match('j'); break;
+    case if:
+        match(if); match('('); match(expr); match(')'); stmt(); break;
+    case for:
+        match(for); match('('); optexpr(); match(';'); ... ; stmt(); break;
+    case other:
+        mathch(other); break;
+    default:
+        report("Syntax error")
+}
+
+void optexpr() {
+    if (lookahead == expr) math(expr
+    // Nichtterminal bedeuter $\varepsilon$-Produktion anwenden.
+}
+\end{lstlisting}
+\begin{description}
+\item[Beispieleingabe]\lstinline[keywords={void, case, break},emphstyle=\underline,emph={expr,if,for,other}]!for (;expr;expr) other!
+\begin{center}
+    \pstree{\Tr{\texttt{stmt}}}{
+            \Tr{\underline{\texttt{for}}}
+            \Tr{(}
+            \Tr{\texttt{optexpr}}
+            \Tr{;}
+            \Tr{\texttt{optexpr}}
+            \Tr{;}
+            \Tr{\texttt{optexpr}}
+            \Tr{)}
+            \Tr{\texttt{stmt}}
+        }
+\end{center}
+
+\end{description}
+
+
+
+
+
+
+
+

@@ -1,0 +1,135 @@
+\begin{itemize}
+\item   Oft interesiert uns nur die asymprotische Laufzeit \\
+        $\Rightarrow$ $O$-Notation
+\end{itemize}
+
+\chapter{Grundlegende Techniken zum Entwurf von Algorithmen}
+\section{Teile \& Herrsche / Divide \& Impera}
+\begin{itemize}
+\item   Geht zurück auf Sun-Tsu (500 v. Chr.) und Neuformulierung durch Machiavelli
+\item   Unterteile in kleinere Probleme, löse diese einzeln, setze die Teilergebnisse zusammen.
+\item   Beispiele: Mergesort, Quicksort
+\item   Bei Divide \& Conquer treten Rekursionsgleichungen auf. Wie löst man diese?
+\end{itemize}
+
+\Bsp Multiplizieren von Zahlen.
+\begin{itemize}
+\item   \textbf{Problem:} Gegeben: $a, b \in \mathbb N$
+\item   Gesucht: $a \cdot b$
+\item   z. B. $a = 1234, b = 512$\\
+        Schulmethode:
+        \begin{verbatim}
+1234 * 512
+----------
+      2468
+     1234
+    6170  
+----------
+    631808\end{verbatim}
+        \begin{itemize}
+        \item   Annahme: beide Zahlen haben $n$ Ziffern (zur Not werden vorne an eine Zahl 0 angefügt)
+        \item   Dann ist die Anzahl der Multiplikationen und Additionen von Ziffern $\Theta(n^2)$
+        \item   Analog im Binärsystem
+        \item   Können wir Teile \& Herrsche benutzen um schneller zu multiplizieren
+                \[
+                    \begin{array}{r|c|c|c|c|c|c|c|c|}
+                    \cline{2-9}
+                     a & 1 & 0 & 1 & 1 & 0 & 0 & 1 & 0 \\\cline{2-9}
+                    \end{array}
+                \]
+                \[
+                    \begin{array}{r|c|c|c|c|c|c|c|c|}
+                    \cline{2-9}
+                     b & 1 & 1 & 1 & 0 & 1 & 0 & 1 & 1 \\\cline{2-9}
+                    \end{array}
+                \]
+        \item   Idee: Teile $a$ und $b$ in Zahlen mit weniger Ziffern auf, löse rekursiv, setze das ergebnis zusammen
+                \[  a\ 
+                    \overbrace{
+                    \begin{array}{|c|c|c|c|}
+                    \cline{1-4}
+                     1 & 0 & 1 & 1 \\\cline{1-4}
+                    \end{array}}^{a_h}
+                    \overbrace{
+                    \begin{array}{|c|c|c|c|}
+                    \cline{1-4}
+                     0 & 0 & 1 & 0 \\\cline{1-4}
+                    \end{array}}^{a_l}
+                \]
+                \[  b\ 
+                    \overbrace{
+                    \begin{array}{|c|c|c|c|}
+                    \cline{1-4}
+                     1 & 1 & 1 & 0 \\\cline{1-4}
+                    \end{array}
+                    }^{b_h}
+                    \overbrace{
+                    \begin{array}{|c|c|c|c|}
+                    \cline{1-4}
+                     1 & 0 & 1 & 1 \\\cline{1-4}
+                    \end{array}}^{b_l}
+                \]
+        \item   Schreibe:
+                \begin{align*}
+                 a &= \overbrace{a_h \cdot 2^{\left\lceil\frac{n}{2}\right\rceil}}^{\text{obere Bits}} + \overbrace{a_l}^{\text{untere $\left\lceil\frac{n}{2}\right\rceil$ Bits}}\\
+                 b &= b_h \cdot 2^{\left\lceil\frac{n}{2}\right\rceil} + b_l
+                \end{align*}
+                \begin{align*}
+                 a \cdot b  &= (a_h \cdot 2^{\left\lceil \frac{n}{1} \right\rceil} + a_l) \cdot (b_h \cdot 2^{\left\lceil \frac{n}{1} \right\rceil} + b_l)\\
+                            &= \psframebox[linecolor=red]{a_h \cdot b_h} 2^{2 \left\lceil \frac{n}{1} \right\rceil} + 
+                                \psframebox[linecolor=blue]{(a_h \cdot b_l + b_h \cdot a_l)} 2^{2 \left\lceil \frac{n}{1} \right\rceil} + \psframebox[linecolor=green]{a_l \cdot b_l}
+                \end{align*}
+        \end{itemize}
+        \paragraph{Algorithmus:}
+        \begin{itemize}
+        \item   Berechne rekursiv $a_h \cdot b_h$, $a_h \cdot b_l$, $a_l \cdot b_h$, $a_l \cdot b_l$
+        \item   Berechne $a \cdot b$ nach Formel mit Shiften und Addieren
+        \end{itemize}
+        \paragraph{Laufzeitanalyse:}
+        \begin{align*}
+         T(n) &\leq \begin{cases}
+                     O(1), & \text{wenn $n < 3$}\\
+                     4 \cdot T\left(\frac{n}{2}\right) + O(n), & \text{sonst}
+                    \end{cases}
+        \end{align*}
+        \begin{description}
+        \item[Lösung:]  $T(n) = \Theta(n^2)$
+        \item[Problem:] Führen $\underline{4}$ rekursive Multiplikationen durch. Dadurch wird nichts gewonnen.
+        \end{description}
+        \paragraph*{Genialer Einfall:}
+        Betrachte $(a_h + a_l) \cdot (b_h + b_l) = \psframebox[linecolor=red]{a_h \cdot b_h} + \psframebox[linecolor=blue]{a_h \cdot b_l + b_h \cdot a_l} + \psframebox[linecolor=green]{a_l \cdot b_l}$
+        \begin{itemize}
+        \item   Berechne nach: $\psframebox[linecolor=red]{a_h \cdot b_h}$ und $\psframebox[linecolor=green]{a_l \cdot b_l}$
+        \item   Und dann: $(a_h + a_l) \cdot (b_h + b_l) - \psframebox[linecolor=green]{a_l \cdot b_l} - \psframebox[linecolor=red]{a_h \cdot b_h}$
+        \end{itemize}
+        \paragraph*{Laufzeitanalyse:}
+        \begin{align*}
+         T(n) &\leq \begin{cases}
+                     O(1), & \text{wenn $n < 3$}\\
+                     {\color{red}3} \cdot T\left(\frac{n}{2}\right) + O(n), & \text{sonst}
+                    \end{cases}
+        \end{align*}
+        Was kommt heraus?
+\end{itemize}
+
+\subsection{Lösen von Rekursionsgleichungen}
+\begin{itemize}
+\item   Methode 1: Raten \& Induktion
+\item   Methode 2: Wiederholt einsetzen \& Muster erkennen
+        \begin{align*}
+         T(n)   &\leq 3 T\left(\frac{n}{2}\right) + c \cdot n \\
+                &\leq 3 \cdot \left(3 \cdot T\left(\frac{n}{4}\right) + c \cdot \frac{n}{2}\right) + c \cdot n \\
+                &\leq 3 \cdot \left(3 \cdot  \left(3 \cdot T\left(\frac{n}{8}\right) + c \cdot \frac{n}{4}\right) + c \cdot \frac{n}{2}\right) + c \cdot n\\
+                &\leq 3^3 T\left(\frac{n}{8}\right) + c \frac{3^2}{2^2}n + c \frac{3}{2}n + c \cdot n\\
+                &\vdots \hspace{1cm}\text{$k$ Schritte}\\
+                &\leq 3^k T\left(\frac{n}{2^k}\right) + c \left(\frac{3}{2}\right)^{k-1}n + c\left(\frac{3}{2}\right)^{k-2} + ... + cn\\
+                & \text{nach $k = \log n$ Schritten ist $\frac{n}{2}$ konstant.}\\
+                &= \sum\limits_{k = 0}^{\log_2 n} \left(\frac{3}{2}\right)^k c \cdot n\\
+                &= cn \frac{\left(\frac{3}{2}\right)^{1 + \log_2 n} - 1}{\frac{3}{2} - 1} \tag{geometrische Reihe}\\
+                &\leq 2 cn \frac{3}{2} \left(\frac{3}{2}\right)^{1 + \log_2 n}\\
+                &= 3 cn \cdot n^{\log_2 \frac{3}{2}} = 3 c \cdot n^{\log_2 3}
+        \end{align*}
+        \paragraph*{Laufzeit} $\Theta(n^{\log_2 3})$, $\log_2 3 \approx 1{,}5385$
+\end{itemize}
+
+

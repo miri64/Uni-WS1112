@@ -1,0 +1,121 @@
+\section{Berechnungsmodell}
+\begin{itemize}
+ \item Bei der Analyse von Algorithmen zählen wir "`elementare Schritte"'
+ \item Was ist das?
+ \item Berechnungsmodell: abstraktes, mathematisches Modell von Rechnern, um Begriffe \emph{Berechenbarkeit}, \emph{Algorithmus}, \emph{Laufzeit}, \emph{Speicherplatz}, etc. zu definieren
+      \paragraph*{Beispiele} Turingmaschine, $\mu$-Rekurion, Game of Live, $\lambda$-Kalkül, Markov-Modelle, ...
+ \item Für uns: \textbf{Registermaschine} (\emph{R}andom \emph{A}ccess \emph{M}aschine)
+\end{itemize}
+\subsection{Registermaschine}
+\Defi Für eine \emph{Registermaschine} gilt folgendes:
+    \begin{itemize}
+    \item $\infty$ viele register $R_0, R_1, R_2, ...$
+          \[
+           \begin{array}{|c|c|c|ccccc}
+            \hline
+            R_0 & R_1 & R_2 & \dots & & & & \\
+            \hline
+           \end{array}
+          \]
+    \item jedes Register speichert eine ganze Zahl $\in \mathbb{Z}$
+    \item \textbf{Programm} endliche Folge von Befehlen\\
+		\textbf{Befehlstypen}
+		\begin{itemize}
+		 \item $A := B \operatorname{op} C$, dabei ist $A,B,C$: 
+			\begin{itemize}
+			 \item Register $R_i$
+			 \item indirekt $(R_i)$
+			 \item Konstante $c$
+			\end{itemize}
+			$\operatorname{op} \in \{+,-,\times,/\}$ ($/$ als ganzzahlige Division)
+		 \item $A := B$
+         \item $\texttt{GOTO } L$, $L$: Label, Programmzeile (auch indirekt)
+         \item $\texttt{GGZ } B, L$: $\texttt{GOTO } L$, wenn $B \geq 0$ 
+         \item $\texttt{GLZ } B, L$: $\texttt{GOTO } L$, wenn $B \leq 0:$ 
+         \item $\texttt{GZ } B, L$: $\texttt{GOTO } L$, wenn $B = 0$
+         \item $\texttt{HALT}$: RAM anhalten
+		\end{itemize}
+	\item \emph{Variante:} Probalistische RAM
+		\begin{itemize}
+		 \item $\texttt{RAND } B$: erzeuge zufällige Zahl zwischen 0 und $B$
+		\end{itemize}
+    \item \emph{Zustand $Z$:}
+		\begin{itemize}
+		 \item $ip$ Befehlszähler
+		 \item Registerinhalt: Funktion $\mathbb{N}_0 \to \mathbb{Z}_0$
+		\end{itemize}
+	\item jeder Befehl hat einen \emph{Effekt}, der den Zustand ändert (operationelle Semandtik).
+	\item ein Programm \emph{berechnet} eine Funktion $f{:}\ \mathbb{Z}^* \to \mathbb{Z}^*$, falls gilt:
+		\begin{itemize}
+		 \item Bei Eingabe $a_0, a_1, ..., a_{n-1}$ in Register $R_0, R_1, ..., R_{n-1}$ läuft das Programm bis $\texttt{HALT}$
+		 \item Danach steht die Ausgabe $f(a_0,...,a_{n-1}) = (b_0,...,b_{m-1})$ in $R_0, ..., R_{m-1}$
+		\end{itemize}
+    \end{itemize}
+	\emph{Church-Turing-These}: intuitive berechenbar = RAM-berechenbar
+
+\subsection{Laufzeit \& Speicherplatz}
+\Defi Gegeben ein RAM-Programm, das eine Funktion $f$ berechnet. Sei $x \in \mathbb{Z}^*$ eine Eingabe, dann ist:
+\begin{center}
+ \begin{tabular}{rp{0.7\textwidth}}
+  $T(x)$: & (\emph{Laufzeit}) Gesamtkosten der Arbeitsschritte, bis das Programm \texttt{HALT} bei Eingabe $x$ erreicht. \\
+  $S(x)$: & (\emph{Speicherplatz}) Gesamter Platzbedarf, bis das Programm \texttt{HALT} bei Eingabe $x$ erreicht. 
+ \end{tabular}
+\end{center}
+ \paragraph*{Was heißt das konkret?} 2 Interpretationen:
+	\begin{itemize}
+	 \item \textbf{Einheitskostenmaß} (EKM)
+		\begin{itemize}
+		\item Jeder Schritt hat Kosten 1.
+		\item $T(x)$ = \#Schritte, die bei Eingabe $x$ ausgeführt werden
+		\item $S(x)$ = \#\emph{verschiedenen} Register, auf die wir zugreifen
+		\end{itemize}
+	 \item \textbf{Logarithmisches Kostenmaß} (LKM)
+		\begin{itemize}
+		 \item Kosten eines Befehls: Gesamtzahl der manipulierten Bits:\\
+			z. B.: $R_0 := R_1 + R_2$\\
+			Kosten: $\left\lfloor\log(|R_1|+1)\right\rceil + \left\lfloor\log(|R_2|+1)\right\rceil$
+		 \item $T(x)$ = Summe der Kosten
+		 \item $S(x)$ = Maximum über die Gesamtlänge der Register zu jedem Zeitpunkt
+		 \item \textbf{Vorteil:} Realistische bei großen Zahlen
+		 \item \textbf{Nachteil:} umständlich
+		 \begin{center}
+		 \begin{tabular}{rl}
+			\begin{minipage}{6cm}
+			 \begin{tabular}{r|c|c|c|l}
+				\multicolumn{1}{c}{} & \multicolumn{1}{c}{\footnotesize 7} & \multicolumn{1}{c}{\footnotesize 2} & \multicolumn{1}{c}{\footnotesize 3} & \footnotesize= 12\,Bits \\\cline{2-4}
+				Schritt 1: & 100 & 2 & 5 & \\\cline{2-4}
+				\multicolumn{1}{c}{} & \multicolumn{1}{c}{\footnotesize 3} & \multicolumn{1}{c}{\footnotesize 4} & \multicolumn{1}{c}{\footnotesize 1} & \footnotesize= 8\,Bits \\\cline{2-4}
+				Schritt 2: & 5 & 10 & 1 & \\\cline{2-4}
+				\multicolumn{1}{c}{} & \multicolumn{1}{c}{\footnotesize 8} & \multicolumn{1}{c}{\footnotesize 1} & \multicolumn{1}{c}{\footnotesize 1} &\footnotesize= 10\,Bits \\\cline{2-4}
+				Schritt 3: & 200 & 1 & 1 & \\\cline{2-4}
+			 \end{tabular}
+			\end{minipage}
+		  & $S(x) = 12\,\text{Bits}$
+		 \end{tabular}
+		 \end{center}
+		\end{itemize}
+	\end{itemize}
+\paragraph*{pragmatische Entscheidung}
+\begin{itemize}
+\item   EKM normalerweise bei kombinatorischen Algorithmen\\
+        $\Rightarrow$ Suchen, Sortieren, Zeichenketten, Graphen
+\item   LKM normalerweise bei zahlentheoretischen Algorithmen (Primzahlzest)
+\end{itemize}
+Vorsicht bei schmutzigen Tricks im EKM!
+
+\paragraph*{Bisher:} Laufzeit für eine feste Eingabe
+\paragraph*{Wollen:} Allgemeine Aussage
+\begin{itemize}\renewcommand{\labelitemi}{$\hookrightarrow$}
+\item   fassen Eingaben nach "`Größe"' zusammen
+\item   wie verhält sich der Algorithmus bei bestimmter Eingabegröße?
+\end{itemize}
+\textbf{Worst-Case-Laufzeit:} schlimmstmögliche Laufzeit für eine Eingabegröße
+\begin{align*}
+T_{\text{wc}}(n) &= \max T(x) \\
+S_{\text{wc}}(n) &= \max S(x)
+\end{align*}
+$x$ Eingabe, $|x| = n$ $\rightarrow$ Problemabhängig
+
+
+
+
