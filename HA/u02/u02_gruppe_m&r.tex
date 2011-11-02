@@ -42,7 +42,7 @@
 	breaklines=true,
 	numbers=left,
 	emphstyle=\textit, 
-	language=Java,
+	language=Python,
 	keywordstyle=\color{purple}\textbf, 
 	identifierstyle=\color{identifier},
 	stringstyle=\color{string},
@@ -178,6 +178,21 @@ Da $\alpha > 0$ sein soll, können wir alle güligen $\alpha$ wählen $\Rightarr
                 \[(x_1, ..., x_n) \lex{<} (y_1, ..., y_n) 
                         \Leftrightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1} \]
         \end{enumerate}
-\item   
+\item   Wir berechnen $a = \sum\limits_{i=1}^{m} x_{i}u^{m-i+1}$ und $b = \sum\limits_{i=n-m}^{n} y_{i}u^{n-i+1}$ (mit $u > x_i, y_i$) und prüfen, 
+        ob $a = b$
+        \begin{lstlisting}[numbers=none]
+def partof(x,y,u):
+    m = len(x)
+    n = len(y)
+    a = sum([x_i * u**(m-i+1) for i, x_i in enumerate(x)])
+    b = sum([y_i * u**(n-i+1) for i, y_i in enumerate(y[n-m:])])
+    i = 0
+    while a != b:
+        b = (b - u * y[i+m])/u + y[i] * u^n
+        i += 1
+        if m+i == n
+            return False
+    return True
+        \end{lstlisting}
 \end{enumerate}
 \end{document}
