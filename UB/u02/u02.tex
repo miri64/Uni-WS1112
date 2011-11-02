@@ -396,10 +396,10 @@
 \begin{align*}
     E &\to K\ |\ E \lor K \\
     K &\to N\ |\ K \land N \\
-    N &\to T\ |\ \neg T\\
+    N &\to T\ |\ \neg N\\
     T &\to A\ |\ (E)\\
     A &\to t\ |\ f
-\end{align*}
+\end{align*}\pagebreak
 
 \section{}
 \begin{enumerate}
@@ -412,7 +412,7 @@
                 $K \to N$                       & $K.p := N.p$ \\
                 $K \to K_1 \land N$             & $K.p := \str{and } \concat K_1.p \concat \str{ } \concat N.p$\\
                 $N \to T$                       & $N.p := T.p$\\
-                $N \to \neg T$                  & $N.p := \str{not } \concat T.p$\\
+                $N \to \neg N$                  & $N.p := \str{not } \concat N.p$\\
                 $T \to A$                       & $T.p := A.p$\\
                 $T \to (E)$                     & $T.p := E.p$\\
                 $A \to f$                       & $A.p := \str{f}$\\
@@ -426,6 +426,7 @@
                 \pstree{\TR*{$K$}\nput{20}{\pssucc}{\color{blue}$p = \str{not or t f}$}}{
                     \pstree{\TR*{$N$}\nput{20}{\pssucc}{\color{blue}$p = \str{not or t f}$}}{
                         \TR*{$\neg$}
+                        \pstree[treesep=3cm]{\TR*{$N$}\nput{20}{\pssucc}{\color{blue}$p = \str{or t f}$}}{
                         \pstree[treesep=3cm]{\TR*{$T$}\nput{20}{\pssucc}{\color{blue}$p = \str{or t f}$}}{
                             \TR*{$($}
                             \pstree[treesep=1.5cm]{\TR*{$E$}\nput{0}{\pssucc}{\color{blue}$p = \str{or t f}$}}{
@@ -448,6 +449,7 @@
                                 }
                             }
                             \TR*{$)$}
+                        }
                         }
                     }
                 }
