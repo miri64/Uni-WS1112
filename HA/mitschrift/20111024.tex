@@ -23,8 +23,8 @@
 		 \rnode{52l}{30} & 6 & 11 & 15 & \rnode{52r}{20} \\&\\
 		 &
 		\end{matrix}
-		\ncbox[nodesep=2px]{51l}{51r}7
-		\ncbox[nodesep=2px]{52l}{52r}15
+		\ncbox[nodesep=2px]{51l}{51r}\nbput{7}
+		\ncbox[nodesep=2px]{52l}{52r}\nbput{15}
 		\]
 		\Lemma Der Median von $S'$ ist ein guter Splitter von $S$, wenn $n$ groß genug ist.
 		\Bew Betrachte $S'$ als von links nach rechts sortiert (für den Beweis) und zugehörige 5er Gruppen.
@@ -62,12 +62,11 @@
 		 \end{pspicture}
 		\end{center}
 		\begin{itemize}
-		 \item Es sind $\underbrace{\left\lceil\frac{1}{2}\underbrace{\left\lceil\frac{n}{5}\right\rceil}_{|5|}\right\rceil}_{\#\text{Gruppen $m$}} - 3$
-		 \item definitiv größer als $q$.
-		 \item Ebenso gibt es definitiv $3 \left\lceil\frac{1}{2}\left\lceil\frac{n}{5}\right\rceil\right\rceil - 3$ Elemente kleiner als $q$.
+		 \item Es sind $3 \cdot \underbrace{\left\lceil\frac{1}{2}\underbrace{\left\lceil\frac{n}{5}\right\rceil}_{|S'|}\right\rceil}_{\#\text{Gruppen $m$}} - 3$ definitiv größer als $q$.
+		 \item Ebenso gibt es definitiv $3 \left\lceil\dfrac{1}{2}\left\lceil\dfrac{n}{5}\right\rceil\right\rceil - 3$ Elemente kleiner als $q$.
 		 \item Es gilt:
 				\begin{align*}
-				 \left\lceil\frac{1}{2}\left\lceil\frac{n}{5}\right\rceil\right\rceil - 3 &\geq
+				 3 \cdot \left\lceil\frac{1}{2}\left\lceil\frac{n}{5}\right\rceil\right\rceil - 3 &\geq
 				3 \cdot \frac{1}{2} \cdot \frac{1}{5} \cdot n - 3 \\
 					&= \frac{3}{10} - 3
 				\end{align*}
