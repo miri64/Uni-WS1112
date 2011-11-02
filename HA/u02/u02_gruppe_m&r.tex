@@ -67,7 +67,37 @@
 
 
 \section{Analyse des BFPRT-Algorithmus}
+Sei $k > 0$ eine ungerade Zahl. So ist die Laufzeit des BFPRT-Algorithmus mit einer Aufteilung in $k$er-Blöcke für $n \geq 100$
+\[T(n) \leq cn + T\left(\left\lceil\frac{n}{k}\right\rceil\right) + T\left(\frac{3n}{4}\right)\tag{s. VL}\]
+für $n < 100$ wird immer Bruteforce verwendet. Die Laufzeit dafür ist nicht von $k$ abhängig und immer $O(1)$.
 
+\begin{description}
+\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T(n+1) < \alpha (n+1)$
+\item[Induktionsanfang] ($n < 100$)
+    \begin{itemize}
+     \item Für $n < 100$ ist $T(n) = O(1) \Rightarrow$ es lässt sich immer ein $\alpha$ finden, so dass $\alpha n > T(n)$ (da $T(n)$ konstant und damit nicht von $n$ abhängig).
+    \end{itemize}
+\item[Induktionsvoraussetzung] $\exists\alpha > 0{:}\ T(n) < \alpha n$
+\item[Induktionsschritt]
+\begin{align*}
+ T(n)   &\leq cn + T\left(\left\lceil\frac{n}{k}\right\rceil\right) + T\left(\frac{3n}{4}\right) \\
+        &\overset{\text{IA}}{\leq} cn + \alpha \left\lceil\frac{n}{k}\right\rceil + \alpha \frac{3n}{4} \\
+        &\leq cn + \alpha \left(\frac{n}{k} + 1\right) + \alpha \frac{3n}{4}\\
+        &= cn + \alpha n \left(\frac{1}{k} + \frac{3}{4}\right) + \alpha \\
+        &= cn + \alpha n \left(\frac{3k + 4}{4k}\right) + \alpha \\
+        &\overset{!}{\leq} \alpha n
+\end{align*}
+\begin{align*}
+ \alpha n &\geq cn + \alpha n \frac{3k + 4}{4k} + \alpha \tag*{| da $k > 0$}\\
+ \alpha n \frac{k - 4}{4k} &\geq cn + \alpha \tag*{| $\cdot \frac{4k}{n}$}\\
+ \alpha (k - 4) &\geq 4kc + \underbrace{\frac{4k\alpha}{n}}_{\leq \frac{\alpha}{k}}\\
+ \Rightarrow 4kc + \frac{\alpha}{k} &\geq 4kc + \frac{4k\alpha}{n}
+\end{align*}
+\begin{align*}
+  \alpha &\geq 4kc + \frac{\alpha}{k} \\
+  \Leftrightarrow \alpha &\geq k^2c
+\end{align*}
+\end{description}
 
 \section{Schmutzige Tricks mit dem Einheitskostenmaß}
 \begin{enumerate}
