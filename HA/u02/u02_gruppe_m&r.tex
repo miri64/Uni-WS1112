@@ -37,8 +37,7 @@
 
 \lstset{
 	tabsize=4, 
-	frame=tlrb, 
-	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
 	breaklines=true,
 	numbers=left,
 	emphstyle=\textit, 
@@ -46,8 +45,8 @@
 	keywordstyle=\color{purple}\textbf, 
 	identifierstyle=\color{identifier},
 	stringstyle=\color{string},
-	backgroundcolor=\color{lgray},
 	showstringspaces=false,
+    escapeinside={((*}{*))},
 	commentstyle=\color{comment},
 	extendedchars=true,
 	inputencoding=utf8/latin1
@@ -178,21 +177,27 @@ Da $\alpha > 0$ sein soll, können wir alle güligen $\alpha$ wählen $\Rightarr
                 \[(x_1, ..., x_n) \lex{<} (y_1, ..., y_n) 
                         \Leftrightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1} \]
         \end{enumerate}
-\item   Wir berechnen $a = \sum\limits_{i=1}^{m} x_{i}u^{m-i+1}$ und $b = \sum\limits_{i=n-m}^{n} y_{i}u^{n-i+1}$ (mit $u > x_i, y_i$) und prüfen, 
-        ob $a = b$
-        \begin{lstlisting}[numbers=none]
-def partof(x,y,u):
-    m = len(x)
-    n = len(y)
-    a = sum([x_i * u**(m-i+1) for i, x_i in enumerate(x)])
-    b = sum([y_i * u**(n-i+1) for i, y_i in enumerate(y[n-m:])])
-    i = 0
-    while a != b:
-        b = (b - u * y[i+m])/u + y[i] * u^n
-        i += 1
-        if m+i == n
-            return False
-    return True
+\item   Wie in (a1) gezeigt, können wir die Gleichheit zweier Vektoren $x = (x_1, ..., x_n)$ und $y = (y_1, ..., y_n)$ zeigen, wenn 
+         $x_1 u^m  + ... + x_m u = y_1 u^m + ... + x_m u$. Der Entwurf unseres Algorithmus nutzt dies aus, in dem er zunächst $x$ mit dem Teilvektor $(y_{n-m+1}, ..., y_n)$ (beide haben Länge $m-1$) vergleicht, indem geprüft wird, ob 
+         \[x_1 u^m + ... + x_m u = y_{n-m+1} u^m + ... + y_n u\]
+         Ist dies der Fall, wird $n-m+1$ als Position der Teilfolge ausgegeben. Ist dies nicht der Fall dekrementieren wir den Index des ersten Elements des Teilvektors (der aber immer Länge $m-1$ behält) solange, bis wir 1 erreichen. Haben wir 1 erreicht und die Hashes sind immer noch nicht gleich, geben wir $-1$ zurück, andernfalls den Index des ersten Elements des Teilvektors.
+         Zur Optimierung der Berechnung passen wir den Hash immer jeweils nur an die aktuelle Situation an.
+         Da wir nach "`links"' verschieben, ziehen wir zunächst $u y_{n}$ vom Hash ab, teilen das Ergebnis durch $u$, um den Vektor nach rechts zu "`shiften"' und addieren die neue "`Stelle"' $y_i u^m$.
+        \begin{lstlisting}[mathescape=true]
+def partof($x = (x_0, ..., x_m)$,$y = (y_0,...,y_n)$,$u$))):
+    $a = x_1 u^m + ... + x_m u $
+    $b = y_{n-m+1} u^m + ... + y_n u $
+    $i = n-m$
+    while $a \neq b$:
+        if $i < 1$:
+            return $-1$
+        $b = \frac{b - u y_{m+i}}{u} + y_i u^m$
+        $i = i - 1$
+    return $i + 1$
         \end{lstlisting}
+        Im EKM haben wir zunächst 3 Schritte zur Initialisierung von $a, b$ und $i$. Die \lstinline!while!-Schleife benötigt im besten Fall (die gesuchte Teilfolge ist direkt am Ende der zu durchsuchenden Folge) 1 Schritt (der Vergleich $a \neq b$), im schlechtesten Fall (die gesuchte Teilfolge ist gar nich in der Folge) $5 \cdot (n-m) + 2$ Schritte ($(n-m)$  Schleifendurchläufe + 2 Vergleiche $a \neq b$ und $i < 1$) und 1 Schritt für die Rückgabe. Insgesamt kommen wir so auf eine Laufzeit von max.
+        \[5(n-m) + 4 = O(n)\] 
+        Im LKM brauchen $a$ und $b$ maximal $M u^m$ Bit. Dadurch ändern sich bei jeder Rechenoperation auch auf maximal $M u^m$ Bit, wodurch die Laufzeit im LKM jeder Rechenoperation $O(\log(Mu^m))$ ist. $u$ kann dabei deutlich größer sein als $m$ und $n$ und ist per Definition $> M$. Für die Laufzeit der Schleife hat dies dramatische Folgen, da sie durch die Neuberechnung von $b$ nun
+        in \[O(n \log(Mu^m)) = O(n \log M + n \log u^m) = O(n \log M + n m \log u) = O(n m \log u),\] was für große Zahlen deutlich größer ist als $O(n)$.
 \end{enumerate}
 \end{document}
