@@ -103,7 +103,23 @@
 	}
 	\end{lstlisting}
 
-\item
+\item	Gegeben sei eine Funktion \texttt{median()}, welche den normalen
+	Median in linearer Zeit bestimmt. Dann lässt sich der gewichtete
+	Median wie folgt berechnen:
+
+	\begin{lstlisting}[numbers=none]
+	int weighted_median(list, weights_smaller, weights_larger) {
+	  weighted_median = median(list);
+	  smaller = [s | s <- list, s < weighted_median];
+	  larger  = [s | s <- list, s > weighted_median];
+	  if ((sum_of_weights(smaller) + weights_smaller <= 0.5) && sum_of_weights(larger) + weights_larger < 0.5)
+	    return weighted_median;
+	  else if (sum_of_weights(smaller) + weights_smaller <= 0.5)
+	    return weighted_median(larger, weights_smaller + weighted_median.weight + sum_of_weights(smaller), weights_larger);
+	  else
+	    return weighted_median(smaller, weights_smaller, weights_larger + weighted_median.weight + sum_of_weights(larger));
+	}
+	\end{lstlisting}
 
 \end{enumerate}
 
