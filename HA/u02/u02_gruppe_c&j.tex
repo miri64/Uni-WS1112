@@ -20,8 +20,10 @@
 \newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
 
 \renewcommand{\thesection}{Aufgabe \arabic{section}}
-\renewcommand{\theenumi}{(\alph{enumi})}
-\renewcommand{\theenumii}{(\roman{enumii}}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
 
 \definecolor{lgray}{gray}{0.95}
 \definecolor{purple}{rgb}{0.498,0,0.3333}
