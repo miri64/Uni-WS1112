@@ -209,7 +209,30 @@ Indem man das Ungleichungszeichen umdreht, kann man auch ein $\alpha > 0$ bestim
                 \[(x_1, ..., x_n) \lex{<} (y_1, ..., y_n) 
                         \Leftrightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1} \]
 	\end{enumerate}
+\item  Die Gleichheit zweier Vektoren $x = (x_1, ..., x_n)$ und $y = (y_1, ..., y_n)$ kann gezeigt werden,  wenn gilt
+         $x_1 u^m  + ... + x_m u = y_1 u^m + ... + x_m u$ (vlg. a1). Das wird sich im folgenden Algorithmus zu Nutze gemacht, indem zunächst $x$ mit dem Teilvektor $(y_{n-m+1}, ..., y_n)$ (jeweils Länge $m-1$) verglichen wird und dabei geprüft wird, ob gilt: 
+         \[x_1 u^m + ... + x_m u = y_{n-m+1} u^m + ... + y_n u\]
+         Falls ja, wird $n-m+1$ als Position der Teilfolge ausgegeben. Falls nein wird der Index des ersten Elements des Teilvektors dekrementiert (der stets von Länge $m-1$ ist) solange, bis 1 erreicht ist. Sobald 1 erreicht ist und die Hashes immer noch nicht gleich sind, wird $-1$ zurückgegeben, andernfalls der Index des ersten Elements des Teilvektors.
 
+         Zur Optimierung der Berechnung wird der Hash jeweils nur an die aktuelle Situation angepasst.
+         Da nach "`links"' verschoben wird, wird zunächst $u y_{n}$ vom Hash abgezogen, das Ergebnis durch $u$ geteilt, um den Vektor nach rechts zu "`shiften"' und die neue "`Stelle"' $y_i u^m$ addiert.
+        \begin{lstlisting}[mathescape=true]
+def partof($x = (x_0, ..., x_m)$,$y = (y_0,...,y_n)$,$u$))):
+    $a = x_1 u^m + ... + x_m u $
+    $b = y_{n-m+1} u^m + ... + y_n u $
+    $i = n-m$
+    while $a \neq b$:
+        if $i < 1$:
+            return $-1$
+        $b = \frac{b - u y_{m+i}}{u} + y_i u^m$
+        $i = i - 1$
+    return $i + 1$
+        \end{lstlisting}
+        Im EKM braucht man drei Schritte zur Initialisierung von $a, b$ und $i$. Die \lstinline!while!-Schleife benötigt im Best-Case (die gesuchte Teilfolge ist direkt am Ende der zu durchsuchenden Folge) 1 Schritt (der Vergleich $a \neq b$), im Worst-Case (die gesuchte Teilfolge ist nicht vorhanden) $5 \cdot (n-m) + 2$ Schritte ($(n-m)$  Schleifendurchläufe + 2 Vergleiche $a \neq b$ und $i < 1$) und 1 Schritt für die Rückgabe. Insgesamt gilt somit für die Laufzeit von max.
+        \[5(n-m) + 4 = O(n)\] 
+        Im LKM brauchen $a$ und $b$ maximal $M u^m$ Bit. Sie ändern sich folglich bei jeder Operation auch auf maximal $M u^m$ Bit. Die Laufzeit jeder Operation ist im LKM  $O(\log(Mu^m))$.
+$u$ kann dabei deutlich größer sein als $m$ und $n$ und ist per Definition $> M$. Dies wird sich massiv auf die Laufzeit der Schleife aus, da sie durch die Neuberechnung von $b$ nun
+        in \[O(n \log(Mu^m)) = O(n \log M + n \log u^m) = O(n \log M + n m \log u) = O(n m \log u),\] Das ist für große Zahlen deutlich größer als $O(n)$.
 \end{enumerate}
 
 \end{document}
