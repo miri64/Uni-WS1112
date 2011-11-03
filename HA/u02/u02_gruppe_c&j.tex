@@ -80,7 +80,11 @@
 	\end{lstlisting}
 
 	Für die Gewichtung kann man einfach jedem Element das Gewicht
-	$1/n$ geben, wobei $n$ die Länge der Liste ist.
+	$1/n$ geben, wobei $n$ die Länge der Liste ist. Dadurch ist bei
+	einer geraden Anzahl an Elementen der gewichtete Median gleich
+	dem normalen Median, bei einer ungeraden Anzahl gleich dem
+	Nachfolger des Medians. Mit obenstehendem Algorithmus lässt sich
+	der Median also mit Laufzeit $T(n) + O(n)$ lösen.
 
 \item	Gegeben eine Liste mit $n$ gewichteten Elementen und eine
 	Sortierfunktion \texttt{sort()}, können wir den gewichteten
