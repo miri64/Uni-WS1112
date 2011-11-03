@@ -8,7 +8,7 @@
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{multicol}
-\usepackage{pst-tree}
+%\usepackage{pst-tree}
 
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
@@ -52,7 +52,7 @@
 	extendedchars=true,
 	inputencoding=utf8/latin1
 }
-\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+%\psset{nodesep=2pt,levelsep=2em,treesep=2em}
 
 \begin{document}
 
@@ -103,7 +103,42 @@
 \end{enumerate}
 
 \section{Analyse des BFPRT-Algorithmus}
+Es wird allgemein für ein ungerades $k > 0$ die Laufzeit berechnet.
+Die Laufzeit des BFPRT-Algorithmus mit einer Aufteilung in $k$er-Blöcke für $n \geq 100$ ist analog zur Vorlesung:
+\[T_k(n) \leq cn + T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) + T_k\left(\frac{3n}{4}\right)\]
+für $n < 100$ wird ein Bruteforce-Ansatz verwendet. Die Laufzeit dafür ist somit von $k$ unabhängig und wie ebenfalls in der Vorlesung erläutert $O(1)$.
 
+Im Folgenden wird mittels vollständiger Induktion über $n$ gezeigt, dass für die Laufzeit $O(n)$ gilt und zwar für alle ungeraden $k$ ab 5 (für die 3 nicht). In einem zweiten Schritt wird gezeigt, dass sogar $\Theta(n)$ gilt.
+\begin{description}
+\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_k(n) \leq \alpha n$
+\item[Induktionsanfang] $n < 100$
+    \begin{itemize}
+     \item $T_k(n) = O(1)$, weil sich sich immer ein $\alpha$ finden lässt, so dass $\alpha n \geq T_k(n)$ ($O(1) \subset O(n)$).
+    \end{itemize}
+\item[Induktionsvoraussetzung] Es gelte für ein $n \in \mathbb{N}$ : $\exists\alpha > 0{:}\ T_k(n-1) \leq \alpha (n-1)$
+
+\item[Induktionsschritt] Es wird nun gezeigt, dass unter der Induktionsvoraussetzung ($T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) \in O(n)$)die Induktionsbehauptung auch für T(n) gilt.
+\[
+\begin{array}{rl|rl}
+ T_k(n)   &\leq cn + T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) + T_k\left(\frac{3n}{4}\right) &
+                \alpha n &\geq cn + \alpha n \frac{3k + 4}{4k} + \alpha\\
+        &\overset{\text{IA}}{\leq} cn + \alpha \left\lceil\frac{n}{k}\right\rceil + \alpha \frac{3n}{4} &
+                \alpha n \frac{k - 4}{4k} &\geq cn + \alpha\\
+        &\leq cn + \alpha \left(\frac{n}{k} + 1\right) + \alpha \frac{3n}{4} &
+                \alpha (k - 4) &\geq 4kc + \underbrace{\frac{4k\alpha}{n}}_{\leq \frac{\alpha}{k}} \qquad \text{(für $k < n$)} \\
+        &= cn + \alpha n \left(\frac{1}{k} + \frac{3}{4}\right) + \alpha  &
+                \alpha (k - 4) &\geq 4kc + \frac{\alpha}{k}\\
+        &= cn + \alpha n \left(\frac{3k + 4}{4k}\right) + \alpha &
+                \frac{\alpha (k^2 - 4k) - \alpha}{k} &\geq 4kc\\
+        &\overset{!}{\leq} \alpha n &
+                \alpha (k^2 - 4k - 1) &\geq 4k^2c\\
+        && \alpha &\geq \frac{4k^2}{k^2 - 4k - 1} c
+\end{array}
+\]
+ Der BFPRT-Algorithmus läuft also für alle  $k \ge 5$ in $O(n)$ Zeit. Für $k = 3$ ist $\alpha$ negativ, was einen Widerspruch zu $\alpha > 0$ darstellt und somit gilt $T_3(n) \in \Theata(n^{\log_3 2})$.
+\end{description}
+
+Indem man das Ungleichungszeichen umdreht, kann man auch ein $\alpha > 0$ bestimmen, so dass gilt $T_k(n) \in \Omega(n)$ (für $k$ ab 5). Somit gilt insgesamt $T_k(n) \in \Theta(n)$ $\forall$ ungerade $k \ge 5 \in \mathbb{N}$.
 \section{Schmutzige Tricks mit dem Einheitskostenmaß}
 
 \begin{enumerate}
