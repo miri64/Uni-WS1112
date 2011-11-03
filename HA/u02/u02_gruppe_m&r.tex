@@ -59,9 +59,34 @@
 
 \section{Gewichteter Median}
 \begin{enumerate}
-\item   
-\item   
-\item   
+\item \begin{description}
+	\item[zu zeigen:] Bei einer Laufzeit $T(n)$ für die Berechnung des gewichteten Medians, lässt sich der Median in $T(n) + O(n)$ berechnen.
+	\item[Annahme:] Jedes Element erhält die Gewichtung $\frac{1}{n}$.
+	\item[Herleitung:] Für gerade $n$ ist der gewichtete Median gleich dem Median, wodurch man eine asymptotische Laufzeit von $T(n)$ erh\"alt.\\
+Für ungerade $n$ ist der gewichtete Median das Nachfolgelement des Medians. Daher muss das gr\"osste Element der Liste gefunden werden, welches kleiner als der gewichtete Median ist. Dies lässt sich in einem Listendurchgang erreichten. So erh\"alt man eine asymptotische Laufzeit von $T(n) + O(n)$.
+	\end{description}
+\item   \begin{description}
+	\item[zu zeigen:] Finden des gewichteten Median liegt in $O(n \log n)$
+	\item[Herleitung:] Sortiere zuerst $S$ mittels MergeSort mit einer Laufzeit von $O(n)$ und summiere aufsteigend alle Elemente aus $S$. Das erste Element, welches die gegebenen Bedingungen erf\"ullt, ist der gewichtete Median. Dies ist in linearer Laufzeit berechnbar, sodass die Gesamtlaufzeit in $O(n \log n)$ liegt.
+	\end{description}
+\item  \begin{description}
+	\item[modifizierter Algorithmus] GMEDIAN
+	\begin{lstlisting}[mathescape=true]
+GMEDIAN($S, W_<, W_>$) {
+	$s_M \leftarrow$ Median von $S$;
+	$S_< \leftarrow \{s \in S | s < M\}$;
+	$S_> \leftarrow \{s \in S | s > M\}$;
+	IF $((\sum_{s_i \in S_<}{w_i} + W_<) \leq \frac{1}{2}$ AND $(\sum_{s_i \in S_>}{w_i} + W_>) < \frac{1}{2})$ {
+		RETURN $s_M$;
+	} ELSE IF $((\sum_{s_i \in S_<}{w_i} + W_<) \leq \frac{1}{2})$ { \\
+		RETURN GMEDIAN($S_>, W_< + w_M + \sum_{s_i \in S_<}{w_i}, W_>$);
+	} ELSE {
+		RETURN GMEDIAN($S_<, W_<, W_> + w_M + \sum_{s_i \in S_>}{w_i}$);
+	}
+}
+	\end{lstlisting}
+	\item[Laufzeit:] Die Berechnung des Medians von $S$ liegt in $O(n)$. Das Erstellen der Teilmengen $S_<$ und $S_>$ sowie die Berechnung der Gewichtung erfolgt ebenfalls in linearer Laufzeit. Die Rekursion entspricht der Rekursion der normalen Medianerechnung, nur werden hier sogar die H\"alfte der Elemente entfernt. Daraus lässt sich f\"ur den gesamten Algorithmus analog eine Laufzeit von $O(n)$ herleiten.
+	\end{description}
 \end{enumerate}
 
 
