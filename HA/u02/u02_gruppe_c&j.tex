@@ -58,6 +58,48 @@
 
 \maketitle
 
-\section{}
+\section{Gewichteter Median}
+\begin{enumerate}
+\item	Gegeben eine Funktion \texttt{weighted\_median()}, die
+	aus einer gegebenen Liste den gewichteten Median bestimmt,
+	können wir einen einfachen Divide-and-Conquer-Algorithmus
+	anwenden, um den Median zu finden:
+
+	\begin{lstlisting}[numbers=none]
+	int median(list) {
+	  weighted_median = weighted_median(list);
+	  smaller = [e | e <- list, e <= weighted_median];
+	  larger  = [e | e <- list, e >  weighted_median];
+	  if (size(smaller) > (size(list) / 2))
+	    return median(smaller);
+	  else if (size(smaller) == (size(list) / 2))
+	    return weighted_median;
+	  else
+	    return median(larger);
+	}
+	\end{lstlisting}
+
+	Für die Gewichtung kann man einfach jedem Element das Gewicht
+	$1/n$ geben, wobei $n$ die Länge der Liste ist.
+
+\item	Gegeben eine Liste mit $n$ gewichteten Elementen und eine
+	Sortierfunktion \texttt{sort()}, können wir den gewichteten
+	Median wie folgt bestimmen:
+
+	\begin{lstlisting}[numbers=none]
+	int weighted_median(list) {
+	  sort(list);
+	  weight = 0;
+	  for (e : list) {
+	    weight += e.weight;
+	    if (weight > 0.5)
+	      return e;
+	  }
+	}
+	\end{lstlisting}
+
+\item
+
+\end{enumerate}
 
 \end{document}
