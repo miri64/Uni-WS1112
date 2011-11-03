@@ -104,4 +104,56 @@
 
 \section{Analyse des BFPRT-Algorithmus}
 
+\section{Schmutzige Tricks mit dem Einheitskostenmaß}
+
+\begin{enumerate}
+\item   \renewcommand{\labelenumii}{(\theenumii)}
+        \renewcommand{\theenumii}{\arabic{enumii}}
+        \begin{enumerate} \newcommand{\lex}[1]{\ensuremath{\underset{\text{lex}}{#1}}}
+        \item	$a = b \Leftrightarrow x = y$ ist trivial, da dann für
+	alle $x_i, y_j$ gilt: $i = j \Leftrightarrow x_i = y_j$ und
+	somit\\
+                \[\sum\limits_{i=1}^{n} x_{i}u^{n-i+1} = \sum\limits_{i=1}^{n} y_{i}u^{n-i+1}\]
+	\item	Ist $x$ lexikographisch kleiner als $y$, so gilt:
+                \begin{align*}
+                    \exists l \in \{1, ..., n\}{:}\ \forall k < l, k \in \{1, ..., n\}{:}\ x_k = y_k \land x_l < y_l 
+                        &\Leftrightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1}
+                \end{align*}
+		Wir können nun die Vektoren aufteilen, so dass wir
+		insgesamt vier Vektoren $(x_1,...x_{l-1})$,
+		$(x_l,...,x_n)$, $(y_1,...y_{l-1})$ und
+		$(y_l,...,y_n)$ erhalten. Für $(x_1, ..., x_{l-1})$ und $(y_1, ..., y_{l-1})$ gilt 
+                dann jeweils (1). Damit bleibt zu beweisen, dass
+                \begin{align*}
+                    x_l < y_l 
+                        &\Leftrightarrow \sum\limits_{i=l}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=l}^{n} y_{i}u^{n-i+1}.
+                \end{align*}
+		Somit ist zu beweisen, dass $x_l < y_l$ ausreicht, damit
+		$a < b$ gilt. Das ist der Fall, wenn
+                \[x_l u^{n-l+1} > \sum\limits_{i=l+1}^{n} x_{i}u^{n-i+1}\ \text{bzw.}\ y_l u^{n-l+1} > \sum\limits_{i=l+1}^{n} y_{i}u^{n-i+1}\].
+                \begin{description}
+                \item[Induktionsbehauptung] Für einen Vektor $(v_1,...,v_n)$ mit $0 \leq v_i \leq M$ gilt für $u > M$:
+                        \[v_1 u^n > v_2 u^{n-1} + ... + v_n u\]
+                \item[Induktionsvoraussetzung] Für einen Vektor $(v_1,...,v_{n-1})$ mit $0 \leq v_i \leq M$ gilt für $u > M$:
+                        \[v_1 u^{n-1} > v_2 u^{n-2} + ... + v_{n-1} u\]
+                \item[Induktionsanfang] $(n = 2)$
+                        \begin{align*}
+                         v_1 u^2 &> v_2 u & &\Longleftrightarrow& u^2 &> \frac{v_2 u}{v_1}
+                        \end{align*}
+                        Da $0 \leq v_1, v_2 < u$ (und $v_1, v_2 \in \mathbb{Z}$), ist das wahr. \hfill$\square$
+                \item[Induktionsschritt]
+                        \begin{align*}
+                         v_1 u^n &> v_2 u^{n-1} + ... + v_n u \tag{IV + Transl. $>$}\\
+                         v_1 u^n > v_2 u^{n-1} &> v_3 u^{n-2} + ... + v_n u\\
+                         v_1 u^n &> v_2 n^{n-1} \tag{s. IA}
+                        \end{align*}
+                        \hfill$\square$
+                \end{description}
+                Damit ist bewiesen:
+                \[(x_1, ..., x_n) \lex{<} (y_1, ..., y_n) 
+                        \Leftrightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1} \]
+	\end{enumerate}
+
+\end{enumerate}
+
 \end{document}
