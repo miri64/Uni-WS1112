@@ -13,7 +13,7 @@
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
 \newcommand{\Authors}{Christian Cikryt (Di. 14-16), Jakob Pfender (Mi. 14-16)}
-\title{H\"ohere Algorithmik - 2. \"Ubungsblatt}
+\title{H\"ohere Algorithmik - 2. \"Ubungsblatt (Tutor Tillmann Miltzow)}
 \author{\Authors}
 \date{\today}
 
@@ -156,7 +156,7 @@ Im Folgenden wird mittels vollständiger Induktion über $n$ gezeigt, dass für 
         && \alpha &\geq \frac{4k^2}{k^2 - 4k - 1} c
 \end{array}
 \]
- Der BFPRT-Algorithmus läuft also für alle  $k \ge 5$ in $O(n)$ Zeit. Für $k = 3$ ist $\alpha$ negativ, was einen Widerspruch zu $\alpha > 0$ darstellt und somit gilt $T_3(n) \in \Theata(n^{\log_3 2})$.
+ Der BFPRT-Algorithmus läuft also für alle  $k \ge 5$ in $O(n)$ Zeit. Für $k = 3$ ist $\alpha$ negativ, was einen Widerspruch zu $\alpha > 0$ darstellt und somit gilt $T_3(n) > O(n)$.
 \end{description}
 
 Indem man das Ungleichungszeichen umdreht, kann man auch ein $\alpha > 0$ bestimmen, so dass gilt $T_k(n) \in \Omega(n)$ (für $k$ ab 5). Somit gilt insgesamt $T_k(n) \in \Theta(n)$ $\forall$ ungerade $k \ge 5 \in \mathbb{N}$.
