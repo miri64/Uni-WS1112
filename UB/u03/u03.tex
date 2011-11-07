@@ -120,7 +120,9 @@ $S \to \langle\rangle$      & $S.\operatorname{correct} = \mathbf{true}$\\
         \upsilon &\to \Rm{5}\ |\ \Rm{5}\iota\ |\ \Rm{4}\ |\ \iota &
             \iota &\to \Rm{1}\ |\ \Rm{2}\ |\ \Rm{3}
         \end{align*}
- \item  
+ \item  Nein. Die Grammatik besitzt mehrere linksrekursive Produktionen (z. B. $\theta \to \gamma\Rm{90}$) und viele Terminale  
+        sind mehrfach das erste Symbol im rechten Teil einer Produktion (z. B. $\iota \to \Rm{1}\ |\ \Rm{2}\ |\ \Rm{3}$).
+        Bevor ein Parser erstellt werden kann, muss also eine entsprechend äquivalente Grammatik, ohne diese Eigenschaften, gefunden werden.
 \end{enumerate}
 
 \section{}
