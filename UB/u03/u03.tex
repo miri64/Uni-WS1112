@@ -63,17 +63,29 @@
 \maketitle
 
 \section{}
+Basisklasse für alle Parser in dieser Aufgabe (getreu dem Motto: "`Python ist ausführbarer Pseudocode"'):
+\lstinputlisting[firstline=1,lastline=21]{aufgabe1.py}
 \begin{enumerate}
- \item  
- \item  
- \item	
-\end{enumerate}
-
-\section{}
-\begin{enumerate}
- \item  
- \item	
- \item	
+ \item  \hspace{0cm}\lstinputlisting[firstline=22,lastline=40]{aufgabe1.py}
+ \item  Die gegebene Grammatik enthält eine Linksrekursion, die zunächst eliminiert werden muss.
+        Die äquivalente, linksrekursionfreie Grammatik ist dann:
+        \begin{align*}
+            S &\to SE | \varepsilon \\
+            E &\to (S)S
+        \end{align*}
+        Da $S$ nun nur noch lediglich $\varepsilon$ und auf $S$ selbst mit einer $E$ Produktion konkatiniert produziert,
+        können wir wiederum vereinfachen:
+        \begin{align*}
+            S &\to (S)S | \varepsilon
+        \end{align*}
+        \lstinputlisting[firstline=41,lastline=48]{aufgabe1.py}
+ \item	Da für beide Produktionen der rechte Teil mit dem gleichen Terminal beginnt, müssen wir wieder umformen, in dem wir ein 
+        Zweites Nichtterminal einführen:
+        \begin{align*}
+            S &\to 0E \\
+            E &\to 0E1 | 1
+        \end{align*}
+        \lstinputlisting[firstline=49,lastline=71]{aufgabe1.py}
 \end{enumerate}
 
 \section{}
