@@ -57,6 +57,8 @@
 \makeatletter
 \newcommand{\Rm}[1]{\textrm{\expandafter\@slowromancap\romannumeral #1@}}
 \makeatother
+\newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
+\newcommand{\add}[1]{\{\texttt{s += #1})\}}
 
 \begin{document}
 
@@ -127,7 +129,34 @@ $S \to \langle\rangle$      & $S.\operatorname{correct} = \mathbf{true}$\\
 
 \section{}
 \begin{enumerate}
- \item  
- \item  
+ \item  Annahme: Eingabe $<10000$ (also grad mal so $>9000$)
+        \begin{align*}
+        S &\to THZE \\
+        T &\to \varepsilon\ |\ 0\ |\ 1\print{M}\ |\ ...\ |\ 9\print{MMMMMMMMM} \\
+        H &\to \varepsilon\ |\ 0\ |\ 1\print{C}\ |\ 2\print{CC}\ |\ 3\print{CCC}\ |\ 4\print{CD} \\
+        H &\to 5\print{D}\ |\ 6\print{DC}\ |\ 7\print{DCC}\ |\ 8\print{DCCC}\ |\ 9\print{CM} \\
+        Z &\to \varepsilon\ |\ 0\ |\ 1\print{X}\ |\ 2\print{XX}\ |\ 3\print{XXX}\ |\ 4\print{XL} \\
+        Z &\to 5\print{L}\ |\ 6\print{LX}\ |\ 7\print{LXX}\ |\ 8\print{LXXX}\ |\ 9\print{XC} \\
+        E &\to \varepsilon\ |\ 0\ |\ 1\print{I}\ |\ 2\print{III}\ |\ 3\print{III}\ |\ 4\print{IV} \\
+        E &\to 5\print{V}\ |\ 6\print{VI}\ |\ 7\print{VII}\ |\ 8\print{VIII}\ |\ 9\print{IX}
+        \end{align*}
+ \item  Sei $s = 0$ initialisiert:
+        \begin{align*}
+        \mu     &\to \Rm{1000}\add{1000}\ |\ \Rm{1000}\add{1000}\mu \\
+        \mu     &\to \Rm{900}\add{900}\ |\ \Rm{900}\add{900}\kappa\ |\ \delta \\
+        \delta  &\to \Rm{500}\add{500}\ |\ \Rm{500}\add{500}\theta\\
+        \delta  &\to \Rm{400}\add{400}\ |\ \Rm{400}\add{400}\kappa\ |\ \theta \\
+        \kappa  &\to \Rm{90}\add{90}\chi\ |\ \Rm{90}\add{90}\ |\ \lambda \\
+        \theta  &\to \gamma\ |\ \gamma\lambda\ |\ \Rm{90}\add{90}\ |\ \Rm{90}\add{90}\chi\\
+        \theta  &\to \gamma \Rm{90}\add{90}\ |\ \gamma \Rm{90}\add{90}\chi\ |\ \lambda  \\
+        \gamma  &\to \Rm{100}\add{100}\ |\ \Rm{200}\add{200}\ |\ \Rm{300}\add{300} \\
+        \lambda &\to \Rm{50}\add{50}\psi\ |\ \Rm{50}\add{50}\\
+        \lambda &\to \Rm{40}\add{40}\chi\ |\ \Rm{40}\add{40}\ |\ \psi \\
+        \chi    &\to \Rm{9}\add{9}\ |\ \upsilon \\
+        \psi    &\to \xi\ |\ \xi\upsilon\ |\ \xi \Rm{9}\add{9}\ |\ \Rm{9}\add{9}\ |\ \upsilon \\
+        \xi     &\to \Rm{10}\add{10}\ |\ \Rm{20}\add{20}\ |\ \Rm{30}\add{30} \\
+        \upsilon &\to \Rm{5}\add{5}\ |\ \Rm{5}\add{5}\iota\ |\ \Rm{4}\add{4}\ |\ \iota \\
+        \iota   &\to \Rm{1}\add{1}\ |\ \Rm{2}\add{2}\ |\ \Rm{3}\add{3}
+        \end{align*}
 \end{enumerate}
 \end{document}
