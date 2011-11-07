@@ -89,7 +89,20 @@ Basisklasse für alle Parser in dieser Aufgabe (getreu dem Motto: "`Python ist a
 \end{enumerate}
 
 \section{}
-
+\begin{center}
+\begin{tabular}{l|l}
+\textbf{Produktion}         & \textbf{Semantische Regel} \\\hline
+$S \to S_1S_2$              & $S.\operatorname{correct} = S_1.\operatorname{correct} \land S_2.\operatorname{correct}$\\
+$S \to (S_1)$               & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to [S_1]$               & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to \{S_1\}$             & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to \langle S_1\rangle$  & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to ()$                  & $S.\operatorname{correct} = \mathbf{true}$\\
+$S \to []$                  & $S.\operatorname{correct} = \mathbf{true}$\\
+$S \to \{\}$                & $S.\operatorname{correct} = \mathbf{true}$\\
+$S \to \langle\rangle$      & $S.\operatorname{correct} = \mathbf{true}$\\
+\end{tabular}
+\end{center}
 
 \section{}
 \begin{enumerate}
