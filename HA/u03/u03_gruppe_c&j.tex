@@ -70,6 +70,53 @@
 \end{enumerate}
 
 \section{Rekursionsgleichungen}
+\begin{enumerate}
+\item	\begin{align}
+	T(n) = T(9n/10)+n \\
+	a = 1, b = 10, f(n) = n \\
+	\log _b a = log _{10} 1 = 0 \\
+	\Rightarrow f(n) = n = \Theta(n^{\log _b a}) \\
+	\Rightarrow T(n) = \Theta(\log n) \tag{Fall 2 des Master-Theorems}
+	\end{align}
+\item	\begin{align}
+	T(n) = T(n-a) + T(a) + n, a \geq 1 \\
+	\end{align}
+	MT nicht anwendbar.
+\item	\begin{align}
+	T(n) = T(\sqrt{n}) + 1 \\
+	\end{align}
+\item	\begin{align}
+	T(n) = 2T(n/4) + \sqrt{n} \\
+	a = 2, b = 4, f(n) = \sqrt{n} \\
+	\log _b a = \log _4 2 = \frac{1}{2} \\
+	\Rightarrow \exists \varepsilon > 0, f(n) = \sqrt{n} = O(n^{\log
+	_b a+\varepsilon}), \exists c < 1, 2f(n/4) \leq cf(n) \\
+	\Rightarrow T(n) = \Theta(f(n)) \tag{Fall 3 des Master-Theorems}
+	\end{align}
+\item	\begin{align}
+	T(n) = 7T(n/3) + n^2 \\
+	a = 7, b = 3, f(n) = n^2 \\
+	\log _b a = \log _3 7 \approx 1.77 \\
+	\Rightarrow \exists \varepsilon > 0, f(n) = n^2 = O(n^{\log _b a-\varepsilon}) \\
+	\Rightarrow T(n) = \Theta(n^{log _3 7}) \tag{Fall 1 des Master-Theorems}
+	\end{align}
+\item	\begin{align}
+	T(n) = 2T(n/2) + n \log n \\
+	a = 2, b = 2, f(n) = n \log n \\
+	\log _b a = \log _2 2 = 1
+	\end{align}
+	MT nicht anwendbar, da $\nexists \varepsilon > 0, f(n) = n \log
+	n = \Omega(n^{\log _b a+\varepsilon}), \nexists \varepsilon > 0,
+	f(n) = n \log n = O(n^{\log _b a-\varepsilon}), f(n) \neq
+	\Theta(n^{\log _b a})$
+\item	\begin{align}
+	T(n) = T(n-1) + \frac{1}{n} \\
+	a = 1, b = 1, f(n) = \frac{1}{n} \\
+	\log _b a = \log _1 1 = 1 \\
+	\Rightarrow f(n) = \frac{1}{n} = \Theta(n^{\log _b a}) \\
+	\Rightarrow T(n) = \Theta(n \log n) \tag{Fall 2 des Master-Theorems}
+	\end{align}
+\end{enumerate}
 
 \section{Implementierung}
 
