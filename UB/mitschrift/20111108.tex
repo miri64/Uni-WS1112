@@ -16,3 +16,67 @@ Alles kontextfrei:
 \paragraph{Lexer:} Quellprogramm $\to$ lexikalische Grundbausteine (\emph{"`Token"'})
 \[<\textit{Tokenname},\text{\textit{optionales Attribut} (irrelevant für Syntaxanalyse)}>\]
 \emph{Tokenname:} Sorte, Terminalsymbol der Syntaxanalyse.
+\paragraph{Organisation:} Lexer als Prozedur, die bei Aufruf das nächste Token liefert.
+
+\Bsp Bereinigte k. f. Grammatik am Beispiel arithmetischer Ausdrücke (integriert im Übersetzungsschema)
+\newcommand{\print}[1]{\{\texttt{print(\textquotesingle#1\textquotesingle)}\}}
+\newcommand{\printx}[1]{\{\texttt{print(}#1\texttt{)}\}}
+\begin{center}
+\begin{minipage}{0.7\linewidth}
+\begin{align*}
+ E &\to E + T\print{+}\ |\ E - T\print{-}\ |\ T \\
+ T &\to T * F\print{*}\ |\ T / F\print{/}\ |\ F \\
+ F &\to (E)\ |\ \rnode{Tokenname_n}{n}\printx{n.\rnode{attr_value}{v}}\ |\ \rnode{Tokenname_i}{i}\printx{n.\rnode{attr_id}{l}}
+\end{align*}
+{\footnotesize \rnode{Tn_start}{Tokenname $n$: Number} \hfill \rnode{av_start}{Attributwert} \hfill \rnode{Ti_start}{Tokenname $i$: Identifier} \hfill \rnode{ai_start}{Attribut $l$ für \emph{Lexem}}}
+\ncline{->}{Tn_start}{Tokenname_n}\ncline{->}{av_start}{attr_value}\ncline{->}{Ti_start}{Tokenname_i}\ncline{->}{ai_start}{attr_id}
+\end{minipage}
+\vline\hfill
+\begin{minipage}{0.25\linewidth}
+ kontextfreie Grammatik für Syntaxanalyse
+\end{minipage}
+\end{center}
+\paragraph{Heute:} \emph{Einfacher Lexer} per Hand programmieren.
+\paragraph{Später:} Endliche Automaten zur Erkennung regulärer Strukturen. (Automatisch mit Tools \emph{Lex})
+
+\paragraph{1. Teilaufgabe:} Entferne von Leerzeichen\\
+peek sei Zeiger auf jeweils nächsten Character der Eingabe.
+
+\begin{lstlisting}[language=Java]
+// Kompletter Code im Drachenbuch
+for(;; peek = next input character) {
+    if (peek == ' ' || peek == '\t') continue;
+    else if (peek == '\n') line = line + 1;
+    else break;
+}
+\end{lstlisting}
+
+\paragraph{2. Teilaufgabe:} Erkenne Konstanten\\
+Hier: natürliche Zahlen
+\begin{lstlisting}[language=Java,mathescape=True]
+if (isDigit(peek)) {
+    v = 0;
+    do {
+        v = v * 10 + integer value of peek;
+        peek = next input character
+    } while (isDigit(peek));
+    return token <$n$, v>
+}
+\end{lstlisting}
+
+\paragraph{3. Teilaufgabe:} Erkenne Schlüsselwörter ("`reservieter Wörter"') und Bezeichner
+\begin{lstlisting}[language=Java,mathescape=True]
+if (isDigit(peek)) {
+    v = 0;
+    do {
+        v = v * 10 + integer value of peek;
+        peek = next input character
+    } while (isDigit(peek));
+    return token <$n$, v>
+}
+\end{lstlisting}
+
+\begin{center}
+\texttt{\dq\textvisiblespace\textvisiblespace\textvisiblespace  $\underbrace{\texttt{count}}_{Lexem = \texttt{"`count"'}}$\textvisiblespace\textvisiblespace $\underbrace{\texttt{count}}$\textvisiblespace +\textvisiblespace 94'\textbackslash n'\dq}
+\end{center}
+
