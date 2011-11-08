@@ -18,15 +18,16 @@ public class MultiplicationMain {
 		long[] results = m.measureTimeForDifferentExecutables(new KaratsubaExecutable(a, b), new SchoolMethodExecutable(a, b));
 		if (firstIsEqualToSecond(results))
 			return n;
+		System.out.println(n);
 		if (firstResultGreaterThanSecond(results)) {
-			return compareAlgorithmsWithNumbersOfLength(n * 2);
+			return compareAlgorithmsWithNumbersOfLength(n * 3);
 		} else {
 			return compareAlgorithmsWithNumbersOfLength(n / 2);
 		}
 	}
 
 	private static boolean firstIsEqualToSecond(long[] results) {
-		return Math.abs(results[0] - results[1]) < 2;
+		return Math.abs(results[0] - results[1]) < 1;
 	}
 
 	private static boolean firstResultGreaterThanSecond(long[] results) {
