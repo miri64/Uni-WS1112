@@ -10,3 +10,9 @@ Alles kontextfrei:
  L &\to \texttt{'a'}\ |\ ...\ |\ \texttt{'b'}\\
  L' &\to L\ |\ D\ |\ \texttt{'\_'}
 \end{align*}
+
+\paragraph{1. Überlegung:} Konkrete Ausprägung ist unerheblich für Syntaxanalyse zusätzlicher Regeln: "Ballast". Außerdem verschärfter Ballast: \texttt{\dq\textvisiblespace\textvisiblespace  count\textvisiblespace +\textvisiblespace 94'\textbackslash n'\dq}
+\paragraph{Einsicht:} Erledige Aufgaben wie Erkennung von Konstanten und Bezeichnern und Eliminierung von Leerzeichen in der ersten Phase: \emph{Lexer}
+\paragraph{Lexer:} Quellprogramm $\to$ lexikalische Grundbausteine (\emph{"`Token"'})
+\[<\textit{Tokenname},\text{\textit{optionales Attribut} (irrelevant für Syntaxanalyse)}>\]
+\emph{Tokenname:} Sorte, Terminalsymbol der Syntaxanalyse.
