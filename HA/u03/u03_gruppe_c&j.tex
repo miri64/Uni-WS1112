@@ -1,0 +1,123 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+%\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Christian Cikryt (Di. 14-16), Jakob Pfender (Mi. 14-16)}
+\title{H\"ohere Algorithmik - 3. \"Ubungsblatt (Tutor Tillmann Miltzow)}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+%\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Schnelle Matrizenmultiplikation}
+\begin{enumerate}
+\item	Da bei der Multiplikation zweier $n \times n$~-Matrizen jedes
+	Element der ersten mit $n$ Elementen der zweiten Matrix
+	multipliziert werden muss, werden insgesamt $n^2 \cdot n = n^3$
+	Multiplikationen sowie $n \cdot n \cdot n-1 = (n-1)n^2$
+	Additionen durchgeführt.
+
+\item
+\end{enumerate}
+
+\section{Rekursionsgleichungen}
+\begin{enumerate}
+\item	\begin{align}
+	T(n) = T(9n/10)+n \\
+	a = 1, b = 10, f(n) = n \\
+	\log _b a = log _{10} 1 = 0 \\
+	\Rightarrow f(n) = n = \Theta(n^{\log _b a}) \\
+	\Rightarrow T(n) = \Theta(\log n) \tag{Fall 2 des Master-Theorems}
+	\end{align}
+\item	\begin{align}
+	T(n) = T(n-a) + T(a) + n, a \geq 1 \\
+	\end{align}
+	MT nicht anwendbar.
+\item	\begin{align}
+	T(n) = T(\sqrt{n}) + 1 \\
+	\end{align}
+\item	\begin{align}
+	T(n) = 2T(n/4) + \sqrt{n} \\
+	a = 2, b = 4, f(n) = \sqrt{n} \\
+	\log _b a = \log _4 2 = \frac{1}{2} \\
+	\Rightarrow \exists \varepsilon > 0, f(n) = \sqrt{n} = O(n^{\log
+	_b a+\varepsilon}), \exists c < 1, 2f(n/4) \leq cf(n) \\
+	\Rightarrow T(n) = \Theta(f(n)) \tag{Fall 3 des Master-Theorems}
+	\end{align}
+\item	\begin{align}
+	T(n) = 7T(n/3) + n^2 \\
+	a = 7, b = 3, f(n) = n^2 \\
+	\log _b a = \log _3 7 \approx 1.77 \\
+	\Rightarrow \exists \varepsilon > 0, f(n) = n^2 = O(n^{\log _b a-\varepsilon}) \\
+	\Rightarrow T(n) = \Theta(n^{log _3 7}) \tag{Fall 1 des Master-Theorems}
+	\end{align}
+\item	\begin{align}
+	T(n) = 2T(n/2) + n \log n \\
+	a = 2, b = 2, f(n) = n \log n \\
+	\log _b a = \log _2 2 = 1
+	\end{align}
+	MT nicht anwendbar, da $\nexists \varepsilon > 0, f(n) = n \log
+	n = \Omega(n^{\log _b a+\varepsilon}), \nexists \varepsilon > 0,
+	f(n) = n \log n = O(n^{\log _b a-\varepsilon}), f(n) \neq
+	\Theta(n^{\log _b a})$
+\item	\begin{align}
+	T(n) = T(n-1) + \frac{1}{n} \\
+	a = 1, b = 1, f(n) = \frac{1}{n} \\
+	\log _b a = \log _1 1 = 1 \\
+	\Rightarrow f(n) = \frac{1}{n} = \Theta(n^{\log _b a}) \\
+	\Rightarrow T(n) = \Theta(n \log n) \tag{Fall 2 des Master-Theorems}
+	\end{align}
+\end{enumerate}
+
+\section{Implementierung}
+
+\end{document}

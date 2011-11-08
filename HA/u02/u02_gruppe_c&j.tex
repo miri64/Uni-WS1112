@@ -8,18 +8,22 @@
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{multicol}
+%\usepackage{pst-tree}
+
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
-\newcommand{\Authors}{Christian Cikryt (Tut. Di. 14-16), Jakob Pfender (Mi. 14-16)}
-\title{H\"ohere Algorithmik - 2. \"Ubungsblatt}
+\newcommand{\Authors}{Christian Cikryt (Di. 14-16), Jakob Pfender (Mi. 14-16)}
+\title{H\"ohere Algorithmik - 2. \"Ubungsblatt (Tutor Tillmann Miltzow)}
 \author{\Authors}
 \date{\today}
 
 \newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
 
 \renewcommand{\thesection}{Aufgabe \arabic{section}}
-\renewcommand{\theenumi}{(\alph{enumi})}
-\renewcommand{\theenumii}{(\roman{enumii}}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
 
 \definecolor{lgray}{gray}{0.95}
 \definecolor{purple}{rgb}{0.498,0,0.3333}
@@ -48,11 +52,187 @@
 	extendedchars=true,
 	inputencoding=utf8/latin1
 }
+%\psset{nodesep=2pt,levelsep=2em,treesep=2em}
 
 \begin{document}
 
 \maketitle
 
-\section{}
+\section{Gewichteter Median}
+\begin{enumerate}
+\item	Gegeben eine Funktion \texttt{weighted\_median()}, die
+	aus einer gegebenen Liste den gewichteten Median bestimmt,
+	können wir einen einfachen Divide-and-Conquer-Algorithmus
+	anwenden, um den Median zu finden:
+
+	\begin{lstlisting}[numbers=none]
+	int median(list) {
+	  weighted_median = weighted_median(list);
+	  smaller = [e | e <- list, e <= weighted_median];
+	  larger  = [e | e <- list, e >  weighted_median];
+	  if (size(smaller) > (size(list) / 2))
+	    return median(smaller);
+	  else if (size(smaller) == (size(list) / 2))
+	    return weighted_median;
+	  else
+	    return median(larger);
+	}
+	\end{lstlisting}
+
+	Für die Gewichtung kann man einfach jedem Element das Gewicht
+	$1/n$ geben, wobei $n$ die Länge der Liste ist. Dadurch ist bei
+	einer geraden Anzahl an Elementen der gewichtete Median gleich
+	dem normalen Median, bei einer ungeraden Anzahl gleich dem
+	Nachfolger des Medians. Mit obenstehendem Algorithmus lässt sich
+	der Median also mit Laufzeit $T(n) + O(n)$ lösen.
+
+\item	Gegeben eine Liste mit $n$ gewichteten Elementen und eine
+	Sortierfunktion \texttt{sort()}, können wir den gewichteten
+	Median wie folgt bestimmen. Als Sortierfunktion wird Mergesort
+	verwendet, da dieser in jedem Fall eine Laufzeit von $O(n \log n)$ besitzt.
+
+	\begin{lstlisting}[numbers=none]
+	int weighted_median(list) {
+	  sort(list);
+	  weight = 0;
+	  for (e : list) {
+	    weight += e.weight;
+	    if (weight > 0.5)
+	      return e;
+	  }
+	}
+	\end{lstlisting}
+
+\item	Gegeben sei eine Funktion \texttt{median()}, welche den normalen
+	Median in linearer Zeit bestimmt. Dann lässt sich der gewichtete
+	Median wie folgt berechnen:
+
+	\begin{lstlisting}[numbers=none]
+	int weighted_median(list, weights_smaller, weights_larger) {
+	  weighted_median = median(list);
+	  smaller = [s | s <- list, s < weighted_median];
+	  larger  = [s | s <- list, s > weighted_median];
+	  if ((sum_of_weights(smaller) + weights_smaller <= 0.5) && sum_of_weights(larger) + weights_larger < 0.5)
+	    return weighted_median;
+	  else if (sum_of_weights(smaller) + weights_smaller <= 0.5)
+	    return weighted_median(larger, weights_smaller + weighted_median.weight + sum_of_weights(smaller), weights_larger);
+	  else
+	    return weighted_median(smaller, weights_smaller, weights_larger + weighted_median.weight + sum_of_weights(larger));
+	}
+	\end{lstlisting}
+
+\end{enumerate}
+
+\section{Analyse des BFPRT-Algorithmus}
+Es wird allgemein für ein ungerades $k > 0$ die Laufzeit berechnet.
+Die Laufzeit des BFPRT-Algorithmus mit einer Aufteilung in $k$er-Blöcke für $n \geq 100$ ist analog zur Vorlesung:
+\[T_k(n) \leq cn + T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) + T_k\left(\frac{3n}{4}\right)\]
+für $n < 100$ wird ein Bruteforce-Ansatz verwendet. Die Laufzeit dafür ist somit von $k$ unabhängig und wie ebenfalls in der Vorlesung erläutert $O(1)$.
+
+Im Folgenden wird mittels vollständiger Induktion über $n$ gezeigt, dass für die Laufzeit $O(n)$ gilt und zwar für alle ungeraden $k$ ab 5 (für die 3 nicht). In einem zweiten Schritt wird gezeigt, dass sogar $\Theta(n)$ gilt.
+\begin{description}
+\item[Induktionsbehauptung] $\exists\alpha > 0{:}\ T_k(n) \leq \alpha n$
+\item[Induktionsanfang] $n < 100$
+    \begin{itemize}
+     \item $T_k(n) = O(1)$, weil sich sich immer ein $\alpha$ finden lässt, so dass $\alpha n \geq T_k(n)$ ($O(1) \subset O(n)$).
+    \end{itemize}
+\item[Induktionsvoraussetzung] Es gelte für ein $n \in \mathbb{N}$ : $\exists\alpha > 0{:}\ T_k(n-1) \leq \alpha (n-1)$
+
+\item[Induktionsschritt] Es wird nun gezeigt, dass unter der Induktionsvoraussetzung ($T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) \in O(n)$)die Induktionsbehauptung auch für T(n) gilt.
+\[
+\begin{array}{rl|rl}
+ T_k(n)   &\leq cn + T_k\left(\left\lceil\frac{n}{k}\right\rceil\right) + T_k\left(\frac{3n}{4}\right) &
+                \alpha n &\geq cn + \alpha n \frac{3k + 4}{4k} + \alpha\\
+        &\overset{\text{IA}}{\leq} cn + \alpha \left\lceil\frac{n}{k}\right\rceil + \alpha \frac{3n}{4} &
+                \alpha n \frac{k - 4}{4k} &\geq cn + \alpha\\
+        &\leq cn + \alpha \left(\frac{n}{k} + 1\right) + \alpha \frac{3n}{4} &
+                \alpha (k - 4) &\geq 4kc + \underbrace{\frac{4k\alpha}{n}}_{\leq \frac{\alpha}{k}} \qquad \text{(für $k < n$)} \\
+        &= cn + \alpha n \left(\frac{1}{k} + \frac{3}{4}\right) + \alpha  &
+                \alpha (k - 4) &\geq 4kc + \frac{\alpha}{k}\\
+        &= cn + \alpha n \left(\frac{3k + 4}{4k}\right) + \alpha &
+                \frac{\alpha (k^2 - 4k) - \alpha}{k} &\geq 4kc\\
+        &\overset{!}{\leq} \alpha n &
+                \alpha (k^2 - 4k - 1) &\geq 4k^2c\\
+        && \alpha &\geq \frac{4k^2}{k^2 - 4k - 1} c
+\end{array}
+\]
+ Der BFPRT-Algorithmus läuft also für alle  $k \ge 5$ in $O(n)$ Zeit. Für $k = 3$ ist $\alpha$ negativ, was einen Widerspruch zu $\alpha > 0$ darstellt und somit gilt $T_3(n) > O(n)$.
+\end{description}
+
+Indem man das Ungleichungszeichen umdreht, kann man auch ein $\alpha > 0$ bestimmen, so dass gilt $T_k(n) \in \Omega(n)$ (für $k$ ab 5). Somit gilt insgesamt $T_k(n) \in \Theta(n)$ $\forall$ ungerade $k \ge 5 \in \mathbb{N}$.
+\section{Schmutzige Tricks mit dem Einheitskostenmaß}
+
+\begin{enumerate}
+\item   \renewcommand{\labelenumii}{(\theenumii)}
+        \renewcommand{\theenumii}{\arabic{enumii}}
+        \begin{enumerate} \newcommand{\lex}[1]{\ensuremath{\underset{\text{lex}}{#1}}}
+        \item	$a = b \Leftrightarrow x = y$ ist trivial, da dann für
+	alle $x_i, y_j$ gilt: $i = j \Leftrightarrow x_i = y_j$ und
+	somit\\
+                \[\sum\limits_{i=1}^{n} x_{i}u^{n-i+1} = \sum\limits_{i=1}^{n} y_{i}u^{n-i+1}\]
+	\item	Ist $x$ lexikographisch kleiner als $y$, so gilt:
+                \begin{align*}
+                    \exists l \in \{1, ..., n\}{:}\ \forall k < l, k \in \{1, ..., n\}{:}\ x_k = y_k \land x_l < y_l 
+                        &\Leftrightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1}
+                \end{align*}
+		Wir können nun die Vektoren aufteilen, so dass wir
+		insgesamt vier Vektoren $(x_1,...x_{l-1})$,
+		$(x_l,...,x_n)$, $(y_1,...y_{l-1})$ und
+		$(y_l,...,y_n)$ erhalten. Für $(x_1, ..., x_{l-1})$ und $(y_1, ..., y_{l-1})$ gilt 
+                dann jeweils (1). Damit bleibt zu beweisen, dass
+                \begin{align*}
+                    x_l < y_l 
+                        &\Leftrightarrow \sum\limits_{i=l}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=l}^{n} y_{i}u^{n-i+1}.
+                \end{align*}
+		Somit ist zu beweisen, dass $x_l < y_l$ ausreicht, damit
+		$a < b$ gilt. Das ist der Fall, wenn
+                \[x_l u^{n-l+1} > \sum\limits_{i=l+1}^{n} x_{i}u^{n-i+1}\ \text{bzw.}\ y_l u^{n-l+1} > \sum\limits_{i=l+1}^{n} y_{i}u^{n-i+1}\].
+                \begin{description}
+                \item[Induktionsbehauptung] Für einen Vektor $(v_1,...,v_n)$ mit $0 \leq v_i \leq M$ gilt für $u > M$:
+                        \[v_1 u^n > v_2 u^{n-1} + ... + v_n u\]
+                \item[Induktionsvoraussetzung] Für einen Vektor $(v_1,...,v_{n-1})$ mit $0 \leq v_i \leq M$ gilt für $u > M$:
+                        \[v_1 u^{n-1} > v_2 u^{n-2} + ... + v_{n-1} u\]
+                \item[Induktionsanfang] $(n = 2)$
+                        \begin{align*}
+                         v_1 u^2 &> v_2 u & &\Longleftrightarrow& u^2 &> \frac{v_2 u}{v_1}
+                        \end{align*}
+                        Da $0 \leq v_1, v_2 < u$ (und $v_1, v_2 \in \mathbb{Z}$), ist das wahr. \hfill$\square$
+                \item[Induktionsschritt]
+                        \begin{align*}
+                         v_1 u^n &> v_2 u^{n-1} + ... + v_n u \tag{IV + Transl. $>$}\\
+                         v_1 u^n > v_2 u^{n-1} &> v_3 u^{n-2} + ... + v_n u\\
+                         v_1 u^n &> v_2 n^{n-1} \tag{s. IA}
+                        \end{align*}
+                        \hfill$\square$
+                \end{description}
+                Damit ist bewiesen:
+                \[(x_1, ..., x_n) \lex{<} (y_1, ..., y_n) 
+                        \Leftrightarrow \sum\limits_{i=1}^{n} x_{i}u^{n-i+1} < \sum\limits_{i=1}^{n} y_{i}u^{n-i+1} \]
+	\end{enumerate}
+\item  Die Gleichheit zweier Vektoren $x = (x_1, ..., x_n)$ und $y = (y_1, ..., y_n)$ kann gezeigt werden,  wenn gilt
+         $x_1 u^m  + ... + x_m u = y_1 u^m + ... + x_m u$ (vlg. a1). Das wird sich im folgenden Algorithmus zu Nutze gemacht, indem zunächst $x$ mit dem Teilvektor $(y_{n-m+1}, ..., y_n)$ (jeweils Länge $m-1$) verglichen wird und dabei geprüft wird, ob gilt: 
+         \[x_1 u^m + ... + x_m u = y_{n-m+1} u^m + ... + y_n u\]
+         Falls ja, wird $n-m+1$ als Position der Teilfolge ausgegeben. Falls nein wird der Index des ersten Elements des Teilvektors dekrementiert (der stets von Länge $m-1$ ist) solange, bis 1 erreicht ist. Sobald 1 erreicht ist und die Hashes immer noch nicht gleich sind, wird $-1$ zurückgegeben, andernfalls der Index des ersten Elements des Teilvektors.
+
+         Zur Optimierung der Berechnung wird der Hash jeweils nur an die aktuelle Situation angepasst.
+         Da nach "`links"' verschoben wird, wird zunächst $u y_{n}$ vom Hash abgezogen, das Ergebnis durch $u$ geteilt, um den Vektor nach rechts zu "`shiften"' und die neue "`Stelle"' $y_i u^m$ addiert.
+        \begin{lstlisting}[mathescape=true]
+def partof($x = (x_0, ..., x_m)$,$y = (y_0,...,y_n)$,$u$))):
+    $a = x_1 u^m + ... + x_m u $
+    $b = y_{n-m+1} u^m + ... + y_n u $
+    $i = n-m$
+    while $a \neq b$:
+        if $i < 1$:
+            return $-1$
+        $b = \frac{b - u y_{m+i}}{u} + y_i u^m$
+        $i = i - 1$
+    return $i + 1$
+        \end{lstlisting}
+        Im EKM braucht man drei Schritte zur Initialisierung von $a, b$ und $i$. Die \lstinline!while!-Schleife benötigt im Best-Case (die gesuchte Teilfolge ist direkt am Ende der zu durchsuchenden Folge) 1 Schritt (der Vergleich $a \neq b$), im Worst-Case (die gesuchte Teilfolge ist nicht vorhanden) $5 \cdot (n-m) + 2$ Schritte ($(n-m)$  Schleifendurchläufe + 2 Vergleiche $a \neq b$ und $i < 1$) und 1 Schritt für die Rückgabe. Insgesamt gilt somit für die Laufzeit von max.
+        \[5(n-m) + 4 = O(n)\] 
+        Im LKM brauchen $a$ und $b$ maximal $M u^m$ Bit. Sie ändern sich folglich bei jeder Operation auch auf maximal $M u^m$ Bit. Die Laufzeit jeder Operation ist im LKM  $O(\log(Mu^m))$.
+$u$ kann dabei deutlich größer sein als $m$ und $n$ und ist per Definition $> M$. Dies wird sich massiv auf die Laufzeit der Schleife aus, da sie durch die Neuberechnung von $b$ nun
+        in \[O(n \log(Mu^m)) = O(n \log M + n \log u^m) = O(n \log M + n m \log u) = O(n m \log u),\] Das ist für große Zahlen deutlich größer als $O(n)$.
+\end{enumerate}
 
 \end{document}

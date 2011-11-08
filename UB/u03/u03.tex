@@ -1,0 +1,162 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 2}
+\author{Christian Cikryt (4285814; Tutorium: Mo. 16-18 Uhr)\\
+  Robert Fels (4210496; Tutorium: Mi. 10-12 Uhr)\\
+  Martin Lenders (4206090; Tutorium: Mi. 10-12 Uhr)
+  }
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Martin Lenders, Christian Cikryt}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\makeatletter
+\newcommand{\Rm}[1]{\textrm{\expandafter\@slowromancap\romannumeral #1@}}
+\makeatother
+\newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
+\newcommand{\add}[1]{\{\texttt{s += #1})\}}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+Basisklasse für alle Parser in dieser Aufgabe (getreu dem Motto: "`Python ist ausführbarer Pseudocode"'):
+\lstinputlisting[firstline=1,lastline=21]{aufgabe1.py}
+\begin{enumerate}
+ \item  \hspace{0cm}\lstinputlisting[firstline=22,lastline=40]{aufgabe1.py}
+ \item  Die gegebene Grammatik enthält eine Linksrekursion, die zunächst eliminiert werden muss.
+        Die äquivalente, linksrekursionfreie Grammatik ist dann:
+        \begin{align*}
+            S &\to SE | \varepsilon \\
+            E &\to (S)S
+        \end{align*}
+        Da $S$ nun nur noch lediglich $\varepsilon$ und auf $S$ selbst mit einer $E$ Produktion konkatiniert produziert,
+        können wir wiederum vereinfachen:
+        \begin{align*}
+            S &\to (S)S | \varepsilon
+        \end{align*}
+        \lstinputlisting[firstline=41,lastline=48]{aufgabe1.py}
+ \item	Da für beide Produktionen der rechte Teil mit dem gleichen Terminal beginnt, müssen wir wieder umformen, in dem wir ein 
+        Zweites Nichtterminal einführen:
+        \begin{align*}
+            S &\to 0E \\
+            E &\to 0E1 | 1
+        \end{align*}
+        \lstinputlisting[firstline=49,lastline=71]{aufgabe1.py}
+\end{enumerate}
+
+\section{}
+\begin{center}
+\begin{tabular}{l|l}
+\textbf{Produktion}         & \textbf{Semantische Regel} \\\hline
+$S \to S_1S_2$              & $S.\operatorname{correct} = S_1.\operatorname{correct} \land S_2.\operatorname{correct}$\\
+$S \to (S_1)$               & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to [S_1]$               & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to \{S_1\}$             & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to \langle S_1\rangle$  & $S.\operatorname{correct} = S_1.\operatorname{correct}$\\
+$S \to ()$                  & $S.\operatorname{correct} = \mathbf{true}$\\
+$S \to []$                  & $S.\operatorname{correct} = \mathbf{true}$\\
+$S \to \{\}$                & $S.\operatorname{correct} = \mathbf{true}$\\
+$S \to \langle\rangle$      & $S.\operatorname{correct} = \mathbf{true}$\\
+\end{tabular}
+\end{center}
+
+\section{}
+\begin{enumerate}
+ \item  Startsymbol der Grammatik sei $\mu$
+        \begin{align*}
+         \mu &\to \Rm{1000}\ |\ \Rm{1000}\mu\ |\ \Rm{900}\ |\ \Rm{900}\kappa\ |\ \delta && \\
+         \delta &\to \Rm{500}\ |\ \Rm{500}\theta\ |\ \Rm{400}\ |\ \Rm{400}\kappa\ |\ \theta &
+            \kappa &\to \Rm{90}\chi\ |\ \Rm{90}\ |\ \lambda \\
+        \theta &\to \gamma\ |\ \gamma\lambda\ |\ \Rm{90}\ |\ \Rm{90}\chi\ |\ \gamma \Rm{90}\ |\ \gamma \Rm{90}\chi\ |\ \lambda &
+            \gamma &\to \Rm{100}\ |\ \Rm{200}\ |\ \Rm{300} \\
+        \lambda &\to \Rm{50}\psi\ |\ \Rm{50}\ |\ \Rm{40}\chi\ |\ \Rm{40}\ |\ \psi &
+            \chi &\to \Rm{9}\ |\ \upsilon \\
+        \psi &\to \xi\ |\ \xi\upsilon\ |\ \xi \Rm{9}\ |\ \Rm{9}\ |\ \upsilon &
+            \xi &\to \Rm{10}\ |\ \Rm{20}\ |\ \Rm{30} \\
+        \upsilon &\to \Rm{5}\ |\ \Rm{5}\iota\ |\ \Rm{4}\ |\ \iota &
+            \iota &\to \Rm{1}\ |\ \Rm{2}\ |\ \Rm{3}
+        \end{align*}
+ \item  Nein. Die Grammatik besitzt mehrere linksrekursive Produktionen (z. B. $\theta \to \gamma\Rm{90}$) und viele Terminale  
+        sind mehrfach das erste Symbol im rechten Teil einer Produktion (z. B. $\iota \to \Rm{1}\ |\ \Rm{2}\ |\ \Rm{3}$).
+        Bevor ein Parser erstellt werden kann, muss also eine entsprechend äquivalente Grammatik, ohne diese Eigenschaften, gefunden werden.
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+ \item  Annahme: Eingabe $<10000$ (also grad mal so $>9000$)
+        \begin{align*}
+        S &\to THZE \\
+        T &\to \varepsilon\ |\ 0\ |\ 1\print{M}\ |\ ...\ |\ 9\print{MMMMMMMMM} \\
+        H &\to \varepsilon\ |\ 0\ |\ 1\print{C}\ |\ 2\print{CC}\ |\ 3\print{CCC}\ |\ 4\print{CD} \\
+        H &\to 5\print{D}\ |\ 6\print{DC}\ |\ 7\print{DCC}\ |\ 8\print{DCCC}\ |\ 9\print{CM} \\
+        Z &\to \varepsilon\ |\ 0\ |\ 1\print{X}\ |\ 2\print{XX}\ |\ 3\print{XXX}\ |\ 4\print{XL} \\
+        Z &\to 5\print{L}\ |\ 6\print{LX}\ |\ 7\print{LXX}\ |\ 8\print{LXXX}\ |\ 9\print{XC} \\
+        E &\to \varepsilon\ |\ 0\ |\ 1\print{I}\ |\ 2\print{III}\ |\ 3\print{III}\ |\ 4\print{IV} \\
+        E &\to 5\print{V}\ |\ 6\print{VI}\ |\ 7\print{VII}\ |\ 8\print{VIII}\ |\ 9\print{IX}
+        \end{align*}
+ \item  Sei $s = 0$ initialisiert:
+        \begin{align*}
+        \mu     &\to \Rm{1000}\add{1000}\ |\ \Rm{1000}\add{1000}\mu \\
+        \mu     &\to \Rm{900}\add{900}\ |\ \Rm{900}\add{900}\kappa\ |\ \delta \\
+        \delta  &\to \Rm{500}\add{500}\ |\ \Rm{500}\add{500}\theta\\
+        \delta  &\to \Rm{400}\add{400}\ |\ \Rm{400}\add{400}\kappa\ |\ \theta \\
+        \kappa  &\to \Rm{90}\add{90}\chi\ |\ \Rm{90}\add{90}\ |\ \lambda \\
+        \theta  &\to \gamma\ |\ \gamma\lambda\ |\ \Rm{90}\add{90}\ |\ \Rm{90}\add{90}\chi\\
+        \theta  &\to \gamma \Rm{90}\add{90}\ |\ \gamma \Rm{90}\add{90}\chi\ |\ \lambda  \\
+        \gamma  &\to \Rm{100}\add{100}\ |\ \Rm{200}\add{200}\ |\ \Rm{300}\add{300} \\
+        \lambda &\to \Rm{50}\add{50}\psi\ |\ \Rm{50}\add{50}\\
+        \lambda &\to \Rm{40}\add{40}\chi\ |\ \Rm{40}\add{40}\ |\ \psi \\
+        \chi    &\to \Rm{9}\add{9}\ |\ \upsilon \\
+        \psi    &\to \xi\ |\ \xi\upsilon\ |\ \xi \Rm{9}\add{9}\ |\ \Rm{9}\add{9}\ |\ \upsilon \\
+        \xi     &\to \Rm{10}\add{10}\ |\ \Rm{20}\add{20}\ |\ \Rm{30}\add{30} \\
+        \upsilon &\to \Rm{5}\add{5}\ |\ \Rm{5}\add{5}\iota\ |\ \Rm{4}\add{4}\ |\ \iota \\
+        \iota   &\to \Rm{1}\add{1}\ |\ \Rm{2}\add{2}\ |\ \Rm{3}\add{3}
+        \end{align*}
+\end{enumerate}
+\end{document}
