@@ -1,0 +1,12 @@
+\chapter{Lexikalische Analyse}
+Alles kontextfrei:
+\begin{align*}
+ N &\to ND\ |\ D \tag{für natürliche Zahlen}\\
+ D &\to 0\ |\ ...\ |\ 9
+\end{align*}
+
+\begin{align*}
+ I &\to IL'\ |\ L \tag{für Bezeichner}\\
+ L &\to \texttt{'a'}\ |\ ...\ |\ \texttt{'b'}\\
+ L' &\to L\ |\ D\ |\ \texttt{'\_'}
+\end{align*}
