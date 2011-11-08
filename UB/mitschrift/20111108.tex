@@ -65,18 +65,33 @@ if (isDigit(peek)) {
 \end{lstlisting}
 
 \paragraph{3. Teilaufgabe:} Erkenne Schlüsselwörter ("`reservieter Wörter"') und Bezeichner
+\begin{center}
+\texttt{\dq\textvisiblespace\textvisiblespace\textvisiblespace  $\underbrace{\texttt{count}}_{\text{Lexem = "`\texttt{count}"'}}$\textvisiblespace\textvisiblespace=\textvisiblespace $\underbrace{\texttt{count}}$\textvisiblespace +\textvisiblespace 94'\textbackslash n'\dq}
+\end{center}
+\paragraph{Idee:} Symboltabelle (Hashtabelle mit Schlüsseln (Wörtern)). Initialisiere mit Schlüsselwörtern!
 \begin{lstlisting}[language=Java,mathescape=True]
-if (isDigit(peek)) {
-    v = 0;
-    do {
-        v = v * 10 + integer value of peek;
-        peek = next input character
-    } while (isDigit(peek));
-    return token <$n$, v>
+Hashtabelle words = new Hashtabelle();  // Symboltabelle initialisierre mit Schlüsselwörtern
+if (isLetter(peek)) {
+    collect letters or digits in Buffer b;
+    s = strung contained in b;
+    w = token returned by words.get(s);
+    if ( w ist not null ) return w;
+    else {
+        enter the key-value-pair (s, <$i$, s>) into words;
+        return token <$i$, s>;
+    }
 }
 \end{lstlisting}
-
-\begin{center}
-\texttt{\dq\textvisiblespace\textvisiblespace\textvisiblespace  $\underbrace{\texttt{count}}_{Lexem = \texttt{"`count"'}}$\textvisiblespace\textvisiblespace $\underbrace{\texttt{count}}$\textvisiblespace +\textvisiblespace 94'\textbackslash n'\dq}
-\end{center}
-
+\begin{lstlisting}
+Token scan() {
+    // 1. Leerzeichen
+        ...
+    // 2. Erkenne Konstanten
+        ...
+    // 3. Erkenne Bezeichner und Schlüsselwörter
+        ...
+    t = new Token(peek);
+    peek = next input character
+    return t;
+}
+\end{lstlisting}
