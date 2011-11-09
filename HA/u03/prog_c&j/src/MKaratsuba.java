@@ -1,8 +1,5 @@
 import java.math.BigInteger;
 
-/**
- * @author Christian Cikryt
- */
 public class MKaratsuba extends Karatsuba {
 
 	public MKaratsuba(int m) {
