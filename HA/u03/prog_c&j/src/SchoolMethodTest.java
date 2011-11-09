@@ -1,8 +1,5 @@
 import org.junit.BeforeClass;
 
-/**
- * @author Christian Cikryt
- */
 public class SchoolMethodTest extends MultiplicationTest {
 	
 	@BeforeClass

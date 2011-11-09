@@ -3,9 +3,6 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 
-/**
- * @author Christian Cikryt
- */
 public abstract class MultiplicationTest {
 
 

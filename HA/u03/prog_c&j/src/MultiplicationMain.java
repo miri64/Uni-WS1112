@@ -1,10 +1,6 @@
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Random;
 
-/**
- * @author Christian Cikryt
- */
 public class MultiplicationMain {
 
 	private static Measurement m = new Measurement(2);

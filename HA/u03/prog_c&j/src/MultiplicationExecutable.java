@@ -1,8 +1,5 @@
 import java.math.BigInteger;
 
-/**
- * @author Christian Cikryt
- */
 public abstract class MultiplicationExecutable implements Executable {
 	protected Multiplication algorithm;
 
