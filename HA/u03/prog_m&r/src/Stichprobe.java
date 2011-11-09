@@ -26,7 +26,7 @@ public class Stichprobe implements Comparable<Stichprobe> {
 	
 	// Mittlere Absolute Abweichung als Streuung
 	public long maa() {
-		if (values.size() == 0) {
+		if (values.isEmpty()) {
 			return 0;
 		}
 		long maa = 0;
