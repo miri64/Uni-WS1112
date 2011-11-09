@@ -78,7 +78,13 @@
 
 \section{Implementierung}
 \begin{enumerate}
-\item   
+\item   In der Schulmethode durchlaufen wir solange eine for-Schleife, bis der rechte Faktor 0 ist.
+        Er wird während der Schleifendurchläufe dabei immer durch 10 geteilt und der Rest dieser Division (also die jeweils letzte Ziffer) jeweils immer mit dem linken Faktor multipliziert. Dieses Teilergebnis wird dann entsprechend der Stelle der Ziffer in der ursprünglichen Zahl mit der korrespondierenden Zehnerpotenz multipliziert und auf dem Endergebnis hinzu addiert.
+        \lstinputlisting[linerange={9-25},gobble=4,firstnumber=9,caption={Schulmethode.java}]{prog_m&r/src/Schulmethode.java}
+        % Beschreibung folgt
+        \lstinputlisting[linerange={6-35},gobble=4,firstnumber=6,caption={Karatsuba.java}]{prog_m&r/src/Karatsuba.java}
+        % Auswertung folgt 100, 300, 1000
+        \[ n = 771 \]
 \item   
 \end{enumerate}
 \end{document}
