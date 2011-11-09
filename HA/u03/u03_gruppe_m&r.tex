@@ -81,10 +81,16 @@
 \item   In der Schulmethode durchlaufen wir solange eine for-Schleife, bis der rechte Faktor 0 ist.
         Er wird während der Schleifendurchläufe dabei immer durch 10 geteilt und der Rest dieser Division (also die jeweils letzte Ziffer) jeweils immer mit dem linken Faktor multipliziert. Dieses Teilergebnis wird dann entsprechend der Stelle der Ziffer in der ursprünglichen Zahl mit der korrespondierenden Zehnerpotenz multipliziert und auf dem Endergebnis hinzu addiert.
         \lstinputlisting[linerange={9-25},gobble=4,firstnumber=9,caption={Schulmethode.java}]{prog_m&r/src/Schulmethode.java}
-        % Beschreibung folgt
+        
+        Bei Karatsuba wird zunächst die Länge der Zahlen in Bits festgestellt. Dazu bestimmen wir das Maximum beider Längen, bei der kürzeren nehmen wir einfach führende Nullen an. Ist die Länge krüzer oder gleich 1 multiplizieren wir die Zahlen mit einander ganz normal\footnote{Es gibt dann nur $0 \cdot 0 = 0, 0 \cdot 1 = 0, 1 \cdot 0 = 0$ und $1 \cdot 1 = 1$. Das ganze entspräche dann also einer logischen Konjunktion auf Bitebene, um den Code aber übersichtlich zu halten benutzen wir dennoch die multiply()-Methode des BigInteger-Typen in Java, obwohl sich das in der Praxis wahrscheinlich durch Zeiteinbußungen bemerkbar macht.}. 
+        Danach bestimmen wir unser neues $n$, indem wir die Länge halbieren, und halbieren unsere Zahlen auf Bitebene entsprechend. Die Hälften werden dann wie durch den Algorithmus vorgegeben (rekursiv mit Karatsuba) multipliziert und die Ergebnisse entsprechend zusammengesetzt und zurückgegeben.
         \lstinputlisting[linerange={6-35},gobble=4,firstnumber=6,caption={Karatsuba.java}]{prog_m&r/src/Karatsuba.java}
-        % Auswertung folgt 100, 300, 1000
-        \[ n = 771 \]
-\item   
+        Für die Auswertung haben wir für jede Zahlenlänge $n$ $r$ Testläufe durchgeführt, um so eine Stichprobe zu sammeln. Der Aufruf unserer ausführbaren JAR-Datei ist dafür entsprechend:
+        \begin{lstlisting}[numbers=none,language=,mathescape=True]
+java -jar u03.jar $r$ max_$n$ 
+        \end{lstlisting}
+        Dabei werden die Tests allerdings nicht bis zu einem maximalen $n$ \lstinline!max_!$n$ ausgeführt, sondern bei Gleichheit der Laufzeiten für Eingabegröße $n$ abgebrochen.
+        Der Vergleich der Laufzeiten geschieht als ganzzahliger Wert in Millisekunden. Von der Stichprobe wird ein Mittelwert und eine Streuung\footnote{Mittlere absolute Abweichung.} berechnet, um den Vergleich statistisch durchführen zu können. Auf \texttt{andorra.imp.fu-berlin.de} haben wir die Tests mehrfach für die Eingabegrößen $r \in \{100, 300, 1000\}$ und \lstinline!max_!$n = 1000$ durchgeführt, was jedesmal zu $n = 771$, als Bitlänge, für die Karatsuba schneller als die Schulmethode ist, führte.
+\item   \textemdash
 \end{enumerate}
 \end{document}
