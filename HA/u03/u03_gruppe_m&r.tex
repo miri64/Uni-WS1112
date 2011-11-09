@@ -59,7 +59,11 @@
 
 \section{Schnelle Matrizenmultiplikation}
 \begin{enumerate}
-\item   
+\item   Konkret werden bei einer Matrizenmultiplikation alle $n^2$ Komponenten einer $n \times n$-Matrix mit $n$ Komponenten
+        der anderen $n \times n$-Matrix multiplizert. Dadurch erhalten wir $n^3 \in \Theta(n^3)$ Multiplikationen.
+
+        Zur endgültigen Berechnung der Komponenten werden dann pro Komponente der Ergebnismatrix $n-1$ Additionen ausgeführt.
+        Insgesamt also $n^2 \cdot (n-1) = n^3 - n^2 \in \Theta(n^3)$.
 \item   
 \item   
 \end{enumerate}
