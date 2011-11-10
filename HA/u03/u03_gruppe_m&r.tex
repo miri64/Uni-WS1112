@@ -127,12 +127,12 @@
          n^{\log_b a} &= n^{\log_{\frac{10}{9}} 1} = n^0 = 1 \\
          f(n) &= \Omega(n^{0+\varepsilon}) \tag{z. B.: für $\varepsilon = \frac{1}{2}$} \\
          a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{9}{10}$} \\
-         &=\frac{9}{10} \cdot n \leq 1 \cdot \frac{9}{10} \cdot f(n)
+        1 \cdot \frac{9}{10} \cdot n & \leq \frac{9}{10} \cdot n
         \end{align*}
         Fall 3: $T(n) = \Theta(n)$
 \item   $T(n) = T(n - a) + T(a) + n \qquad a \geq 1$\\
         Annahme (laut Tutorium): $T(a) = O(1)$\\
-        MT nicht anwendbar
+        MT nicht anwendbar.
         \begin{center}
             \pstree{\Tr{$T(n)$}}{
                 \pstree{\Tr{$T(n-a)$}}{
@@ -151,23 +151,60 @@
         Der Baum hat eine Tiefe von $\frac{n}{a}$. Pro Ebene gibt es eine Konstante Lauzeit un eine lineare Laufzeit. Somit ist die gesamte Laufzeit:
         \[T(n) = O(n^2)\]
 \item   $T(n) = T(\sqrt{n}) + 1$\\
-        MT nicht anwendbar\\
-        Bestimme die Anzalh der Rekursionsschritte $x$, bis $n \leq 2$:
+        MT nicht anwendbar.\\
+        Bestimme die Anzahl der Rekursionsschritte $x$, bis $n \leq 2$.
         \begin{align*}
-         n^{\frac{1}{2^x}} &\leq 2 \tag*{$|\ \log_n$}\\
-         \Leftrightarrow \log_n 2 &\leq \frac{2}{2^x} \tag*{$| \cdot -1 \log_2$} \\
-         \Leftrightarrow \log_2 \left(\frac{1}{\log_n 2}\right) &\leq x \\
-         \Leftrightarrow x &\geq \log_2 1 - \log_2 (\log_n 2) \\
-         \Leftrightarrow x &\geq \log_{\frac{n}{2}} (\log_n 2)
+        n^{\left(\frac{1}{2}\right)^x} & \leq 2 \tag*{$\|\ \log_n$}\\
+        \Leftrightarrow \left(\frac{1}{2}\right)^x &\leq \log_n 2 \tag*{$\|\ \log_\frac{1}{2}$}\\
+        \Leftrightarrow x &\leq \log_\frac{1}{2} \log_n 2 && \Longleftrightarrow & x & \leq \log_\frac{1}{2} \left(\frac{\log_2 2}{\log_2 n}\right)\\
+        \Leftrightarrow x & \leq  \log_\frac{1}{2} 1 - \log_\frac{1}{2} \log_2 n && \Longleftrightarrow & x & \leq \log_2 \log_2 n\\
         \end{align*}
-        Man benötigt also mindestens $\log_{\frac{n}{2}} (\log_n 2)$ viele Schritte. In jedem Schritt hat man eine konstante Laufziet, wodurch die gesamte Laufzeit lautet:
+        Der Baum hat somit eine maximale Tiefe von $\log_2 \log_2 n2$ und in jedem Rekursionsschritt wird nur konstante Zeit benötigt. Daraus folgt für die gesamte Laufzeit:
+       n \[T(n) = O(\log_2 \log_2 n2\]
 \item   $T(n) = 2 \cdot T\left(\frac{1}{4} \cdot n\right) + \sqrt{n}$\\
         MT anwendbar mit $m = 2$, $b = 4$ und $f(n) = n^{\frac{1}{2}}$\\
         \[ n^{\log_n 2} = n^{\frac{1}{2}} = f(n) \]
         Fall 2: $T(n) = \Theta(\sqrt{n} \cdot \log n)$
-\item   
-\item   
-\item   
+\item   $T(n) = 7 T(\frac{1}{3}n) + n^2$\\
+        MT ist anwendbar mit $a = 7, b = 3$ und $f(n) = n^2$
+        \begin{align*}
+        n^{\log_3 7} &= n^{1,77}\\
+        f(n) &= \Omega(n^{\log_3 7 + \varepsilon}) \tag{z.B.: für $\varepsilon = \frac{1}{2}$}\\
+            a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{7}{9}$} \\
+            7 \cdot \frac{n^2}{9} &\leq \frac{7}{9} \cdot n^2
+        \end{align*}
+        Fall 3: $T(n) = \Theta(n^2)$
+\item   $T(n) = 2 \cdot T\left(\frac{1}{2}n\right) + n \log n$\\
+    MT nicht anwendbar.\\
+        \begin{center}
+            \pstree{\Tr{$T(n)$}}{
+                \pstree{\Tr{$T\left(\frac{n}{2}\right)$}}{
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$\frac{n}{2} \log \frac{n}{2}$}
+                }
+                \pstree{\Tr{$T\left(\frac{n}{2}\right)$}}{
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$\frac{n}{2} \log \frac{n}{2}$}
+                }
+                \Tr{$n \log n$}
+            }
+        \end{center}
+    
+    Da $n$ immer halbiert wird, hat der Baum $\log n$ viele Ebenen. In der $i$-ten Ebene gibt es $2^{i} \cdot \frac{n}{2^i} \log \frac{n}{2^i}$  zusätzlichen Zeitaufwand.
+    Für $\log n$ Ebenen erhält man:
+    \begin{align*}
+    \sum_{i = 0}^{\log n} n \log n - n i &= \log n \dot (n \log n) - n \sum_{i = 1}^{\log n}i\\
+    &= n \log^2 n - n \left(\frac{log^2 n + \log n}{2}\right)\\
+    &= \frac{2n \log^2 n}{2} - \frac{n \log^2 n + n \log n}{2}\\
+    &= \frac{n \log^2 n - n \log n}{2}
+    \end{align*}
+    Daraus ergibt sich für die Gesamtlaufzeit:
+    \[T(n) = O(n \log^2 n)\]
+\item   $T(n) = T(n-1) + \frac{1}{n}$\\
+Der Rekursionsbaum dieser Gleichung hat eine Höhe von $n$, da in jedem Rekursionsschritt $n$ nur einfach dekrementiert wird. In jeder Ebene $i$ hat man eine zusätzliche Laufzeit von $O(1) + O\left(\frac{1}{n-1}\right)$. So beträgt die Laufzeit $O(n) + O\left(\sum_{i = 0}^{n-1} \frac{1}{n - i}\right) = O(n + H_n)$. $H_n$ geht gegen $\log n$, wodurch die Gesamtlauzeit folgendermaßen lautet:
+    \[T(n) = O(n)\]
 \end{enumerate}
 
 \section{Implementierung}
@@ -185,6 +222,5 @@ java -jar u03.jar $r$ max_$n$
         \end{lstlisting}
         Dabei werden die Tests allerdings nicht bis zu einem maximalen $n$ \lstinline!max_!$n$ ausgeführt, sondern bei Gleichheit der Laufzeiten für Eingabegröße $n$ abgebrochen.
         Der Vergleich der Laufzeiten geschieht als ganzzahliger Wert in Millisekunden. Von der Stichprobe wird ein Mittelwert und eine Streuung\footnote{Mittlere absolute Abweichung.} berechnet, um den Vergleich statistisch durchführen zu können. Auf \texttt{andorra.imp.fu-berlin.de} haben wir die Tests mehrfach für die Eingabegrößen $r \in \{100, 300, 1000\}$ und \lstinline!max_!$n = 1000$ durchgeführt, was jedesmal zu $n = 771$, als Bitlänge, für die Karatsuba schneller als die Schulmethode ist, führte.
-\item   \textemdash
 \end{enumerate}
 \end{document}
