@@ -1,5 +1,5 @@
-\subsubsection{Problem des engsten Punktpaares}
-Gegeben $n$ Punkte in einer Ebene $P$
+\subsection{Beispiel: Problem des engsten Punktpaares}
+\paragraph*{Gegeben} $n$ Punkte in einer Ebene $P \subseteq \mathbb{R}^2, |P| = n$, alle $x$-Koordinaten sind paarweise verschieden.
 \begin{center}
  \begin{pspicture}(0,0)(3,3)
   \psdot(0,2.1)\psdot(0.4,0.5)\psdot(1,1)\psdot(1.2,1.9)
@@ -7,11 +7,19 @@ Gegeben $n$ Punkte in einer Ebene $P$
   \psdot(2.5,1.1)\psdot(2.6,0.1)\psdot(3,1.6)
  \end{pspicture}
 \end{center}
-Gesucht $p, q \in P$ mit $p \neq q$ und $d(p,q)$ minimal
+\paragraph*{Gesucht} $p, q \in P$ mit $p \neq q$ und $S = d(p,q)$ minimal
 \begin{itemize}
- \item Naiv: probiere alle Punktpaare durch, nimm das Minimum
+ \item Naiv: Probiere aller $\binom{n}{2}$ Punktpaare durch, nimm das Minimum
          \[\Theta(n^2)\ \text{Laufzeit}\]
- \item Schnelle mit Devide \& Conquer:
+        \begin{itemize}
+         \item Problem: Wie $d(p,q) = \sqrt{(p_x - q_x)^2 + (p_y - q_y)^2}$ finden?
+         \item Lösing: Wir müssen $d(p,q)$ nicht ausrechnen, wir müssen nur $d(p,q) \leq d(r,s)$ entscheiden können.
+                \begin{align*}
+                 \sqrt{(p_x - q_x)^2 + (p_y - q_y)^2} &< \sqrt{(r_x - s_x)^2 + (r_y + s_y)^2} \\
+                 \Leftrightarrow (p_x - q_x)^2 + (p_y - q_y)^2 &< (r_x - s_x)^2 + (r_y + s_y)^2
+                \end{align*}
+        \end{itemize}
+ \item Schneller mit Devide \& Conquer:
          \begin{itemize}
           \item  Teile die Punktmenge in zwei Hälften
           \item  Sortiere nach $x$-Koordinate
@@ -22,18 +30,29 @@ Gesucht $p, q \in P$ mit $p \neq q$ und $d(p,q)$ minimal
               \end{align*}
               \[
                   \left.\begin{matrix}
-                   \text{Bestimme engstes Paar in $P_L$} \\
-                   \text{Bestimme engstes Paar in $P_R$}
+                   \text{$S_L \leftarrow$ Bestimme engstes Paar in $P_L$} \\
+                   \text{$S_R \leftarrow$ Bestimme engstes Paar in $P_R$}
                   \end{matrix}
                  \right\}\text{rekursiv}
               \]
-         \end{itemize}
-       \begin{pspicture}(0,0)(3,3)
-       \psdot(0,2.1)\psdot(0.4,0.5)\psdot(1,1)\psdot(1.2,1.9)
-       \psline[linecolor=red](1.6,0)(1.6,3)
-       \psdot(1.6,0.6)\uput{3px}[45](1.6,0.6){$q$}\psdot(2.1,1.5)\psdot(2.4,2)
-       \psdot(2.5,1.1)\psdot(2.6,0.1)\psdot(3,1.6)
-       \end{pspicture}
+              \begin{center}
+                $S \to \min(S_L, S_R)$
+              \end{center}
+              $S$ ist eventuell nicht die Lösung für ganz $p$.
+\begin{center}
+\begin{pspicture}(0,-0.5)(3,3)
+\psframe[linestyle=none,fillstyle=solid,fillcolor=melon](1.2,0)(2.0,3)
+\psdot(0,2.1)\psdot(0.4,0.5)\psdot(1,1)\psdot(1.2,1.9)
+\psline[linecolor=red](1.6,0)(1.6,3)
+\psdot(1.6,0.6)\uput{3px}[45](1.6,0.6){$q$}\psdot(2.1,1.5)\psdot(2.4,2)
+\psdot(2.5,1.1)\psdot(2.6,0.1)\psdot(3,1.6)
+\psline(1.2,-0.1)(2,-0.1)\psline(1.2,-0.2)(1.2,0)\psline(1.6,-0.2)(1.6,0)\psline(2,-0.2)(2,0)
+\uput{3px}[-90](1.4,-0.1){$\delta$}\uput{3px}[-90](1.8,-0.1){$\delta$}
+\end{pspicture}
+\end{center}
+            Es könnte sein, dass das engste Paar zwischen $P_L$ und $P_R$ liegt.
 \end{itemize}
+
+
 
 

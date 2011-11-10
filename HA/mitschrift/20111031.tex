@@ -119,8 +119,8 @@
 
 \subsection{Lösen von Rekursionsgleichungen}
 \begin{itemize}
-\item   Methode 1: Raten \& Induktion
-\item   Methode 2: Wiederholt einsetzen \& Muster erkennen
+\item   Methode 1: Raten \& \textbf{Induktion}
+\item   Methode 2: \textbf{Wiederholt einsetzen} \& Muster erkennen
         \begin{align*}
          T(n)   &\leq 3 T\left(\frac{n}{2}\right) + c \cdot n \\
                 &\leq 3 \cdot \left(3 \cdot T\left(\frac{n}{4}\right) + c \cdot \frac{n}{2}\right) + c \cdot n \\
@@ -136,7 +136,7 @@
         \end{align*}
         \paragraph*{Laufzeit} $\Theta(n^{\log_2 3})$, $\log_2 3 \approx 1{,}5385$
 % 2011104 hier angefangen wegen itemize
-\item   Methode 3: Bild malen \& Muster erkennen (Rekursionsbaummethode)
+\item   Methode 3: Bild malen \& Muster erkennen (\textbf{Rekursionsbaummethode})
         \[T(n) \leq 3 T\left(\frac{n}{2} + O(n)\right)\]
         Male einen Knoten für jeden rekursiven Aufruf
         \begin{center}
@@ -182,7 +182,7 @@
         \begin{itemize}
         \item Addiere alle Kosten $\sum\limits_{k = 0}^{\log n} \left(\frac{3}{2}\right)^k c \cdot n = \Theta(n^{\log_2 3})$
         \end{itemize}
-\item   Methode 4: Allgemeines Rezept: Master Theorem
+\item   Methode 4: Allgemeines Rezept: \textbf{Master Theorem}
         \Satz Sei $a \geq 1, b \geq 1, f{:}\ \mathbb{N} \to \mathbb{N}$. Sei $T(n) = a \cdot T\left(\frac{n}{b}\right) + f(n)$ eine Rekursion ($T(n) = O(1)$ für $n \leq 2$). Dann gilt:
         \begin{enumerate}
          \item Wenn $f(n) = O(n^{(\log_b a) - \varepsilon})$ für $\varepsilon > 0$, dann ist 

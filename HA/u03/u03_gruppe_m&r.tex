@@ -82,7 +82,7 @@
            ce + df & cg + dh 
          \end{pmatrix}
         \]
-        Laut dem Strassenalgorithmus gilt daher:
+        Laut dem \textsc{Strassen}-Algorithmus gilt daher:
         \begin{align}
          ae + bf &= r = P_5 + P_4 - P_2 + P_6  \label{matrix_r} \\
          ag + bh &= s = P_1 + P_2 \label{matrix_s}\\
@@ -160,7 +160,7 @@
         \Leftrightarrow x & \leq  \log_\frac{1}{2} 1 - \log_\frac{1}{2} \log_2 n && \Longleftrightarrow & x & \leq \log_2 \log_2 n\\
         \end{align*}
         Der Baum hat somit eine maximale Tiefe von $\log_2 \log_2 n2$ und in jedem Rekursionsschritt wird nur konstante Zeit benötigt. Daraus folgt für die gesamte Laufzeit:
-       n \[T(n) = O(\log_2 \log_2 n2\]
+       n \[T(n) = O(\log_2 \log_2 n)\]
 \item   $T(n) = 2 \cdot T\left(\frac{1}{4} \cdot n\right) + \sqrt{n}$\\
         MT anwendbar mit $m = 2$, $b = 4$ und $f(n) = n^{\frac{1}{2}}$\\
         \[ n^{\log_n 2} = n^{\frac{1}{2}} = f(n) \]
