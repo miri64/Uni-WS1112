@@ -64,8 +64,57 @@
 
         Zur endgültigen Berechnung der Komponenten werden dann pro Komponente der Ergebnismatrix $n-1$ Additionen ausgeführt.
         Insgesamt also $n^2 \cdot (n-1) = n^3 - n^2 \in \Theta(n^3)$.
-\item   
-\item   
+        \item   Bei der normalen Matrixmultiplikation können wir eine $n \times n$-Matrix als Blockmatrix aus $\frac{n}{2}\times\frac{n}{2}$-Matrizen sehen\footnote{vorausgesetzt $n \in \{2^a\ |\ a \in \mathbb{N}_0\}$}. Die Matrixmultiplikation zweier Blockmatrizen
+        \begin{align*}
+         A &= \begin{pmatrix}
+              a & b \\
+              c & d
+             \end{pmatrix} & 
+         B &= \begin{pmatrix}
+              e & g \\
+              f & h
+              \end{pmatrix}
+        \end{align*}
+        lässt sich dann wie folgt berechnen:
+        \[
+         C = \begin{pmatrix}
+           ae + bf & ag + bh \\
+           ce + df & cg + dh 
+         \end{pmatrix}
+        \]
+        Laut dem Strassenalgorithmus gilt daher:
+        \begin{align}
+         ae + bf &= r = P_5 + P_4 - P_2 + P_6  \label{matrix_r} \\
+         ag + bh &= s = P_1 + P_2 \label{matrix_s}\\
+         ce + df &= t = P_3 + P_4 \label{matrix_t}\\
+         cg + dh &= u = P_5 + P_1 - P_3 - P_7 \label{matrix_u}
+        \end{align}
+        Wir zeigen nun die Gleichheit der einzelnen Formeln
+        \enlargethispage{1.3\baselineskip}
+        \begin{align*}
+         \text{(\ref{matrix_r})} \qquad ae + bf &= \overbrace{(a + d) \cdot (e + h)}^{P_5} + \overbrace{d \cdot (f - e)}^{P_4} - \overbrace{(a + b) \cdot h}^{P_2} + \overbrace{(b - d) \cdot (f + h)}^{P_6}\\
+                    &= \overbrace{ae + \psframebox{ah} + \psframebox[linestyle=dotted]{de} + \psframebox[linestyle=dashed]{dh}}^{P_5} + \overbrace{\psframebox[linecolor=gray]{df} - \psframebox[linestyle=dotted]{de}}^{P_4} - \overbrace{\psframebox{ah} - \psframebox[linecolor=gray,linestyle=dashed]{bh}}^{P_2} + \overbrace{bf + \psframebox[linecolor=gray,linestyle=dashed]{bh} - \psframebox[linecolor=gray]{df} - \psframebox[linestyle=dashed]{dh}}^{P_6}\\
+                    &= ae + bf \quad \checkmark \\
+         \text{(\ref{matrix_s})} \qquad ag + bh &= \overbrace{a \cdot (g - h)}^{P_1} + \overbrace{(a + b) \cdot h}^{P_2} \\
+                    &= \overbrace{ag - \psframebox{ah}}^{P_1} + \overbrace{\psframebox{ah} + bh}^{P_2} \\
+                    &= ag + bh \quad \checkmark \\
+         \text{(\ref{matrix_t})} \qquad ce + df &= \overbrace{(c + d) \cdot e}^{P_3} + \overbrace{d \cdot (f - e)}^{P_4} \\
+                    &= \overbrace{ce + \psframebox{de}}^{P_3} + \overbrace{df - \psframebox{de}}^{P_4} \\
+                    &= ce + df \quad \checkmark \\
+         \text{(\ref{matrix_u})} \qquad cg + dh &= \overbrace{(a + d) \cdot (e + h)}^{P_5} + \overbrace{a \cdot (g - h)}^{P_1} - \overbrace{(c + d) \cdot e}^{P_3} - \overbrace{(a - c) \cdot (e + g)}^{P_7} \\
+                    &= \overbrace{\psframebox{ae} + \psframebox[linestyle=dotted]{ah} + \psframebox[linecolor=gray]{de} + dh}^{P_5} + \overbrace{\psframebox[linestyle=dashed]{ag} - \psframebox[linestyle=dotted]{ah}}^{P_1} - \overbrace{\psframebox[linecolor=gray,linestyle=dashed]{ce} - \psframebox[linecolor=gray]{de}}^{P_3} - \overbrace{\psframebox{ae} - \psframebox[linestyle=dashed]{ag} + \psframebox[linecolor=gray,linestyle=dashed]{ce} + cg}^{P_7}\qquad\circlearrowleft
+        \end{align*}
+        \begin{align*}
+                    &= cg + dh \quad \checkmark \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad
+        \end{align*}\hfill $\square$
+\item   Wir müssen immer noch jedes Element der Matrix berechnen. Das heißt unsere Rekursionsformel erhält einen Konstanten Summanden $\in \Theta(n^2)$. Die sieben Multiplikationen pro Teilmatrix setzen sich nach unten fort.
+        \[
+         T(n) = 7 \cdot T\left(\frac{n}{2}\right) + \Theta(n^2)
+        \]
+        Diese Rekursionsformel wird durch Fall 1 des Mastertheorems abgedeckt, mit 
+        \[a = 7,\quad b = 2,\quad \varepsilon = \log_2 7 - 2 \approx 0{,}807.\]
+        Damit gilt
+        \[T(n) = \Theta\left(n^{\log_2 7}\right) = O\left(n^{2{,}81}\right).\]
 \end{enumerate}
 
 
