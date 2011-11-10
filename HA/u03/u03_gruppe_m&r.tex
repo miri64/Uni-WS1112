@@ -150,8 +150,21 @@
         \end{center}
         Der Baum hat eine Tiefe von $\frac{n}{a}$. Pro Ebene gibt es eine Konstante Lauzeit un eine lineare Laufzeit. Somit ist die gesamte Laufzeit:
         \[T(n) = O(n^2)\]
-\item   
-\item   
+\item   $T(n) = T(\sqrt{n}) + 1$\\
+        MT nicht anwendbar\\
+        Bestimme die Anzalh der Rekursionsschritte $x$, bis $n \leq 2$:
+        \begin{align*}
+         n^{\frac{1}{2^x}} &\leq 2 \tag*{$|\ \log_n$}\\
+         \Leftrightarrow \log_n 2 &\leq \frac{2}{2^x} \tag*{$| \cdot -1 \log_2$} \\
+         \Leftrightarrow \log_2 \left(\frac{1}{\log_n 2}\right) &\leq x \\
+         \Leftrightarrow x &\geq \log_2 1 - \log_2 (\log_n 2) \\
+         \Leftrightarrow x &\geq \log_{\frac{n}{2}} (\log_n 2)
+        \end{align*}
+        Man benötigt also mindestens $\log_{\frac{n}{2}} (\log_n 2)$ viele Schritte. In jedem Schritt hat man eine konstante Laufziet, wodurch die gesamte Laufzeit lautet:
+\item   $T(n) = 2 \cdot T\left(\frac{1}{4} \cdot n\right) + \sqrt{n}$\\
+        MT anwendbar mit $m = 2$, $b = 4$ und $f(n) = n^{\frac{1}{2}}$\\
+        \[ n^{\log_n 2} = n^{\frac{1}{2}} = f(n) \]
+        Fall 2: $T(n) = \Theta(\sqrt{n} \cdot \log n)$
 \item   
 \item   
 \item   
