@@ -1,0 +1,39 @@
+\subsubsection{Problem des engsten Punktpaares}
+Gegeben $n$ Punkte in einer Ebene $P$
+\begin{center}
+ \begin{pspicture}(0,0)(3,3)
+  \psdot(0,2.1)\psdot(0.4,0.5)\psdot(1,1)\psdot(1.2,1.9)
+  \psdot(1.6,0.6)\psdot(2.1,1.5)\psdot(2.4,2)
+  \psdot(2.5,1.1)\psdot(2.6,0.1)\psdot(3,1.6)
+ \end{pspicture}
+\end{center}
+Gesucht $p, q \in P$ mit $p \neq q$ und $d(p,q)$ minimal
+\begin{itemize}
+ \item Naiv: probiere alle Punktpaare durch, nimm das Minimum
+         \[\Theta(n^2)\ \text{Laufzeit}\]
+ \item Schnelle mit Devide \& Conquer:
+         \begin{itemize}
+          \item  Teile die Punktmenge in zwei Hälften
+          \item  Sortiere nach $x$-Koordinate
+          \item  Nimm den Punkt $q$ mit den $\left\lceil\frac{n}{2}\right\rceil$ größten $x$-Koordinaten. Annahme: alle $x$-Koordinaten verschieden
+              \begin{align*}
+               P_L &= \{p \in P\ |\ \text{$p$ links von $q$}\} \cup \{q\}\\
+               P_R &= \{p \in P\ |\ \text{$p$ rechts von $q$}\}
+              \end{align*}
+              \[
+                  \left.\begin{matrix}
+                   \text{Bestimme engstes Paar in $P_L$} \\
+                   \text{Bestimme engstes Paar in $P_R$}
+                  \end{matrix}
+                 \right\}\text{rekursiv}
+              \]
+         \end{itemize}
+       \begin{pspicture}(0,0)(3,3)
+       \psdot(0,2.1)\psdot(0.4,0.5)\psdot(1,1)\psdot(1.2,1.9)
+       \psline[linecolor=red](1.6,0)(1.6,3)
+       \psdot(1.6,0.6)\uput{3px}[45](1.6,0.6){$q$}\psdot(2.1,1.5)\psdot(2.4,2)
+       \psdot(2.5,1.1)\psdot(2.6,0.1)\psdot(3,1.6)
+       \end{pspicture}
+\end{itemize}
+
+
