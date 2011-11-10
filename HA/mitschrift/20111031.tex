@@ -96,7 +96,7 @@
         \item[Lösung:]  $T(n) = \Theta(n^2)$
         \item[Problem:] Führen $\underline{4}$ rekursive Multiplikationen durch. Dadurch wird nichts gewonnen.
         \end{description}
-        \paragraph*{Genialer Einfall:}
+        \paragraph*{Genialer Einfall:} (Algorithmus von Karatsuba)
         Betrachte $(a_h + a_l) \cdot (b_h + b_l) = \psframebox[linecolor=red]{a_h \cdot b_h} + \psframebox[linecolor=blue]{a_h \cdot b_l + b_h \cdot a_l} + \psframebox[linecolor=green]{a_l \cdot b_l}$
         \begin{itemize}
         \item   Berechne nach: $\psframebox[linecolor=red]{a_h \cdot b_h}$ und $\psframebox[linecolor=green]{a_l \cdot b_l}$
@@ -110,6 +110,11 @@
                     \end{cases}
         \end{align*}
         Was kommt heraus?
+    \paragraph*{Bemerkungen}
+    \begin{itemize}
+     \item aktueller Champion der Multiplikationsalgorithmen: M. Fürer (2007/09) $O(n \log n 2^{\log_* n})$
+     \item Vermutung: $\Theta(n \log n)$ ist optimal
+    \end{itemize}
 \end{itemize}
 
 \subsection{Lösen von Rekursionsgleichungen}
@@ -130,6 +135,148 @@
                 &= 3 cn \cdot n^{\log_2 \frac{3}{2}} = 3 c \cdot n^{\log_2 3}
         \end{align*}
         \paragraph*{Laufzeit} $\Theta(n^{\log_2 3})$, $\log_2 3 \approx 1{,}5385$
+% 2011104 hier angefangen wegen itemize
+\item   Methode 3: Bild malen \& Muster erkennen (Rekursionsbaummethode)
+        \[T(n) \leq 3 T\left(\frac{n}{2} + O(n)\right)\]
+        Male einen Knoten für jeden rekursiven Aufruf
+        \begin{center}
+        \begin{minipage}{0.3\textwidth}
+        \psset{levelsep=0.6cm,treesep=0.3cm}
+        \pstree{\Tr*{$T(n)$}}{
+            \pstree{\Tr*{$T\left(\frac{n}{2}\right)$}}{
+                \pstree{\Tr*{$T\left(\frac{n}{4}\right)$}}{
+                    \pstree{\Tr*{$T\left(\frac{n}{8}\right)$}}{
+                        \pstree{\Tr*{$\vdots$}}{
+                            \Tr{$T(1)$}
+                        }
+                    }
+                    \Tr{$\vdots$}\Tr{$\vdots$}
+                }
+                \Tr{$\vdots$}
+                \Tr{$\vdots$}
+            }
+            \pstree{\Tr*{$T\left(\frac{n}{2}\right)$}}{
+                \Tr{$\vdots$}
+                \Tr{$\vdots$}
+                \Tr{$\vdots$}
+            }
+            \pstree{\Tr*{$T\left(\frac{n}{2}\right)$}}{
+                \Tr{$\vdots$}
+                \Tr{$\vdots$}
+                \Tr{$\vdots$}
+            }
+        }
+        \end{minipage}
+        \vline
+        \begin{minipage}{0.3\textwidth}
+            \centering
+            $c \cdot n$ \\[0.3cm]
+            $3 \cdot c \cdot \frac{n}{2}$ \\[0.3cm]
+            $9 \cdot c \cdot \frac{n}{4}$ \\[0.3cm]
+            $27 \cdot c \cdot \frac{n}{8}$ \\[0.3cm]
+            \hspace{0cm} \\[0.3cm]
+            $3^k \cdot c \cdot \frac{n}{2^k}$
+        \end{minipage}
+        \end{center}
+        Es gibt $O(\log_2 n)$ Ebenen $\leq \log n$ Ebenen
+        \begin{itemize}
+        \item Addiere alle Kosten $\sum\limits_{k = 0}^{\log n} \left(\frac{3}{2}\right)^k c \cdot n = \Theta(n^{\log_2 3})$
+        \end{itemize}
+\item   Methode 4: Allgemeines Rezept: Master Theorem
+        \Satz Sei $a \geq 1, b \geq 1, f{:}\ \mathbb{N} \to \mathbb{N}$. Sei $T(n) = a \cdot T\left(\frac{n}{b}\right) + f(n)$ eine Rekursion ($T(n) = O(1)$ für $n \leq 2$). Dann gilt:
+        \begin{enumerate}
+         \item Wenn $f(n) = O(n^{(\log_b a) - \varepsilon})$ für $\varepsilon > 0$, dann ist 
+                \[T(n) = \Theta(n^{\log_b a})\]
+         \item Wenn $f(n) = \Theta(n^{\log_b a})$ ist, dann ist
+                \[T(n) = \Theta\left(n^{\log_b a} \log n\right)\]
+         \item Wenn $f(n) = \Omega(n^{(\log_b a) + \varepsilon})$ für $\varepsilon > 0$ und $\exists c < 1{:}\ a f\left(\frac{n}{b}\right) < c f\left(n\right)$, dann ist
+                \[T(n) = \Theta\left(f(n)\right)\]
+        \end{enumerate}
+        \Bsp    \begin{itemize}
+        \item   $T(n) \leq 3 T\left(\frac{n}{2}\right) + O(n)$\\
+                MT anwendbar mit $a = 3, b = 2, f(n) = c \cdot n$
+                \begin{align*}
+                 f(n)   &= O(n^{\log_b a - \varepsilon}) \\
+                        &= O(n^{\log_2 3} - n^{1{,}5...}), \varepsilon \approx 0{,}5
+                \end{align*}
+                Fall 1: $T(n) = \Theta(n^{\log_2 3})$
+        \item   $T(n) = 4 T\left(\frac{n}{2}\right) + O(n)$ \\
+                MT mit $a = 4, b = 2, f(n) = c \cdot n$
+                \begin{align*}
+                 f(n) &= O(n^{2 - \varepsilon}) \text{ für $\varepsilon \approx 0{,}5$}
+                \end{align*}
+                Fall 1: $T(n) = \Theta(n^2)$
+        \item   $T(n) = 2 T\left(\frac{n}{2}\right) + O(n)$ \\
+                MT anwendbar mit $a = 2, b = 2, f(n) = c \cdot n$
+                \begin{align*}
+                 n^{\log_b a} &= n\\
+                 f(n) &= \Theta(n^{\log_b a})
+                \end{align*}
+                Fall 2: $T(n) = \Theta(n \log n)$
+        \item   $T(n) = T\left(\frac{n}{2}\right) + O(1)$ \\
+                MT anwendbar mit $a = 1, b = 2, f(n) = c$
+                \begin{align*}
+                 n^{\log_b a} &= n^0 = 1\\
+                 f(n) &= \Theta(n^{\log_b a})
+                \end{align*}
+                Fall 2: $T(n) = \Theta(\log n)$
+        \item   $T(n) = T\left(\frac{3}{4}n\right) + O(n)$\\
+                MT anwendbar mit $a = 1, b = \frac{4}{3}, f(n) = d \cdot n$\\
+                \begin{align*}
+                 n^{\log_b a} &= n^0 = 1 \\
+                 f(n) &= \Omega(n^{0+\varepsilon}), \text{z. N. für $\varepsilon = \dfrac{1}{2}$} \\
+                 a \cdot f\left(\frac{n}{b}\right) &\leq 1 \cdot \frac{3}{4} \cdot dn
+                    &= \frac{3}{4} d n \leq \frac{3}{4} f(n)
+                \end{align*}
+                Fall 3: $T(n) = \Theta(n)$
+        \end{itemize}
+        \Bew
+            \begin{center}
+             \begin{minipage}{0.4\textwidth}
+            \centering
+        \psset{levelsep=0.6cm,treesep=0.3cm}
+        \pstree{\Tr*{$T(n)$}}{
+            \pstree{\Tr*{$T\left(\frac{n}{b}\right)$}}{
+                \pstree{\Tr*{$T\left(\frac{n}{b^2}\right)$}}{
+                    \pstree{\Tr*{$T\left(\frac{n}{b^3}\right)$}}{
+                        \pstree{\Tr*{$\vdots$}}{
+                            \Tr{$T(1)$}
+                        }
+                    }
+                    \Tr{$\vdots$}\Tr{$\vdots$}
+                }
+                \Tr{$\hdots$}
+                \Tr{$\vdots$}
+            }
+            \pstree{\Tr*{$T\left(\frac{n}{b}\right)$}}{
+                \Tr{$\vdots$}
+                \Tr{$\hdots$}
+                \Tr{$\vdots$}
+            }
+            \pstree{\Tr*{$T\left(\frac{n}{b}\right)$}}{
+                \Tr{$\vdots$}
+                \Tr{$\hdots$}
+                \Tr{$\vdots$}
+            }
+        }
+        (jeweils $a$ Kinder)
+        \end{minipage}
+        \vline
+        \begin{minipage}{0.3\textwidth}
+            \centering
+            $f(n)$ \\[0.3cm]
+            $a \cdot f\left(\frac{n}{b}\right)$ \\[0.3cm]
+            $a^2 \cdot f\left(\frac{n}{b^2}\right)$ \\[0.3cm]
+            $a^3 \cdot f\left(\frac{n}{b^3}\right)$ \\[0.3cm]
+            \hspace{0cm} \\[0.3cm]
+            $a^k \cdot f\left(\frac{n}{b^k}\right)$ \\[0.3cm]
+        \end{minipage}
+        \end{center}
+        $\leq \log_b n$ Ebenen, Gesamtkosten: $\sum\limits_{k = 0}^{\log_b n} a^k f\left(\frac{n}{b^k}\right)$\\
+        \begin{itemize}
+        \item   $T(n) = 2 T \left(\frac{n}{2}\right) + \Theta(n \log n)$\\
+                MT nicht anwendbar
+        \item   $T(n) = 2 T \left(\frac{n}{3}\right) + T \left(\frac{2}{3} n\right) + \Theta(n)$\\
+                MT nicht anwendbar (passt nicht ins Schema)
+        \end{itemize}
 \end{itemize}
-
-
