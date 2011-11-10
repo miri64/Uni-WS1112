@@ -63,35 +63,54 @@
 \item	Da bei der Multiplikation zweier $n \times n$~-Matrizen jedes
 	Element der ersten mit $n$ Elementen der zweiten Matrix
 	multipliziert werden muss, werden insgesamt $n^2 \cdot n = n^3$
-	Multiplikationen sowie $n \cdot n \cdot n-1 = (n-1)n^2$
+	Multiplikationen sowie $n \cdot n \cdot n-1 = (n-1)n^2 = O(n^3)$
 	Additionen durchgeführt.
 
 \item
+  TBD
+
+\item
+  Es werden 7 Mulitplikationen gebraucht. Jede dieser rekursiven Multiplikationen wird auf Eingaben der Größe $n/2$ durchgeführt. In jedem Schritt müssen die Elemente der Matrix berechnet werdne, was Kosten $\Theta(n^2)$ hat. Es ergibt sich folgende Rekursionsformel:
+\[T(n) = 7 * T(n/2) + \Theta(n^2)\]
+Das Mastertheorem kann mit $a=7$ und $b=2$ zur Lösung angewendet werden. $\epsilon$ ist in dem Fall $\log_2 7 - 2$, was ungefähr $0,807$ ist.
+Es handelt sich um den 1. FAll des MT:
+\[ T(n) = \Theta (n^{\log_2 7}) = \Theta(n^{2,8})\]
 \end{enumerate}
 
 \section{Rekursionsgleichungen}
 \begin{enumerate}
 \item	\begin{align}
 	T(n) = T(9n/10)+n \\
-	a = 1, b = 10, f(n) = n \\
+	a = 1, b = \frac{10}{9}, f(n) = n \\
 	\log _b a = log _{10} 1 = 0 \\
 	\Rightarrow f(n) = n = \Theta(n^{\log _b a}) \\
-	\Rightarrow T(n) = \Theta(\log n) \tag{Fall 2 des Master-Theorems}
+	\Rightarrow T(n) = \Theta(n^0 * \log n) = \Theta(\log n) \tag{Fall 2 des Master-Theorems}
 	\end{align}
 \item	\begin{align}
 	T(n) = T(n-a) + T(a) + n, a \geq 1 \\
 	\end{align}
 	MT nicht anwendbar.
+	$T(a)$ sei konstant. Dann gilt:
+	\begin{align}
+	 T(n) = T(n-a) + T(a) + n = \\
+	 = T(n - 2*a) + 0(1) + n - a = \\
+	 = T(n - 3*a) + O(1) + n - 2*a + n - a \\
+	\end{align}
+	Daran sieht man, dass in jedem Schritt O(n) Aufwand dazu kommt. Es gibt insgesamt $\frac{n}{a} = O(n)$ Schritte.
+	Somit gilt insgesamt.
+	\[ T(n) = O(n^2) \]
 \item	\begin{align}
 	T(n) = T(\sqrt{n}) + 1 \\
 	\end{align}
+	Das Mastertheorem ist nicht anwendbar. In jedem Schritt hat konstanten Aufwand.Es gibt $\sqrt(n)$-Schritte. Somit gilt
+  \[ T(n) = O(\sqrt(n)\]
 \item	\begin{align}
 	T(n) = 2T(n/4) + \sqrt{n} \\
 	a = 2, b = 4, f(n) = \sqrt{n} \\
 	\log _b a = \log _4 2 = \frac{1}{2} \\
 	\Rightarrow \exists \varepsilon > 0, f(n) = \sqrt{n} = O(n^{\log
 	_b a+\varepsilon}), \exists c < 1, 2f(n/4) \leq cf(n) \\
-	\Rightarrow T(n) = \Theta(f(n)) \tag{Fall 3 des Master-Theorems}
+	\Rightarrow T(n) = \Theta(f(n)) = \Theta(\sqrt{n})\tag{Fall 3 des Master-Theorems}
 	\end{align}
 \item	\begin{align}
 	T(n) = 7T(n/3) + n^2 \\
@@ -108,16 +127,39 @@
 	MT nicht anwendbar, da $\nexists \varepsilon > 0, f(n) = n \log
 	n = \Omega(n^{\log _b a+\varepsilon}), \nexists \varepsilon > 0,
 	f(n) = n \log n = O(n^{\log _b a-\varepsilon}), f(n) \neq
-	\Theta(n^{\log _b a})$
+	\Theta(n^{\log _b a}).$
+
+
+	Ein gedachter Baum hätte $\log n$ Höhe, da $n$ in jedem Schritt halbiert wird und da in jedem Schritt $2 * n * \log n$ Aufwand verursacht wird, gilt insgesamt:
+\[ T(n) = O(n^2 * \log n)\]
 \item	\begin{align}
 	T(n) = T(n-1) + \frac{1}{n} \\
 	a = 1, b = 1, f(n) = \frac{1}{n} \\
 	\log _b a = \log _1 1 = 1 \\
-	\Rightarrow f(n) = \frac{1}{n} = \Theta(n^{\log _b a}) \\
-	\Rightarrow T(n) = \Theta(n \log n) \tag{Fall 2 des Master-Theorems}
+	\Rightarrow f(n) = \frac{1}{n} = O(n^{\log _b a}) \\
+	\Rightarrow T(n) = \Theta(n^1) \tag{Fall 1 des Master-Theorems}
 	\end{align}
 \end{enumerate}
 
 \section{Implementierung}
+\begin{enumerate}
+\item  
 
+        \lstinputlisting[linerange={5-19},gobble=4,firstnumber=9,caption={SchoolMethod.java}]{prog_c&j/src/SchoolMethod.java}
+      
+        \lstinputlisting[linerange={10-36},gobble=4,firstnumber=6,caption={Karatsuba.java}]{prog_c&j/src/Karatsuba.java}
+
+Der Vergleich der Laufzeit geschieht voll automatisch ausgewertet in der main-Methode.
+Dabei kam raus dass die Karatsuba erst ab einer Größe von ca. $2^{600}$ (es gab leichte Schwankungen) effizienter ist.
+
+ \lstinputlisting[linerange={8-26},gobble=4,firstnumber=6,caption={MultiplicationMain.java}]{prog_c&j/src/MultiplicationMain.java}
+
+\item
+       \lstinputlisting[linerange={9-14},gobble=4,firstnumber=6,caption={MKaratsuba.java}]{prog_c&j/src/MKaratsuba.java}
+  Das Finden das optimalen M geschah auch automatisch. Der Range wurde manuell leicht angepasst (da gesehen wurde, dass er sehr klein ist wurde die Abstände zwischen den Testzahlen nach oben hin immer größer).
+\lstinputlisting[linerange={28-38},gobble=4,firstnumber=6,caption={MultiplicationMain.java}]{prog_c&j/src/MultiplicationMain.java}
+Es wurde somit $M = 16$ als optimal ermittelt.
+Der vollständigen Quellcode findet sich in der E-Mail.
+
+\end{enumerate}
 \end{document}

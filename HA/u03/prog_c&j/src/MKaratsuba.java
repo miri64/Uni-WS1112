@@ -9,7 +9,7 @@ public class MKaratsuba extends Karatsuba {
 	private Multiplication helper = new SchoolMethod();
 
 	@Override
-	public BigInteger multiply(BigInteger a, BigInteger b) {
+	public BigInteger trivialMultiply(BigInteger a, BigInteger b) {
 		return helper.multiply(a, b);
 	}
 }
