@@ -132,7 +132,7 @@
         Fall 3: $T(n) = \Theta(n)$
 \item   $T(n) = T(n - a) + T(a) + n \qquad a \geq 1$\\
         Annahme (laut Tutorium): $T(a) = O(1)$\\
-        MT nicht anwendbar
+        MT nicht anwendbar.
         \begin{center}
             \pstree{\Tr{$T(n)$}}{
                 \pstree{\Tr{$T(n-a)$}}{
@@ -151,16 +151,16 @@
         Der Baum hat eine Tiefe von $\frac{n}{a}$. Pro Ebene gibt es eine Konstante Lauzeit un eine lineare Laufzeit. Somit ist die gesamte Laufzeit:
         \[T(n) = O(n^2)\]
 \item   $T(n) = T(\sqrt{n}) + 1$\\
-        MT nicht anwendbar\\
-        Bestimme die Anzahl der Rekursionsschritte $x$, bis $n \leq 2$:
+        MT nicht anwendbar.\\
+        Bestimme die Anzahl der Rekursionsschritte $x$, bis $n \leq 2$.
         \begin{align*}
-         n^{\frac{1}{2^x}} &\leq 2 \tag*{$|\ \log_n$}\\
-         \Leftrightarrow \log_n 2 &\leq \frac{2}{2^x} \tag*{$| \cdot -1 \log_2$} \\
-         \Leftrightarrow \log_2 \left(\frac{1}{\log_n 2}\right) &\leq x \\
-         \Leftrightarrow x &\geq \log_2 1 - \log_2 (\log_n 2) \\
-         \Leftrightarrow x &\geq \log_{\frac{n}{2}} (\log_n 2)
+        n^{\left(\frac{1}{2}\right)^x} & \leq 2 \tag*{$\|\ \log_n$}\\
+        \Leftrightarrow \left(\frac{1}{2}\right)^x &\leq \log_n 2 \tag*{$\|\ \log_\frac{1}{2}$}\\
+        \Leftrightarrow x &\leq \log_\frac{1}{2} \log_n 2 && \Longleftrightarrow & x & \leq \log_\frac{1}{2} \left(\frac{\log_2 2}{\log_2 n}\right)\\
+        \Leftrightarrow x & \leq  \log_\frac{1}{2} 1 - \log_\frac{1}{2} \log_2 n && \Longleftrightarrow & x & \leq \log_2 \log_2 n\\
         \end{align*}
-        Man benötigt also mindestens $\log_{\frac{n}{2}} (\log_n 2)$ viele Schritte. In jedem Schritt hat man eine konstante Laufziet, wodurch die gesamte Laufzeit lautet:
+        Der Baum hat somit eine maximale Tiefe von $\log_2 \log_2 n2$ und in jedem Rekursionsschritt wird nur konstante Zeit benötigt. Daraus folgt für die gesamte Laufzeit:
+       n \[T(n) = O(\log_2 \log_2 n2\]
 \item   $T(n) = 2 \cdot T\left(\frac{1}{4} \cdot n\right) + \sqrt{n}$\\
         MT anwendbar mit $m = 2$, $b = 4$ und $f(n) = n^{\frac{1}{2}}$\\
         \[ n^{\log_n 2} = n^{\frac{1}{2}} = f(n) \]
