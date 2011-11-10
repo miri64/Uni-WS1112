@@ -120,8 +120,36 @@
 
 \section{Rekursionsgleichungen}
 \begin{enumerate}
-\item   
-\item   
+\def\dedge{\ncline[linestyle=dashed]}
+\item   $T(n) = T\left(\frac{9}{10}n\right) + n$\\
+        MT ist anwendbar mit $a = 1, b = \frac{10}{9}$ und $f(n) = n$:
+        \begin{align*}
+         n^{\log_b a} &= n^{\log_{\frac{10}{9}} 1} = n^0 = 1 \\
+         f(n) &= \Omega(n^{0+\varepsilon}) \tag{z. B.: für $\varepsilon = \frac{1}{2}$} \\
+         a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{9}{10}$} \\
+         &=\frac{9}{10} \cdot n \leq 1 \cdot \frac{9}{10} \cdot f(n)
+        \end{align*}
+        Fall 3: $T(n) = \Theta(n)$
+\item   $T(n) = T(n - a) + T(a) + n \qquad a \geq 1$\\
+        Annahme (laut Tutorium): $T(a) = O(1)$\\
+        MT nicht anwendbar
+        \begin{center}
+            \pstree{\Tr{$T(n)$}}{
+                \pstree{\Tr{$T(n-a)$}}{
+                    \pstree{\Tr{$T(n-2a)$}}{
+                        \Tr[edge=\dedge]{$T\left(n-\frac{n}{a} \cdot a\right) = \Theta(1)$}
+                        \Tr[edge=\dedge]{$O(1)$}
+                        \Tr[edge=\dedge]{$n-\frac{n}{a}\cdot a = 0$}
+                    }
+                    \Tr{$O(1)$}
+                    \Tr{$n - a$}
+                }
+                \Tr{$O(1)$}
+                \Tr{$n$}
+            }
+        \end{center}
+        Der Baum hat eine Tiefe von $\frac{n}{a}$. Pro Ebene gibt es eine Konstante Lauzeit un eine lineare Laufzeit. Somit ist die gesamte Laufzeit:
+        \[T(n) = O(n^2)\]
 \item   
 \item   
 \item   
