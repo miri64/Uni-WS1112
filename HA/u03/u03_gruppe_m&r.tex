@@ -127,7 +127,7 @@
          n^{\log_b a} &= n^{\log_{\frac{10}{9}} 1} = n^0 = 1 \\
          f(n) &= \Omega(n^{0+\varepsilon}) \tag{z. B.: für $\varepsilon = \frac{1}{2}$} \\
          a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{9}{10}$} \\
-         &=\frac{9}{10} \cdot n \leq 1 \cdot \frac{9}{10} \cdot f(n)
+        1 \cdot \frac{9}{10} \cdot n & \leq \frac{9}{10} \cdot n
         \end{align*}
         Fall 3: $T(n) = \Theta(n)$
 \item   $T(n) = T(n - a) + T(a) + n \qquad a \geq 1$\\
