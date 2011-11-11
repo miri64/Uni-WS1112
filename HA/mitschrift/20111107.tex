@@ -33,34 +33,36 @@ Optimale Laufzeit:
 \end{description}
 
 \section{Dynamisches Programmieren}
-\Bsp Einkaufsproblem
+\Bsp Einkaufsproblem / Rucksackproblem
 \begin{itemize}
- \item Haben $1{,}60$ EUR
+ \item Haben $B = 1{,}60$ EUR
         \begin{center}
-            \begin{tabular}{l|c}
-                & Präferenz \\
-                1 Apfel 40 ct. & 3 \\
-                2 WM-Brötchen 60 ct. & 9 \\
-                3 Buttermilch 1 EUR & 5 \\
-                4 Gummibärchen 80 ct. & 10 \\
-                5 Bifi 60 ct. & 6 \\ 
+            \begin{tabular}{lr|c}
+                & Preis $p_i$ & Präferenz $w_i$ \\
+                1 Apfel & 40 ct. & 3 \\
+                2 WM-Brötchen & 60 ct. & 4 \\
+                3 Buttermilch & 1 EUR & 6 \\
+                4 Gummibärchen & 80 ct. & 9 \\
+                5 Bifi & 60 ct. & 10 \\ 
             \end{tabular}
         \end{center}
- \item \textbf{Problem:} Finde eine Teilmenge von Einkäufen, mit Gesamtpreis $\leq 1{,}60$ EUR, die die Summe aller Präferenzen maximiert
+ \item \textbf{Problem:} Finde eine Teilmenge $X$ von Einkäufen, mit Gesamtpreis $\leq 1{,}60$ EUR, die die Summe aller Präferenzen maximiert
  \item \textbf{Idee:} Rekursiver Ansatz. \\
     $\Rightarrow$ Schränke Problem ein auf Teilprobleme. Finde eine Rekursionsgleichung, die die Teilprobleme in Beziehung setzt.
  \item \textbf{Hier:}
    \begin{center}
     \begin{tabular}{rp{0.7\linewidth}}
-     $E[n,p] =$ & Maximale Präferenz des Einkaufs, bei dem nur Lebensmittel $1,...,n$ zur Verfügung stehen \& bei dem wir $p$ ct. haben
+     $E[m,b] =$ & Maximale Präferenz des Einkaufs, bei dem nur Lebensmittel $1,...,m$ zur Verfügung stehen \& bei dem wir $b$ ct. haben
     \end{tabular}
    \end{center}
-    Wollen: $E[5,160]$ ausrechnen\\
+    Wollen: $E[n,B]$ mit $n = 5, B = 160$ ausrechnen\\
     $\Rightarrow$ Finde Rekursion fpr $E[n,p]$
     \begin{align*}
-     E[0,p] &= 0 \tag*{f. n. P.}\\
-     E[n,0] &= 0 \tag*{f. a. n.}\\
-     E[n,p] &= \max(E[n-1,p], w_n + E[n-1, p-p_1])
+     E[0,b] &= 0 \qquad \forall b \in \mathbb{N} \\
+     E[m,0] &= 0 \qquad \forall m \in \mathbb{N} \\
+     E[m,b] &= \begin{cases}
+                \max(E[m-1,b], w_m + E[m-1, b-p_m]), & \text{wenn } b \geq p_m \\
+                E[m-1,b], & \text{sonst}
+               \end{cases}
     \end{align*}
-
 \end{itemize}

@@ -1,0 +1,69 @@
+\begin{itemize}
+ \item Implementiere Rekursion.\\
+         Direkte Implementierung ist schlecht, da exponentiell viele Aufrufe vorkommen.
+     \begin{itemize}
+     \item   Besser: Merke Werte in einer Tabelle
+     \item   Noch besser: Fülle Tabelle von unten nach oben aus.
+     \end{itemize}
+     \psset{arrows=->}
+     \[
+      \begin{array}{r||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
+        & 0 & \hdots & 40 & \hdots & 60 & \hdots & 80 & \hdots & 100 & \hdots & 120 & \hdots & 140 & \hdots & 160 \\\hline\hline
+       0 & \rnode{0_000}{0} & \rnode{0_020}{\hdots} & \rnode{0_040}{0} & \hdots & \rnode{0_060}{0} & \hdots & \rnode{0_080}{0} & \hdots & \rnode{0_100}{0} & \hdots & \rnode{0_120}{0} & \hdots & \rnode{0_140}{0} & \hdots & \rnode{0_160}{0} \\\hline
+       1 & \rnode{1_000}{0} & \hdots & \rnode{1_040}{3} & \hdots & \rnode{1_060}{3} & \hdots & \rnode{1_080}{3} & \hdots & \rnode{1_100}{3} & \hdots & \rnode{1_120}{3} & \hdots & \rnode{1_140}{3} & \hdots & \rnode{1_160}{3}\\\hline
+       2 & \rnode{2_000}{0} & \hdots & \rnode{2_040}{3} & \hdots & \rnode{2_060}{4} & \hdots & \rnode{2_080}{4} & \hdots & \rnode{2_100}{7} & \hdots & \rnode{2_120}{7} & \hdots & \rnode{1_140}{7} & \hdots & \rnode{1_160}{7}\\\hline
+       3 & \rnode{3_000}{0} & \hdots & \rnode{3_040}{3} & \hdots & \rnode{3_060}{4} & \hdots & \rnode{3_080}{4} & \hdots & \rnode{3_100}{7} & \hdots & \rnode{3_120}{7} & \hdots & \rnode{3_140}{9} & \hdots & \rnode{3_160}{10}\\\hline
+       4 & \rnode{4_000}{0} & \hdots & \rnode{4_040}{3} & \hdots & \rnode{4_060}{9} & \hdots & \rnode{4_080}{9} & \hdots & \rnode{4_100}{12} & \hdots & \rnode{4_120}{13} & \hdots & \rnode{4_140}{13} & \hdots & \rnode{4_160}{16}\\\hline
+       5 & \rnode{5_000}{0} & \hdots & \rnode{5_040}{3} & \hdots & \rnode{5_060}{9} & \hdots & \rnode{5_080}{10} & \hdots & \rnode{5_100}{12} & \hdots & \rnode{5_120}{13} & \hdots & \rnode{5_140}{19} & \hdots & \circlenode{5_160}{\underline{\underline{19}}}
+      \end{array}
+     \]\ncline{1_040}{0_020}\ncline{2_040}{1_040}
+     Optimaler Wert: 19
+     \begin{description}
+      \item[Algorithmus:]
+       \begin{center}
+        \begin{algorithmic}
+            \FOR{$m \in \{0, \hdots, n\}$}
+                \STATE $E[m,0] \gets 0$
+            \ENDFOR
+            \FOR{$b \in \{0, \hdots, B\}$}
+                \STATE $E[0,b] \gets 0$
+            \ENDFOR
+            \FOR{$m \in \{1, \hdots, n\}$}
+                \FOR{$b \in \{1, \hdots, B\}$}
+                    \IF{$p[m] > b$}
+                        \STATE $E[m,b] \gets E[m-1,b]$
+                    \ELSE
+                        \STATE $E[m,b] \gets \max\{E[m-1,b], w[m] + E[m-1,b-p[m]]\}$
+                    \ENDIF
+                \ENDFOR
+            \ENDFOR
+            \RETURN $E[n, B]$
+        \end{algorithmic}
+       \end{center}
+      \item[Laufzeit:] $O(nB)$ (Pseudopolynomielle Laufzeit)
+      \item[Speicher:] $O(nB)$
+     \end{description}
+\item Bestimme den optimalen Einkauf:
+    \renewcommand{\labelenumi}{(\theenumi)}
+    \renewcommand{\theenumi}{\alph{enumi}}
+    \begin{enumerate}
+     \item Nimm 2. Tabelle $\operatorname{Kaufen}[m, b] \begin{cases}
+                                                         \textbf{true}, & \text{wenn wir $m$ kaufen für $E[m,b]$} \\
+                                                         \textbf{false}, & \text{sonst}
+                                                        \end{cases}$\\
+        Verfolge die Rekursion Rückwerts von $E[n,B]$ ausgehend. Benutze den Eintrag in $\operatorname{Kaufen}$ als Wegweiser.
+     \item Rekonstruiere $\operatorname{Kaufen}$ anhand von $E$, inem wir die Rekursion nach den Werten nachvollziehen
+     \item speichere kompletten Einkauf in jeden Eintrag $B[m,b]$\\
+             $\Rightarrow$ müglicherweise mehr Speicher.
+    \end{enumerate}
+\end{itemize}
+\subsection{Zusammenfassung}
+\begin{itemize}
+ \item Optimierungsproblem
+ \item Finde zunächst nur den \emph{Wert} einer optimalen Lösung
+ \item Schränke geeignet auf Teilprobleme ein
+ \item Finde Rekursion für die Teilprobleme
+ \item Implementiere die Rekursion (in der Regel Tabelle)
+ \item Rekonstruiere optimale Lösung
+\end{itemize}
+
