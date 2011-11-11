@@ -1,0 +1,68 @@
+\begin{description}
+ \item[Beobachtung 1:] Wenn es ein engeres Paar $p,q$ mit $p \in P_L, q \in P_R$ gibt, so liegt es im $2 \delta$-Streifen um die Mittellinie
+ \item[Beobachtung 2:] Wenn es ein engeres Paar gibt, so liegt es in einem $2\delta \times \delta$-Rechteck $R$ zentriert um die Mittellinie
+ \item[Volumenargument:] Alle Punkte in $P_L$ haben Mindestabstand $\delta$, alle Punkte in $P_R$ haben Mindestabstand $\delta$.
+\end{description}
+ \item Wie viele Punkte aus $P_L$ können in dem Rechteck $R$ liegen?
+ \item Müssen im Quadrat $R_L$, $R_L$ hat Fläche $\delta\delta = \delta^2$\\
+        $\Rightarrow$ jedem Punkt gehören $\frac{1}{4} \cdot \left(\frac{\delta}{2}\right)^2 \cdot \pi \leq \frac{3}{16} \delta^2$
+ \item D. h.: $R_L$ kann höchstens $\left\lfloor\frac{16}{3}\right\rfloor = 5$ Punkte aus $P_L$ enthalten. Ebenso in $R_R$.
+    \begin{itemize}
+    \item   Sortiere Punkte nac $y$-Koordinate. Gehe alle Punkte im $2\delta$-Streifen von unten nach oben durch.
+    \item   Für jeden Punkt im $2\delta$-Streifen berechne Abstände zu den 9 Nachfolgern
+    \item   Nimm das Minimum
+    \item   Vergleiche mit $\delta$ und nimm das globale Minimum.
+    \end{itemize}
+         \end{itemize}
+
+\paragraph{Laufzeitanalyse:}
+\[T(n) = 2 \cdot T \left(\frac{n}{2}\right) + \overbrace{O(n \log n)}^{\text{sortieren + Mittelstreifen + Teilen}}\]
+Optimierungsidee:
+\begin{itemize}
+ \item Wir müssen nicht jedes Mal sortieren\\
+        $\Rightarrow$ einmal nach $x$-Koordinate sortieren genügt
+ \item Ebenso für die $y$-Koordinate: Sortiere einmal auch $y$-Koordinate
+ \item Beim Splitten können wir die Sortierung von $P_L$ und $P_R$ nach $y$-Koordinate in $O(n)$ Zeit erhalten durch umgekehrte Menge.
+\end{itemize}
+Optimale Laufzeit:
+\begin{description}
+ \item $O(n \log n)$ Vorverarbeitungszeit
+ \item $T(n) = 2 \cdot T\left(\frac{n}{2}\right) + O(n)$ für die Rekursion
+ \item $\rightarrow T(n) = O(n \log n)$
+ \item $\Rightarrow$ Gesamtlaufzeit $O(n \log n)$ 
+\end{description}
+
+\section{Dynamisches Programmieren}
+\Bsp Einkaufsproblem / Rucksackproblem
+\begin{itemize}
+ \item Haben $B = 1{,}60$ EUR
+        \begin{center}
+            \begin{tabular}{lr|c}
+                & Preis $p_i$ & Präferenz $w_i$ \\
+                1 Apfel & 40 ct. & 3 \\
+                2 WM-Brötchen & 60 ct. & 4 \\
+                3 Buttermilch & 1 EUR & 6 \\
+                4 Gummibärchen & 80 ct. & 9 \\
+                5 Bifi & 60 ct. & 10 \\ 
+            \end{tabular}
+        \end{center}
+ \item \textbf{Problem:} Finde eine Teilmenge $X$ von Einkäufen, mit Gesamtpreis $\leq 1{,}60$ EUR, die die Summe aller Präferenzen maximiert
+ \item \textbf{Idee:} Rekursiver Ansatz. \\
+    $\Rightarrow$ Schränke Problem ein auf Teilprobleme. Finde eine Rekursionsgleichung, die die Teilprobleme in Beziehung setzt.
+ \item \textbf{Hier:}
+   \begin{center}
+    \begin{tabular}{rp{0.7\linewidth}}
+     $E[m,b] =$ & Maximale Präferenz des Einkaufs, bei dem nur Lebensmittel $1,...,m$ zur Verfügung stehen \& bei dem wir $b$ ct. haben
+    \end{tabular}
+   \end{center}
+    Wollen: $E[n,B]$ mit $n = 5, B = 160$ ausrechnen\\
+    $\Rightarrow$ Finde Rekursion fpr $E[n,p]$
+    \begin{align*}
+     E[0,b] &= 0 \qquad \forall b \in \mathbb{N} \\
+     E[m,0] &= 0 \qquad \forall m \in \mathbb{N} \\
+     E[m,b] &= \begin{cases}
+                \max(E[m-1,b], w_m + E[m-1, b-p_m]), & \text{wenn } b \geq p_m \\
+                E[m-1,b], & \text{sonst}
+               \end{cases}
+    \end{align*}
+\end{itemize}

@@ -1,6 +1,3 @@
-/**
- * @author Christian Cikryt
- */
 public class Measurement {
 	private int numberOfRuns;
 

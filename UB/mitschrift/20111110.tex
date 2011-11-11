@@ -1,0 +1,139 @@
+\begin{enumerate}
+ \item \emph{Syboltabellen}
+ \item Semantische Analyse (kursorisch) -- Statische Überprüfungen \emph{nicht} kontextfreier Eigenschaften
+ \item Zwischencode-Erzeugung (kursorisch)
+\end{enumerate}
+
+\begin{enumerate}
+ \item Lexikalische Analyse liefert Token bestehend aus Tokenname und optionalen Attributen (Lexem, Index in Syboltabellen, $<$Konstante, Wert$>$, $<=>$, $<$IF$>$, ...)
+           \begin{description}
+            \item[Problem]  Gültigkeitsbereiche $\rnode{x_dek}{\{\textbf{int } x}; \rnode{y_dek}{\textbf{bool } y}; ... x ... \rnode{y}{y} \{\rnode{y2_dek}{\textbf{float } y}; ... \rnode{x}{x} ... \rnode{y2}{y} ...\} ... \{y ...\}\}$\\[0.2em]
+ \ncangle[angleA=-90,angleB=-90,arm=0.5]{->}{x_dek}{x}
+  \ncangle[angleA=-90,angleB=-90,arm=0.3]{->}{y_dek}{y}
+  \ncangle[angleA=-90,angleB=-90,arm=0.3]{->}{y2_dek}{y2}
+            \item[Idee] Strukturierte Symboltabelle
+            \item[Erkenntnis] Lexikalische Analyse ist überfordert!
+            \item[Ergebnis] Lexer liefert flache Struktur, d. h. eine Tabelle, die Gültigkeitsbereiche \emph{nicht} berücksichtigt.
+           \end{description}
+           Zusatzaufgabe des Parsers: Erstelle \emph{eigene} Symboltabelle für jeden Block, jedde Klasse, jede Methode, die in der lokalen Deklaration vorkommen. Organisation als Baumstruktur
+           \begin{center}
+            \pstree{\Tr*{
+                \begin{minipage}{2cm}\centering
+                 \begin{tabular}{|rl|}
+                  \hline
+                  $x$: & \textbf{int}\\\hline
+                  $y$: & \textbf{bool}\\\hline
+                 \end{tabular}
+                \end{minipage}
+            }}{
+                \pstree{\Tr*{
+                \begin{minipage}{2cm}\centering
+                 \begin{tabular}{|rl|}
+                  \hline
+                  $y$: & \textbf{float}\\\hline
+                 \end{tabular}
+                \end{minipage}
+                }}{
+                    \Tr*{\begin{minipage}{2cm}\centering
+                 \begin{tabular}{|c|}
+                  \hline
+                  ...\\\hline
+                 \end{tabular}
+                \end{minipage}}
+                }
+                 \Tr*{\begin{minipage}{2cm}\centering
+                 \begin{tabular}{|c|}
+                  \hline
+                  ...\\\hline
+                 \end{tabular}
+                \end{minipage}}
+            }
+           \end{center}
+\item  Statisch Überprüfung
+    \begin{itemize}
+     \item Typüberprüfungen, -herleitung, -konversion
+     \item Überprüfung ob jede Variable deklariertt wurde
+    \end{itemize}
+    \emph{Methode:} Syntaxgerichtete Definition
+\item  Zwischencodeerzeugung
+    \begin{itemize}
+     \item Bisher: Postfix-Notation, Befehle der abstrakten Stack-Maschine
+     \item Typische Formen des Zwischencodes:
+         \begin{enumerate}
+          \item abstrakte Syntaxbäume
+          \item Drei-Adress-Code (lineare Struktur, Befehlsfolge)
+          Operatorbaum für 2 - (9+5)
+          \begin{center}\psset{levelsep=1cm}
+\pstree{\Tr{$-$}\nput{20}{\pssucc}{\color{blue}$t_1 = 2 - t_0$}}{
+   \Tr{2}\nput{20}{\pssucc}{\color{blue}$2$}
+   \pstree{\Tr{+}\nput{20}{\pssucc}{\color{blue}$t_0 = 9 + 5$}}{
+   \Tr{9}\nput{20}{\pssucc}{\color{blue}$9$}\Tr{5}\nput{20}{\pssucc}{\color{blue}$5$}
+}
+}
+          \end{center}
+         \end{enumerate}
+    \lstinline[language=Java]!while(E) S!
+    \begin{center}
+     \pstree{\Tr{\textbf{while}}}{
+     \Ttri{E}\nput{160}{\pssucc}{\color{blue}Code für $E$ in $t$}
+     \Ttri{S}\nput{20}{\pssucc}{\color{blue}Code von $S$}
+    }
+    \begin{minipage}{0.3\textwidth}
+     \color{blue}
+     \begin{tabular}{|c|l|c|}
+      \hline
+      \multicolumn{3}{|c|}{}\\\cline{2-2}
+      M & Code für E & \\ \cline{2-2}
+       & ifFalse t goto L& \\ \cline{2-2}
+       & Code von S & \\ \cline{2-2}
+       & goto M  &\\ \cline{2-2}
+       \multicolumn{3}{|l|}{L}\\\hline
+     \end{tabular}
+    \end{minipage}
+    \end{center}
+    \end{itemize}
+\item Optimierung\\
+    \begin{tabular}{lcl}
+     \lstset{language=Java}
+     Beispiel: & \lstinline[language=Java]!if (peek = '\n') line = line + 1! & Quellprogramm \\
+         & $\Downarrow$ & \\\cline{2-2}
+         & \multicolumn{1}{|c|}{lexikalische Analyse} & \\\cline{2-2}
+         & $\Downarrow$ & \\
+         & $<\textbf{if}><(><\textbf{id},\lstinline!"peek"!><=><\textbf{char}, \lstinline!'\n'!><)>$ & \\
+         & $<\textbf{id},\lstinline!"line"!><=><\textbf{id}, \lstinline!"line"!><+><\textbf{int},1><;>$ & \\
+         & \rnode{start}{$\Downarrow$}
+    \end{tabular}
+    \vspace{10mm}
+    \begin{center}
+     \begin{tabular}{cc}
+\begin{minipage}{0.4\textwidth}
+\psset{levelsep=1cm}
+\pstree{\Tr[name=var1]{\textbf{if}}}{
+    \pstree{\Tr{\textbf{eq}}}{
+        \Tr{peek}
+        \pstree{\Tr{(\textbf{int})}}{
+            \Tr{\lstinline!'\n'!}
+        }
+    }
+    \pstree{\Tr{\textbf{assign}}}{
+        \Tr{line}
+        \pstree{\Tr{+}}{
+            \Tr{line}
+            \Tr{1}
+        }
+    }
+}
+\end{minipage}    &
+     \rnode{var2}{
+         \begin{minipage}{0.4\textwidth}
+         \texttt{1. t1 = (int)'\textbackslash n'}\\
+         \texttt{2. ifFalse (peek == t1) goto 4}\\
+         \texttt{3. line = line + 1}\\
+         \texttt{4. ...}
+         \end{minipage}
+     }
+     \end{tabular}
+     \ncline{->}{start}{var1}\nbput{Variante 1}
+     \ncline{->}{start}{var2}\naput{Variante 2 unter Optimierung}
+    \end{center}
+\end{enumerate}

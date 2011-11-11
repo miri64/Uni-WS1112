@@ -1,8 +1,5 @@
 import java.math.BigInteger;
 
-/**
- * @author Christian Cikryt
- */
 public class SchoolMethod implements Multiplication{
 
 	public BigInteger multiply(BigInteger a, BigInteger b) {

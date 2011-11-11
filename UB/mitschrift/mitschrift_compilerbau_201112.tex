@@ -8,7 +8,6 @@
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amsthm, amssymb}
-\usepackage{textcomp}
 
 % Zeichensatz
 \usepackage[colorlinks,%
@@ -45,7 +44,7 @@
 \lstset{
 	tabsize=8,
 	frame=,
-	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
 	emphstyle=\textit,
 	numberstyle=\tiny\textsf,
 	numbersep=5pt,
@@ -58,7 +57,7 @@
 	extendedchars=true,
 	xleftmargin=1em,
 	inputencoding=utf8,
-	mathescape=true;
+	mathescape=true,
 }
 
 \psset{%
@@ -80,7 +79,7 @@
 \fancyhead[RO]{\footnotesize\sffamily\rightmark} 
 
 % Eigene Befehle
-\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+\newcommand{\changefont}[3]{\fontfamily{#1}\fontseries{#2}\fontshape{#3}\selectfont}
 \newcommand{\Defi}{\paragraph*{Definition}}
 \newcommand{\Lemma}{\paragraph*{Lemma}}
 \newcommand{\Satz}{\paragraph*{Satz}}
@@ -100,11 +99,12 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\input{20111018}
-\input{20111020}
-\input{20111025}
-\input{20111027}
-\input{20111101}
-\input{20111103}
-\input{20111108}
+% \input{20111018}
+% \input{20111020}
+% \input{20111025}
+% \input{20111027}
+% \input{20111101}
+% \input{20111103}
+% \input{20111108}
+\input{20111110}
 \end{document}

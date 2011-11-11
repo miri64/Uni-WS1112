@@ -1,0 +1,226 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Martin Lenders (Mi. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
+\title{H\"ohere Algorithmik - 3. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+    escapeinside={((*}{*))},
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Schnelle Matrizenmultiplikation}
+\begin{enumerate}
+\item   Konkret werden bei einer Matrizenmultiplikation alle $n^2$ Komponenten einer $n \times n$-Matrix mit $n$ Komponenten
+        der anderen $n \times n$-Matrix multiplizert. Dadurch erhalten wir $n^3 \in \Theta(n^3)$ Multiplikationen.
+
+        Zur endgültigen Berechnung der Komponenten werden dann pro Komponente der Ergebnismatrix $n-1$ Additionen ausgeführt.
+        Insgesamt also $n^2 \cdot (n-1) = n^3 - n^2 \in \Theta(n^3)$.
+        \item   Bei der normalen Matrixmultiplikation können wir eine $n \times n$-Matrix als Blockmatrix aus $\frac{n}{2}\times\frac{n}{2}$-Matrizen sehen\footnote{vorausgesetzt $n \in \{2^a\ |\ a \in \mathbb{N}_0\}$}. Die Matrixmultiplikation zweier Blockmatrizen
+        \begin{align*}
+         A &= \begin{pmatrix}
+              a & b \\
+              c & d
+             \end{pmatrix} & 
+         B &= \begin{pmatrix}
+              e & g \\
+              f & h
+              \end{pmatrix}
+        \end{align*}
+        lässt sich dann wie folgt berechnen:
+        \[
+         C = \begin{pmatrix}
+           ae + bf & ag + bh \\
+           ce + df & cg + dh 
+         \end{pmatrix}
+        \]
+        Laut dem \textsc{Strassen}-Algorithmus gilt daher:
+        \begin{align}
+         ae + bf &= r = P_5 + P_4 - P_2 + P_6  \label{matrix_r} \\
+         ag + bh &= s = P_1 + P_2 \label{matrix_s}\\
+         ce + df &= t = P_3 + P_4 \label{matrix_t}\\
+         cg + dh &= u = P_5 + P_1 - P_3 - P_7 \label{matrix_u}
+        \end{align}
+        Wir zeigen nun die Gleichheit der einzelnen Formeln
+        \enlargethispage{1.3\baselineskip}
+        \begin{align*}
+         \text{(\ref{matrix_r})} \qquad ae + bf &= \overbrace{(a + d) \cdot (e + h)}^{P_5} + \overbrace{d \cdot (f - e)}^{P_4} - \overbrace{(a + b) \cdot h}^{P_2} + \overbrace{(b - d) \cdot (f + h)}^{P_6}\\
+                    &= \overbrace{ae + \psframebox{ah} + \psframebox[linestyle=dotted]{de} + \psframebox[linestyle=dashed]{dh}}^{P_5} + \overbrace{\psframebox[linecolor=gray]{df} - \psframebox[linestyle=dotted]{de}}^{P_4} - \overbrace{\psframebox{ah} - \psframebox[linecolor=gray,linestyle=dashed]{bh}}^{P_2} + \overbrace{bf + \psframebox[linecolor=gray,linestyle=dashed]{bh} - \psframebox[linecolor=gray]{df} - \psframebox[linestyle=dashed]{dh}}^{P_6}\\
+                    &= ae + bf \quad \checkmark \\
+         \text{(\ref{matrix_s})} \qquad ag + bh &= \overbrace{a \cdot (g - h)}^{P_1} + \overbrace{(a + b) \cdot h}^{P_2} \\
+                    &= \overbrace{ag - \psframebox{ah}}^{P_1} + \overbrace{\psframebox{ah} + bh}^{P_2} \\
+                    &= ag + bh \quad \checkmark \\
+         \text{(\ref{matrix_t})} \qquad ce + df &= \overbrace{(c + d) \cdot e}^{P_3} + \overbrace{d \cdot (f - e)}^{P_4} \\
+                    &= \overbrace{ce + \psframebox{de}}^{P_3} + \overbrace{df - \psframebox{de}}^{P_4} \\
+                    &= ce + df \quad \checkmark \\
+         \text{(\ref{matrix_u})} \qquad cg + dh &= \overbrace{(a + d) \cdot (e + h)}^{P_5} + \overbrace{a \cdot (g - h)}^{P_1} - \overbrace{(c + d) \cdot e}^{P_3} - \overbrace{(a - c) \cdot (e + g)}^{P_7} \\
+                    &= \overbrace{\psframebox{ae} + \psframebox[linestyle=dotted]{ah} + \psframebox[linecolor=gray]{de} + dh}^{P_5} + \overbrace{\psframebox[linestyle=dashed]{ag} - \psframebox[linestyle=dotted]{ah}}^{P_1} - \overbrace{\psframebox[linecolor=gray,linestyle=dashed]{ce} - \psframebox[linecolor=gray]{de}}^{P_3} - \overbrace{\psframebox{ae} - \psframebox[linestyle=dashed]{ag} + \psframebox[linecolor=gray,linestyle=dashed]{ce} + cg}^{P_7}\qquad\circlearrowleft
+        \end{align*}
+        \begin{align*}
+                    &= cg + dh \quad \checkmark \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad
+        \end{align*}\hfill $\square$
+\item   Wir müssen immer noch jedes Element der Matrix berechnen. Das heißt unsere Rekursionsformel erhält einen Konstanten Summanden $\in \Theta(n^2)$. Die sieben Multiplikationen pro Teilmatrix setzen sich nach unten fort.
+        \[
+         T(n) = 7 \cdot T\left(\frac{n}{2}\right) + \Theta(n^2)
+        \]
+        Diese Rekursionsformel wird durch Fall 1 des Mastertheorems abgedeckt, mit 
+        \[a = 7,\quad b = 2,\quad \varepsilon = \log_2 7 - 2 \approx 0{,}807.\]
+        Damit gilt
+        \[T(n) = \Theta\left(n^{\log_2 7}\right) = O\left(n^{2{,}81}\right).\]
+\end{enumerate}
+
+
+\section{Rekursionsgleichungen}
+\begin{enumerate}
+\def\dedge{\ncline[linestyle=dashed]}
+\item   $T(n) = T\left(\frac{9}{10}n\right) + n$\\
+        MT ist anwendbar mit $a = 1, b = \frac{10}{9}$ und $f(n) = n$:
+        \begin{align*}
+         n^{\log_b a} &= n^{\log_{\frac{10}{9}} 1} = n^0 = 1 \\
+         f(n) &= \Omega(n^{0+\varepsilon}) \tag{z. B.: für $\varepsilon = \frac{1}{2}$} \\
+         a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{9}{10}$} \\
+        1 \cdot \frac{9}{10} \cdot n & \leq \frac{9}{10} \cdot n
+        \end{align*}
+        Fall 3: $T(n) = \Theta(n)$
+\item   $T(n) = T(n - a) + T(a) + n \qquad a \geq 1$\\
+        Annahme (laut Tutorium): $T(a) = O(1)$\\
+        MT nicht anwendbar.
+        \begin{center}
+            \pstree{\Tr{$T(n)$}}{
+                \pstree{\Tr{$T(n-a)$}}{
+                    \pstree{\Tr{$T(n-2a)$}}{
+                        \Tr[edge=\dedge]{$T\left(n-\frac{n}{a} \cdot a\right) = \Theta(1)$}
+                        \Tr[edge=\dedge]{$O(1)$}
+                        \Tr[edge=\dedge]{$n-\frac{n}{a}\cdot a = 0$}
+                    }
+                    \Tr{$O(1)$}
+                    \Tr{$n - a$}
+                }
+                \Tr{$O(1)$}
+                \Tr{$n$}
+            }
+        \end{center}
+        Der Baum hat eine Tiefe von $\frac{n}{a}$. Pro Ebene gibt es eine Konstante Lauzeit un eine lineare Laufzeit. Somit ist die gesamte Laufzeit:
+        \[T(n) = O(n^2)\]
+\item   $T(n) = T(\sqrt{n}) + 1$\\
+        MT nicht anwendbar.\\
+        Bestimme die Anzahl der Rekursionsschritte $x$, bis $n \leq 2$.
+        \begin{align*}
+        n^{\left(\frac{1}{2}\right)^x} & \leq 2 \tag*{$\|\ \log_n$}\\
+        \Leftrightarrow \left(\frac{1}{2}\right)^x &\leq \log_n 2 \tag*{$\|\ \log_\frac{1}{2}$}\\
+        \Leftrightarrow x &\leq \log_\frac{1}{2} \log_n 2 && \Longleftrightarrow & x & \leq \log_\frac{1}{2} \left(\frac{\log_2 2}{\log_2 n}\right)\\
+        \Leftrightarrow x & \leq  \log_\frac{1}{2} 1 - \log_\frac{1}{2} \log_2 n && \Longleftrightarrow & x & \leq \log_2 \log_2 n\\
+        \end{align*}
+        Der Baum hat somit eine maximale Tiefe von $\log_2 \log_2 n2$ und in jedem Rekursionsschritt wird nur konstante Zeit benötigt. Daraus folgt für die gesamte Laufzeit:
+       n \[T(n) = O(\log_2 \log_2 n)\]
+\item   $T(n) = 2 \cdot T\left(\frac{1}{4} \cdot n\right) + \sqrt{n}$\\
+        MT anwendbar mit $m = 2$, $b = 4$ und $f(n) = n^{\frac{1}{2}}$\\
+        \[ n^{\log_n 2} = n^{\frac{1}{2}} = f(n) \]
+        Fall 2: $T(n) = \Theta(\sqrt{n} \cdot \log n)$
+\item   $T(n) = 7 T(\frac{1}{3}n) + n^2$\\
+        MT ist anwendbar mit $a = 7, b = 3$ und $f(n) = n^2$
+        \begin{align*}
+        n^{\log_3 7} &= n^{1,77}\\
+        f(n) &= \Omega(n^{\log_3 7 + \varepsilon}) \tag{z.B.: für $\varepsilon = \frac{1}{2}$}\\
+            a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{7}{9}$} \\
+            7 \cdot \frac{n^2}{9} &\leq \frac{7}{9} \cdot n^2
+        \end{align*}
+        Fall 3: $T(n) = \Theta(n^2)$
+\item   $T(n) = 2 \cdot T\left(\frac{1}{2}n\right) + n \log n$\\
+    MT nicht anwendbar.\\
+        \begin{center}
+            \pstree{\Tr{$T(n)$}}{
+                \pstree{\Tr{$T\left(\frac{n}{2}\right)$}}{
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$\frac{n}{2} \log \frac{n}{2}$}
+                }
+                \pstree{\Tr{$T\left(\frac{n}{2}\right)$}}{
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$T\left(\frac{n}{4}\right)$}
+                    \Tr{$\frac{n}{2} \log \frac{n}{2}$}
+                }
+                \Tr{$n \log n$}
+            }
+        \end{center}
+    
+    Da $n$ immer halbiert wird, hat der Baum $\log n$ viele Ebenen. In der $i$-ten Ebene gibt es $2^{i} \cdot \frac{n}{2^i} \log \frac{n}{2^i}$  zusätzlichen Zeitaufwand.
+    Für $\log n$ Ebenen erhält man:
+    \begin{align*}
+    \sum_{i = 0}^{\log n} n \log n - n i &= \log n \dot (n \log n) - n \sum_{i = 1}^{\log n}i\\
+    &= n \log^2 n - n \left(\frac{log^2 n + \log n}{2}\right)\\
+    &= \frac{2n \log^2 n}{2} - \frac{n \log^2 n + n \log n}{2}\\
+    &= \frac{n \log^2 n - n \log n}{2}
+    \end{align*}
+    Daraus ergibt sich für die Gesamtlaufzeit:
+    \[T(n) = O(n \log^2 n)\]
+\item   $T(n) = T(n-1) + \frac{1}{n}$\\
+Der Rekursionsbaum dieser Gleichung hat eine Höhe von $n$, da in jedem Rekursionsschritt $n$ nur einfach dekrementiert wird. In jeder Ebene $i$ hat man eine zusätzliche Laufzeit von $O(1) + O\left(\frac{1}{n-1}\right)$. So beträgt die Laufzeit $O(n) + O\left(\sum_{i = 0}^{n-1} \frac{1}{n - i}\right) = O(n + H_n)$. $H_n$ geht gegen $\log n$, wodurch die Gesamtlauzeit folgendermaßen lautet:
+    \[T(n) = O(n)\]
+\end{enumerate}
+
+\section{Implementierung}
+\begin{enumerate}
+\item   In der Schulmethode durchlaufen wir solange eine for-Schleife, bis der rechte Faktor 0 ist.
+        Er wird während der Schleifendurchläufe dabei immer durch 10 geteilt und der Rest dieser Division (also die jeweils letzte Ziffer) jeweils immer mit dem linken Faktor multipliziert. Dieses Teilergebnis wird dann entsprechend der Stelle der Ziffer in der ursprünglichen Zahl mit der korrespondierenden Zehnerpotenz multipliziert und auf dem Endergebnis hinzu addiert.
+        \lstinputlisting[linerange={9-25},gobble=4,firstnumber=9,caption={Schulmethode.java}]{prog_m&r/src/Schulmethode.java}
+        
+        Bei Karatsuba wird zunächst die Länge der Zahlen in Bits festgestellt. Dazu bestimmen wir das Maximum beider Längen, bei der kürzeren nehmen wir einfach führende Nullen an. Ist die Länge krüzer oder gleich 1 multiplizieren wir die Zahlen mit einander ganz normal\footnote{Es gibt dann nur $0 \cdot 0 = 0, 0 \cdot 1 = 0, 1 \cdot 0 = 0$ und $1 \cdot 1 = 1$. Das ganze entspräche dann also einer logischen Konjunktion auf Bitebene, um den Code aber übersichtlich zu halten benutzen wir dennoch die multiply()-Methode des BigInteger-Typen in Java, obwohl sich das in der Praxis wahrscheinlich durch Zeiteinbußungen bemerkbar macht.}. 
+        Danach bestimmen wir unser neues $n$, indem wir die Länge halbieren, und halbieren unsere Zahlen auf Bitebene entsprechend. Die Hälften werden dann wie durch den Algorithmus vorgegeben (rekursiv mit Karatsuba) multipliziert und die Ergebnisse entsprechend zusammengesetzt und zurückgegeben.
+        \lstinputlisting[linerange={6-35},gobble=4,firstnumber=6,caption={Karatsuba.java}]{prog_m&r/src/Karatsuba.java}
+        Für die Auswertung haben wir für jede Zahlenlänge $n$ $r$ Testläufe durchgeführt, um so eine Stichprobe zu sammeln. Der Aufruf unserer ausführbaren JAR-Datei ist dafür entsprechend:
+        \begin{lstlisting}[numbers=none,language=,mathescape=True]
+java -jar u03.jar $r$ max_$n$ 
+        \end{lstlisting}
+        Dabei werden die Tests allerdings nicht bis zu einem maximalen $n$ \lstinline!max_!$n$ ausgeführt, sondern bei Gleichheit der Laufzeiten für Eingabegröße $n$ abgebrochen.
+        Der Vergleich der Laufzeiten geschieht als ganzzahliger Wert in Millisekunden. Von der Stichprobe wird ein Mittelwert und eine Streuung\footnote{Mittlere absolute Abweichung.} berechnet, um den Vergleich statistisch durchführen zu können. Auf \texttt{andorra.imp.fu-berlin.de} haben wir die Tests mehrfach für die Eingabegrößen $r \in \{100, 300, 1000\}$ und \lstinline!max_!$n = 1000$ durchgeführt, was jedesmal zu $n = 771$, als Bitlänge, für die Karatsuba schneller als die Schulmethode ist, führte.
+\end{enumerate}
+\end{document}

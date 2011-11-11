@@ -1,13 +1,16 @@
 import java.math.BigInteger;
 
-/**
- * @author Christian Cikryt
- */
 public class Karatsuba implements Multiplication {
+	protected int m;
+
+	public Karatsuba() {
+		this.m = 1;
+	}
+
 	public BigInteger multiply(BigInteger a, BigInteger b) {
 		int maxLength = Math.max(a.bitLength(), b.bitLength());
-		if (maxLength <= 1)
-			return a.multiply(b);
+		if (maxLength <= m)
+			return trivialMultiply(a, b);
 		int half = maxLength / 2 + maxLength % 2; // round up
 		// a = ah + 2 ^ half * al
 		BigInteger ah = a.shiftRight(half);
@@ -26,5 +29,9 @@ public class Karatsuba implements Multiplication {
 
 		// a_h * b_h * 2^(2 * ceil(n/2)) + (a_h * b_l + b_h * a_l) * 2 ^ (ceil(n/2)) + a_l * b_l
 		return ah_bh.shiftLeft(2 * half).add(ah_bl__bh_al).add(al_bl);
+	}
+
+	public BigInteger trivialMultiply(BigInteger a, BigInteger b) {
+		return a.multiply(b);
 	}
 }
