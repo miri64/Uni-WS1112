@@ -1,0 +1,45 @@
+\subsection{Rundreiseproblem (TSP, Traveling Salesperson)}
+\Geg $n$ Städte $0, ..., n-1$. Für 2 Städte $i,j$ Abstand $d(i,j) = d(j,i) \leq 0$
+\Ges Permutation $\Pi{:}\ \{0,...,n-1\} \to \{0,...,n-1\}$ mit $\Pi(0) = 0$, so dass $\sum\limits_{i=0}^{n-1} d(\Pi(i), \Pi((i-1) \mod n))$
+    \begin{center}
+    \begin{pspicture}(0,0)(2,3)
+     \psdot(1,3)\uput{3pt}[45](1,3){HH}\psdot(1.1,2.2)\uput{3pt}[45](1.1,2.2){H}\psdot(0,1.8)\uput{3pt}[45](0,1.8){D}\psdot(0.1,0)\uput{3pt}[45](0.1,0){S}\psdot(1.8,0)\uput{3pt}[45](1.8,0){M}\psdot(2,1.6)\uput{3pt}[45](2,1.6){L}\psdot(1.9,2.2)\uput{3pt}[45](1.9,2.2){B}
+     \psline(1,3)(1.1,2.2)(0,1.8)(0.1,0)(1.8,0)(2,1.6)(1.9,2.2)(1,3)
+    \end{pspicture}
+    \end{center}
+\Los 
+\begin{description}
+ \item[Naiv] alle Permutationen $\Pi$ durchprobieren
+    \[(n-1)! \text{viele}\]
+    $\Theta(n)$ Zeit pro Permutation, um die Gesamtlänge zu bestimmen\\
+    $\Rightarrow$ Gesamtlaufzeit $\Theta(n!)$\\
+    Sehr schlecht:
+    \[\Theta(n!) = 2^{\Theta(n\log n)}\]
+    Superexponentiell, Hoffnungslos für $n \geq 10$
+ \item[Dynamisches Programmieren] $\Theta(n^2 \cdot 2^n)$
+  \begin{enumerate}
+   \item Finde geeignete Teilprobleme. 
+       \begin{itemize}
+        \item Sei $S \subseteq \{1, ..., n-1\}$ Teilmenge von Städten.  
+        \item Sei $m \in {0, ..., n-1} \setminus S$
+        \[
+         \begin{array}{rp{0.7\linewidth}}
+          T[S,m] &= \text{Länge einer optimalen Tour, die bei 0 anfängt, beim $m$ aufhört und zwischen $0$ und $m$ genau die Städte aus $S$ besucht}
+         \end{array}
+        \]
+       \end{itemize}
+       Ziel: Wollen $T[\{1,...,n-1\},0]$
+  \item Finde Rekursion:
+      \[ T[\emptyset, m] = d(0,m), \forall m \in \{0, ..., n-1\} \]
+      \begin{align*}
+       T[S,m] &= \min\limits_{a \in S} T[S \setminus a, a] + d(a,m)
+      \end{align*}
+      Welches ist die letzte Stadt, die wir vor $m$ besuchen
+  \item Fülle Tabelle aus
+  \item Finde optimale Lösung
+  \end{enumerate}
+  (3. und 4. sind Teil einer Übung)
+\item[Ergebnis:] Tabelle hat $2^{n-1} \cdot n$ viele Einträge, $O(n)$ Zeit pro Eintrag\\
+    $\Rightarrow$ Laufzeit: $O(n^22^n)$, Platz: $O(n2^n)$\\
+    Bester bekannter Algorithmus (NP-schweres Problem, d. h. es ist unwahrscheinlicht, dass ein wesentlich besserer Algorithmus existiert).
+\end{description}
