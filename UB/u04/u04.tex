@@ -72,9 +72,9 @@ Token scan() {
         if (peek == '/') {
             for(; peek == '/n'; peek = next input character);
         } else if (peek == '*') {
-            next = next input character from peak
+            next = next input character from peek
             for(; peek == '*' && next = '/'; 
-                peek = next input character, next = next input character from peak);
+                peek = next input character, next = next input character from peek);
         }
     }
     // Entferne Leerzeichen
@@ -87,35 +87,26 @@ Token scan() {
 \section{}
 \begin{lstlisting}[language=Java,mathescape=True]
 Token scan() {
-    if (peek == '/') {
-        peek = next input character;
-        if (peek == '/') {
-            for(; peek == '/n'; peek = next input character);
-        } else if (peek == '*') {
-            next = next input character from peak
-            for(; peek == '*' && next = '/'; 
-                peek = next input character, next = next input character from peak);
-        }
-    }
+    // Entferne Kommentare
     // Entferne Leerzeichen
     // Erkenne Konstanten
     if (peek in ['<', '>', '=', '!']) {
-        next = next input character from peak
-        if (next != '=' && peak == '<') {
+        next = next input character from peek
+        if (next != '=' && peek == '<') {
             return token <$<$>
-        } else if (next != '=' && peak == '>') {
+        } else if (next != '=' && peek == '>') {
             return token <$>$>
         } else if (next == '=') {
-            if (peak == '<') {
+            if (peek == '<') {
                 return token <$\leq$>
             }
-            if (peak == '>') {
+            if (peek == '>') {
                 return token <$\geq$>
             }
-            if (peak == '=') {
+            if (peek == '=') {
                 return token <$==$>
             }
-            if (peak == '!') {
+            if (peek == '!') {
                 return token <$\neq$>
             }
         }
@@ -125,7 +116,45 @@ Token scan() {
 \end{lstlisting}
 
 \section{}
+\begin{lstlisting}[language=Java,mathescape=True]
+Token scan() {
+    // Entferne Kommentare
+    // Entferne Leerzeichen
+    // Erkenne Konstanten
+    // Erkenne Vergleichsoperatoren 
+    
+    if (isDigit(peek) || peek=='.') {
+	v_left = 0;
+	v_right= 0;
+	v	   = 0;
+	count = 0; // counter for digits after the dot('.')
+		if (isDigit(peek)) {
+			do {
+				vleft = vleft  10 + integer value of peek;
+				peek = next input character;
+		} while (isDigit(peek));
+		
+		if (peek=='.') {
+				peek=next input chaaracter;
+				if (isDigit(peek)) {
+					do {
+						v_right = v_right  10 + integer value of peek;
+						count++;
+						peek = next input character;
+				}
+		}
+		
+		Math.pow(10,count);
+		v_right = v_right / Math.pow(10,count);
+		
+		//put left and right together
+		v= v_left + v_right;
+	return token <number, v>
+}
 
+    // Erkenne Bezeichner und Schluesselwoerter
+}
+\end{lstlisting}
 \section{}
 \begin{lstlisting}[language=Java]
 	  three address code of expr;
