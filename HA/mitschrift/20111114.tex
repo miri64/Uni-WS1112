@@ -1,0 +1,106 @@
+\subsection{Rundreiseproblem (TSP, Traveling Salesperson)}
+\Geg $n$ Städte $0, ..., n-1$. Für 2 Städte $i,j$ Abstand $d(i,j) = d(j,i) \leq 0$
+\Ges Permutation $\Pi{:}\ \{0,...,n-1\} \to \{0,...,n-1\}$ mit $\Pi(0) = 0$, so dass $\sum\limits_{i=0}^{n-1} d(\Pi(i), \Pi((i-1) \mod n))$
+    \begin{center}
+    \begin{pspicture}(0,0)(2,3)
+     \psdot(1,3)\uput{3pt}[45](1,3){HH}\psdot(1.1,2.2)\uput{3pt}[45](1.1,2.2){H}\psdot(0,1.8)\uput{3pt}[45](0,1.8){D}\psdot(0.1,0)\uput{3pt}[45](0.1,0){S}\psdot(1.8,0)\uput{3pt}[45](1.8,0){M}\psdot(2,1.6)\uput{3pt}[45](2,1.6){L}\psdot(1.9,2.2)\uput{3pt}[45](1.9,2.2){B}
+     \psline(1,3)(1.1,2.2)(0,1.8)(0.1,0)(1.8,0)(2,1.6)(1.9,2.2)(1,3)
+    \end{pspicture}
+    \end{center}
+\Los 
+\begin{description}
+ \item[Naiv] alle Permutationen $\Pi$ durchprobieren
+    \[(n-1)! \text{viele}\]
+    $\Theta(n)$ Zeit pro Permutation, um die Gesamtlänge zu bestimmen\\
+    $\Rightarrow$ Gesamtlaufzeit $\Theta(n!)$\\
+    Sehr schlecht:
+    \[\Theta(n!) = 2^{\Theta(n\log n)}\]
+    Superexponentiell, Hoffnungslos für $n \geq 10$
+ \item[Dynamisches Programmieren] $\Theta(n^2 \cdot 2^n)$
+  \begin{enumerate}
+   \item Finde geeignete Teilprobleme. 
+       \begin{itemize}
+        \item Sei $S \subseteq \{1, ..., n-1\}$ Teilmenge von Städten.  
+        \item Sei $m \in {0, ..., n-1} \setminus S$
+        \[
+         \begin{array}{rp{0.7\linewidth}}
+          T[S,m] &= \text{Länge einer optimalen Tour, die bei 0 anfängt, beim $m$ aufhört und zwischen $0$ und $m$ genau die Städte aus $S$ besucht}
+         \end{array}
+        \]
+       \end{itemize}
+       Ziel: Wollen $T[\{1,...,n-1\},0]$
+  \item Finde Rekursion:
+      \[ T[\emptyset, m] = d(0,m), \forall m \in \{0, ..., n-1\} \]
+      \begin{align*}
+       T[S,m] &= \min\limits_{a \in S} T[S \setminus a, a] + d(a,m)
+      \end{align*}
+      Welches ist die letzte Stadt, die wir vor $m$ besuchen
+  \item Fülle Tabelle aus
+  \item Finde optimale Lösung
+  \end{enumerate}
+  (3. und 4. sind Teil einer Übung)
+\item[Ergebnis:] Tabelle hat $2^{n-1} \cdot n$ viele Einträge, $O(n)$ Zeit pro Eintrag\\
+    $\Rightarrow$ Laufzeit: $O(n^22^n)$, Platz: $O(n2^n)$\\
+    Bester bekannter Algorithmus (NP-schweres Problem, d. h. es ist unwahrscheinlicht, dass ein wesentlich besserer Algorithmus existiert).
+\end{description}
+
+\subsection{Viterbi-Algorithmus}
+\begin{itemize}
+ \item Lerne für HA-Klausur
+ \item Schließe mich 7 Tage bei geschlossenen Vorhängen zu Hause ein
+ \item Wissen nicht, wie das Wetter draußen ist
+ \item Aber: Mitbewohner geht aus, jeden Tag, und kommt \emph{nass} oder \emph{trocken} zurück.
+\end{itemize}
+\Bsp NNTTTNT
+\paragraph*{Frage:} Wie war das Wetter?
+\begin{itemize}
+ \item Bauen ein Modell
+    \begin{center}
+        \psset{arrows=->}
+        \begin{psmatrix}
+         [mnode=oval] regnet & [mnode=oval] regnet nicht
+        \end{psmatrix}\nccurve[angleA=-170,angleB=170,ncurv=4]{1,1}{1,1}\naput{0{,}6}\nccurve[angleA=-10,angleB=10,ncurv=4]{1,2}{1,2}\nbput{0{,}7}
+        \nccurve[angleA=-10,angleB=-170]{1,1}{1,2}\nbput{0{,4}}\nccurve[angleA=170,angleB=10]{1,2}{1,1}\nbput{0{,}3}
+    \end{center}
+    \begin{align*}
+     \operatorname{Pr}[\text{Mitbewohner nass}\ |\ \text{es regnet}] &= 0{,}9 \\
+     \operatorname{Pr}[\text{Mitbewohner trocken}\ |\ \text{es regnet}] &= 0{,}1 \\
+     \operatorname{Pr}[\text{Mitbewohner nass}\ |\ \text{es regnet nicht}] &= 0{,}2 \\
+     \operatorname{Pr}[\text{Mitbewohner trocken}\ |\ \text{es regnet nicht}] &= 0{,}8 \\\hline
+     \operatorname{Pr}[\text{regnet morgen}\ |\ \text{regnet heute}] &= 0{,}6 \\
+     \operatorname{Pr}[\text{regnet morgen nicht}\ |\ \text{regnet heute}] &= 0{,}4 \\
+     \operatorname{Pr}[\text{regnet morgen}\ |\ \text{regnet heute nicht} &= 0{,}3 \\
+     \operatorname{Pr}[\text{regnet morgen nicht}\ |\ \text{regnet heute nicht}] &= 0{,}7 \\\hline
+     \operatorname{Pr}[\text{regnet am Montag}] &= 0{,}7 \\
+     \operatorname{Pr}[\text{regnet am Montag nicht}] &= 0{,}3
+    \end{align*}
+    \paragraph*{Problem} Finde die wahrscheinlichste Erklärung für die Beobachtung, d. h. finde eine Folge von Zustönden, so dass die Wahrscheinlichkeit, dass diese Folge von Zuständen, die die Beobachtung erzeugt, maximal ist.
+\end{itemize}
+\Defi \emph{Verstecktes Markov Modell} (Hidden Markov Modell, HMM) besteht aus:
+\begin{itemize}
+ \item Zustandsmenge $Q$ (endlich)
+ \item Ausgangsalphabet $\Sigma$ (endlich)
+ \item Ausgangsverteilung $P_q, q \in Q, P_q \in [0,1]; \sum\limits_{q \in Q} P_q = 1$
+ \item Ausgabeverteilung: 
+     \[\forall q \in Q, \sigma \in \Sigma{:}\ \operatorname{Pr}[\text{Modell gibt $\sigma$ aus}\ |\ \text{Modell ist in Zustand $q$}]\]
+     Für jeden Zustand: Wahrscheinlichkeiten liegen zwischen 0, ..., 1 und summieren zu 1.
+ \item Übergangsverteilungen:
+     \[\forall q,r \in Q{:}\ \operatorname{Pr}[\text{nächster Zustand ist $r$}\ |\ \text{aktueller Zustand ist $q$}]\]
+     Für jeden Zustand: Wahrscheinlichkeiten liegen zwischen 0, ..., 1 und summieren zu 1.
+\end{itemize}
+Semantik:
+\begin{itemize}
+ \item Wähle zufülligen Zustand $q_0$ gemäß Anfangsverteilung
+ \item Aktueller Zustand $q_i$:
+     \begin{itemize}
+     \item Wähle zufällige Ausgabe $\sigma_i \in \Sigma$, gemäß der Ausgabeverteilung fpr $q_i$
+     \item Gib $\sigma_i$ aus
+     \item Wähle nächsten Zustand $q_{i+1}$ gemäß der Übergangsverteilung für $q_i$
+     \end{itemize}
+ \item Wechsle zu $q_{i+1}$, wiederhole
+\end{itemize}
+\paragraph*{Problem:} Gegeben Ausgabe $G_0G_1G_2...G_{l-1}$ \\
+Finde Zustandsfolge $q_0...q_{l-1}$, so dass $\operatorname{Pr}[\text{Zustandsfolge $q_0...q_{l-1}$}\ |\ \text{Ausgabe $\sigma_0...\sigma_{l-1}$}]$ maximal.
+
+
+

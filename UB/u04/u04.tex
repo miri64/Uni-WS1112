@@ -1,0 +1,176 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 4}
+\author{Christian Cikryt (4285814; Tutorium: Mo. 16-18 Uhr)\\
+  Robert Fels (4210496; Tutorium: Mi. 10-12 Uhr)\\
+  Martin Lenders (4206090; Tutorium: Mi. 10-12 Uhr)
+  }
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Martin Lenders, Christian Cikryt}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\makeatletter
+\newcommand{\Rm}[1]{\textrm{\expandafter\@slowromancap\romannumeral #1@}}
+\makeatother
+\newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
+\newcommand{\add}[1]{\{\texttt{s += #1})\}}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+\begin{lstlisting}[language=Java]
+Token scan() {
+    if (peek == '/') {
+        peek = next input character;
+        if (peek == '/') {
+            for(; peek == '/n'; peek = next input character);
+        } else if (peek == '*') {
+            next = next input character from peek
+            for(; peek == '*' && next = '/'; 
+                peek = next input character, next = next input character from peek);
+        }
+    }
+    // Entferne Leerzeichen
+    // Erkenne Konstanten
+    // Erkenne Bezeichner und Schluesselwoerter
+}
+\end{lstlisting}
+
+
+\section{}
+\begin{lstlisting}[language=Java,mathescape=True]
+Token scan() {
+    // Entferne Kommentare
+    // Entferne Leerzeichen
+    // Erkenne Konstanten
+    if (peek in ['<', '>', '=', '!']) {
+        next = next input character from peek
+        if (next != '=' && peek == '<') {
+            return token <$<$>
+        } else if (next != '=' && peek == '>') {
+            return token <$>$>
+        } else if (next == '=') {
+            if (peek == '<') {
+                return token <$\leq$>
+            }
+            if (peek == '>') {
+                return token <$\geq$>
+            }
+            if (peek == '=') {
+                return token <$==$>
+            }
+            if (peek == '!') {
+                return token <$\neq$>
+            }
+        }
+    }
+    // Erkenne Bezeichner und Schluesselwoerter
+}
+\end{lstlisting}
+
+\section{}
+\begin{lstlisting}[language=Java,mathescape=True]
+Token scan() {
+    // Entferne Kommentare
+    // Entferne Leerzeichen
+    // Erkenne Konstanten
+    // Erkenne Vergleichsoperatoren 
+    
+    if (isDigit(peek) || peek=='.') {
+	v_left = 0;
+	v_right= 0;
+	v	   = 0;
+	count = 0; // counter for digits after the dot('.')
+		if (isDigit(peek)) {
+			do {
+				vleft = vleft  10 + integer value of peek;
+				peek = next input character;
+		} while (isDigit(peek));
+		
+		if (peek=='.') {
+				peek=next input chaaracter;
+				if (isDigit(peek)) {
+					do {
+						v_right = v_right  10 + integer value of peek;
+						count++;
+						peek = next input character;
+				}
+		}
+		
+		Math.pow(10,count);
+		v_right = v_right / Math.pow(10,count);
+		
+		//put left and right together
+		v= v_left + v_right;
+	return token <number, v>
+}
+
+    // Erkenne Bezeichner und Schluesselwoerter
+}
+\end{lstlisting}
+\section{}
+\begin{lstlisting}[language=Java]
+	  three address code of expr;
+L1:   if !expr goto L2      	//jump when for-condition is false
+      three address code of stmt;
+	  three address code of expr;
+      goto L1
+L2:
+\end{lstlisting}
+\section{}
+\begin{enumerate}
+\item   
+\item   
+\item   
+\item   
+\item   
+\end{enumerate}
+
+\end{document}

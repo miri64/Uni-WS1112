@@ -1,5 +1,5 @@
 \begin{enumerate}
- \item \emph{Syboltabellen}
+ \item \emph{Symboltabellen}
  \item Semantische Analyse (kursorisch) -- Statische Überprüfungen \emph{nicht} kontextfreier Eigenschaften
  \item Zwischencode-Erzeugung (kursorisch)
 \end{enumerate}
@@ -95,12 +95,12 @@
 \item Optimierung\\
     \begin{tabular}{lcl}
      \lstset{language=Java}
-     Beispiel: & \lstinline[language=Java]!if (peek = '\n') line = line + 1! & Quellprogramm \\
+     Beispiel: & \lstinline!if (peek = '\n') line = line + 1! & Quellprogramm \\
          & $\Downarrow$ & \\\cline{2-2}
          & \multicolumn{1}{|c|}{lexikalische Analyse} & \\\cline{2-2}
          & $\Downarrow$ & \\
-         & $<\textbf{if}><(><\textbf{id},\lstinline!"peek"!><=><\textbf{char}, \lstinline!'\n'!><)>$ & \\
-         & $<\textbf{id},\lstinline!"line"!><=><\textbf{id}, \lstinline!"line"!><+><\textbf{int},1><;>$ & \\
+         & $<\textbf{if}><(><\textbf{id},\texttt{\dq peek\dq}><=><\textbf{char}, \texttt{'\textbackslash n'}><)>$ & \\
+         & $<\textbf{id},\texttt{\dq line\dq}><=><\textbf{id}, \texttt{\dq line\dq}><+><\textbf{int},1><;>$ & \\
          & \rnode{start}{$\Downarrow$}
     \end{tabular}
     \vspace{10mm}
