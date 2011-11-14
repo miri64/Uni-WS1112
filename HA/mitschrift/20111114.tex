@@ -43,3 +43,64 @@
     $\Rightarrow$ Laufzeit: $O(n^22^n)$, Platz: $O(n2^n)$\\
     Bester bekannter Algorithmus (NP-schweres Problem, d. h. es ist unwahrscheinlicht, dass ein wesentlich besserer Algorithmus existiert).
 \end{description}
+
+\subsection{Viterbi-Algorithmus}
+\begin{itemize}
+ \item Lerne für HA-Klausur
+ \item Schließe mich 7 Tage bei geschlossenen Vorhängen zu Hause ein
+ \item Wissen nicht, wie das Wetter draußen ist
+ \item Aber: Mitbewohner geht aus, jeden Tag, und kommt \emph{nass} oder \emph{trocken} zurück.
+\end{itemize}
+\Bsp NNTTTNT
+\paragraph*{Frage:} Wie war das Wetter?
+\begin{itemize}
+ \item Bauen ein Modell
+    \begin{center}
+        \psset{arrows=->}
+        \begin{psmatrix}
+         [mnode=oval] regnet & [mnode=oval] regnet nicht
+        \end{psmatrix}\nccurve[angleA=-170,angleB=170,ncurv=4]{1,1}{1,1}\naput{0{,}6}\nccurve[angleA=-10,angleB=10,ncurv=4]{1,2}{1,2}\nbput{0{,}7}
+        \nccurve[angleA=-10,angleB=-170]{1,1}{1,2}\nbput{0{,4}}\nccurve[angleA=170,angleB=10]{1,2}{1,1}\nbput{0{,}3}
+    \end{center}
+    \begin{align*}
+     \operatorname{Pr}[\text{Mitbewohner nass}\ |\ \text{es regnet}] &= 0{,}9 \\
+     \operatorname{Pr}[\text{Mitbewohner trocken}\ |\ \text{es regnet}] &= 0{,}1 \\
+     \operatorname{Pr}[\text{Mitbewohner nass}\ |\ \text{es regnet nicht}] &= 0{,}2 \\
+     \operatorname{Pr}[\text{Mitbewohner trocken}\ |\ \text{es regnet nicht}] &= 0{,}8 \\\hline
+     \operatorname{Pr}[\text{regnet morgen}\ |\ \text{regnet heute}] &= 0{,}6 \\
+     \operatorname{Pr}[\text{regnet morgen nicht}\ |\ \text{regnet heute}] &= 0{,}4 \\
+     \operatorname{Pr}[\text{regnet morgen}\ |\ \text{regnet heute nicht} &= 0{,}3 \\
+     \operatorname{Pr}[\text{regnet morgen nicht}\ |\ \text{regnet heute nicht}] &= 0{,}7 \\\hline
+     \operatorname{Pr}[\text{regnet am Montag}] &= 0{,}7 \\
+     \operatorname{Pr}[\text{regnet am Montag nicht}] &= 0{,}3
+    \end{align*}
+    \paragraph*{Problem} Finde die wahrscheinlichste Erklärung für die Beobachtung, d. h. finde eine Folge von Zustönden, so dass die Wahrscheinlichkeit, dass diese Folge von Zuständen, die die Beobachtung erzeugt, maximal ist.
+\end{itemize}
+\Defi \emph{Verstecktes Markov Modell} (Hidden Markov Modell, HMM) besteht aus:
+\begin{itemize}
+ \item Zustandsmenge $Q$ (endlich)
+ \item Ausgangsalphabet $\Sigma$ (endlich)
+ \item Ausgangsverteilung $P_q, q \in Q, P_q \in [0,1]; \sum\limits_{q \in Q} P_q = 1$
+ \item Ausgabeverteilung: 
+     \[\forall q \in Q, \sigma \in \Sigma{:}\ \operatorname{Pr}[\text{Modell gibt $\sigma$ aus}\ |\ \text{Modell ist in Zustand $q$}]\]
+     Für jeden Zustand: Wahrscheinlichkeiten liegen zwischen 0, ..., 1 und summieren zu 1.
+ \item Übergangsverteilungen:
+     \[\forall q,r \in Q{:}\ \operatorname{Pr}[\text{nächster Zustand ist $r$}\ |\ \text{aktueller Zustand ist $q$}]\]
+     Für jeden Zustand: Wahrscheinlichkeiten liegen zwischen 0, ..., 1 und summieren zu 1.
+\end{itemize}
+Semantik:
+\begin{itemize}
+ \item Wähle zufülligen Zustand $q_0$ gemäß Anfangsverteilung
+ \item Aktueller Zustand $q_i$:
+     \begin{itemize}
+     \item Wähle zufällige Ausgabe $\sigma_i \in \Sigma$, gemäß der Ausgabeverteilung fpr $q_i$
+     \item Gib $\sigma_i$ aus
+     \item Wähle nächsten Zustand $q_{i+1}$ gemäß der Übergangsverteilung für $q_i$
+     \end{itemize}
+ \item Wechsle zu $q_{i+1}$, wiederhole
+\end{itemize}
+\paragraph*{Problem:} Gegeben Ausgabe $G_0G_1G_2...G_{l-1}$ \\
+Finde Zustandsfolge $q_0...q_{l-1}$, so dass $\operatorname{Pr}[\text{Zustandsfolge $q_0...q_{l-1}$}\ |\ \text{Ausgabe $\sigma_0...\sigma_{l-1}$}]$ maximal.
+
+
+
