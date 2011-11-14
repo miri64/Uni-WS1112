@@ -130,21 +130,20 @@ Token scan() {
 	count = 0; // counter for digits after the dot('.')
 		if (isDigit(peek)) {
 			do {
-				vleft = vleft  10 + integer value of peek;
+				v_left = v_left *  10 + integer value of peek;
 				peek = next input character;
-		} while (isDigit(peek));
+			} while (isDigit(peek));
 		
 		if (peek=='.') {
 				peek=next input chaaracter;
 				if (isDigit(peek)) {
 					do {
-						v_right = v_right  10 + integer value of peek;
+						v_right = v_right *  10 + integer value of peek;
 						count++;
 						peek = next input character;
 				}
 		}
 		
-		Math.pow(10,count);
 		v_right = v_right / Math.pow(10,count);
 		
 		//put left and right together
