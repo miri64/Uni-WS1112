@@ -127,7 +127,14 @@ Token scan() {
 \section{}
 
 \section{}
-
+\begin{lstlisting}[language=Java]
+	  three address code of expr;
+L1:   if !expr goto L2      	//jump when for-condition is false
+      three address code of stmt;
+	  three address code of expr;
+      goto L1
+L2:
+\end{lstlisting}
 \section{}
 \begin{enumerate}
 \item   
