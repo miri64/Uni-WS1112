@@ -1,0 +1,87 @@
+\psset{colsep=0.5cm,arrows=->}
+\begin{psmatrix}
+             & & & Analysephase \\
+             & & \framebox{\begin{minipage}{3cm}
+                               Fehlerbehandlung
+                          \end{minipage}} && Start der Übersetzung \\
+Quellprogramm & \framebox{Lexer} & \psframebox[linestyle=none,fillstyle=hlines,hatchcolor=red]{Tokenstrom} &
+\framebox{Parser} & ... \\
+              && \framebox{
+                  \begin{minipage}{3cm}
+                   Symboltabelle
+                  \end{minipage}}
+\end{psmatrix}\ncline{3,1}{3,2}\ncline{3,2}{3,3}\ncline{3,3}{3,4}\ncline{3,4}{3,5}
+\ncline{<->}{2,3}{3,2}\ncline{<->}{2,3}{3,4}\ncline{<->}{2,3}{3,5}\ncline{<->}{4,3}{3,2}\ncline{<->}{4,3}{3,4}\ncline{<->}{4,3}{3,5}
+\nccurve[angleA=-10,angleB=-170,linecolor=red]{3,2}{3,4}\nbput{\color{red} Token}\nccurve[angleA=170,angleB=10,linecolor=red]{3,4}{3,2}\nbput{\color{red} getNextToken}\ncline[doubleline=true]{2,5}{3,4}
+
+\paragraph{Begriffserklärung}
+\begin{itemize}
+ \item Token
+ \item Muster-Berschreibung zulässiger Lexeme
+ \item Lexem
+\end{itemize}
+\begin{center}
+ \texttt{\textvisiblespace\textvisiblespace'\textbackslash t'\textvisiblespace'\textbackslash n'} "`Leerzeichen"'
+\end{center}
+\begin{center}
+ $\underbrace{\textvisiblespace\textvisiblespace}_{Leerraum}\underset{\overset{\uparrow}{<\textbf{num}, 34>}}{34} \overset{\underset{\downarrow}{\text{Beginnlexem}}}{+}\underbrace{\textvisiblespace\textvisiblespace}_{\textbf{id}, \texttt{'count'}}\textvisiblespace\textvisiblespace...$
+\end{center}
+
+\begin{enumerate}
+ \item Folge von Leerzeichen -- Leerräume: werden entfernt
+ \item Suche längsten Präfix der verbleibenden Eingabe, der auf eines der Muster, d. h. der Beschreibung von Strukturen passt
+ \item Gib Token bestehend aus Tokenname (Terminalsymbol der kontextfreien Grammatik) ggf. zusammen mit Attributwert zurück, falls Suche erfolgreich. Fehlerbehandlung sonst.
+\end{enumerate}
+\paragraph*{Vorsicht:} Beispiel zu FORTRAN:
+\begin{itemize}
+ \lstset{language=fortran}
+ \item \lstinline!DO 10 I = 1.25! $\rightsquigarrow$ \underline{\lstinline!DO10I!}\lstinline!=!\underline{\lstinline!1.25!} (Bezeichner, Zuweisung, Konstante)
+ \item \lstinline!DO 10 I = 1,25! $\rightsquigarrow$ \lstset{language=} \underline{\lstinline!DO!}\lstinline!10!\underline{\lstinline!I!}\lstinline!=!\underline{\lstinline!1!}\lstinline!,!\underline{\lstinline!25!}
+\end{itemize}
+Scanner entfernt Leerräume. Unschön, in modernen Sprachen ausgemerzt
+\begin{itemize}
+ \item Leerzeichen als Trennzeichen
+ \item Reservierung der Schlüsselwörter
+\end{itemize}
+
+\section{Fehlerbehandlung}
+Nicht alle Schreibfehler können vom Lexer erkannt werden!
+\paragraph*{Beispiel:} \lstinline!fi(x == f(y)) ...! vs \lstinline!if (x == f(y)) ....! \\
+$<\textbf{id}, \texttt{'fi'}><(> ....$ kein lexik. Fehlerbehandlung\\
+Welche Fehlersituation kann auftreten? \emph{Kein} Präfix der verbleibenden Eingabe passt auf einen der Muster.
+\paragraph{Systematik zu Fehlerbehandlung}
+\begin{itemize}
+ \item "`Panic Recovery"' -- Entfenrne einzelne Zeichen am Anfang der verbleibenden Eingabe
+ \item Vier primitive Operation werden angewendet, um korrekte Eingabe herzustellen
+     \begin{itemize}
+     \item Entferne ein Zeichen aus verbleibender Eingabe
+     \item Füge ein Zeichen in verbleibender Eingabe ein
+     \item Vertausche zwei benachbarte Zeichen in verbleibender Eingabe
+     \item Ersetze ein Zeichen durch ein anderes in verbleibender Eingabe
+     \end{itemize}
+\end{itemize}
+
+\paragraph{Optimale Strategie} Wende eine minimale Anzahl promitiver Operationen an, so dass verbleibebende Eingabe bis zum Ende erfolgreich lexikalisch analysiert werden kann.
+
+Aus Effizienzgründen \emph{nicht praktikabel}!
+\begin{itemize}
+ \item Anwendung einer dieser Optionen ist meistens erfolgreich
+\end{itemize}
+
+\section{Eingabebehandlung mit zweigeteilten Puffer}
+\begin{longtable}{|c|c|c|c|c|c|c|c|c|c||c|c|c|c|c|c|c|c|c|c|}
+   &   & & & \multicolumn{4}{l}{beginLexem} & \multicolumn{4}{l}{$\downarrow$ forward} \\
+ \hline
+   &   & & & c & o & u & n & t & & = & & c & o & u & n & t & + & 1 & eof \\\hline
+ 0 & 1 & & & & & & & & $N-1$ & 0 & 1 & & & & & & & & $N-1$
+\end{longtable}
+$N$ ist Blocklänge, mit einem Lesebefehl wird jeweils eine Hälfte gelesen. Typisches $N = 4096$\\
+\begin{itemize}
+ \item Vereinfachung durch Einführung von Wächtern (Sentinel).
+ \item Test auf Pufferende kann mit \emph{Lesen} des nächsten Zeichens verschmolzen werden.
+\end{itemize}
+
+
+
+
+
