@@ -58,14 +58,29 @@
 \maketitle
 
 \section{Bestimmen des engsten Paares}
+Die Differenz der $x$-Werte ist nur bei dem Punkt notwendig, wenn die Menge in zwei annähernd gleichgroße Mengen aufgeteilt werden soll. Mit dem bisherigen Algorithmus kann es dazu führen, dass alle Punkte in die gleiche Menge getan werden. Um dies zu verhindern, können die Punkte zusätzlich anhand ihres $y$-Wertes sortiert werden. Dies gilt jedoch nur innerhalb der Punktmengen, die die gleichen $x$-Koordinaten haben. Haben zwei oder mehr Punkte sowohl gleiche $x$- und $y$-Koordinaten, ist damit das engste Paar gefunden.\\
+Die asymptotische Laufzeit bleibt davon unbeeinflusst, da diese Modifikation keine Veränderung auf die Laufzeit des Aufteilens hat.
 
 \section{Rekursionsgleichungen}
 \begin{enumerate}
 \item   Da die Beschriftungen $x_v \in \mathbb{R}$ paarweise verschieden sind und $\mathbb{R}$ eine geordnete Menge ist, gilt 
         \[\forall i \in \{1, ..., n\}, \exists j \in \{1, ..., n\}, i \neq j{:}\ x_{v_i} < x_{v_j}\]
         Daher existiert definitiv ein globales Minimum, das auch ein lokales Minimum ist.
-\item 
-\item 
+\item  Es kann Verteilungen geben, sodass manbeispielsweise jede zweite Zeile von einem Rand zum anderen anderen abläuft, dort auf die übernächste Zeile wechselt und wieder zum anderen Rand läuft. Dies kann man prinzipiell für jeden Startpunkt erreichen, sodass man O($n \cdot \frac{n}{2} + n$) = O($n^2$) erhält.\\
+Siehe auch: FASS-Kurven.
+\item Wähle Spalte $x = \lceil\frac{n}{2}\rceil$ und Zeile $y = \lceil\frac{n}{2}\rceil$. Finde das absolute Minimum je Zeile und Spalte in O($n$). Betrachte anschließend dessen Zeilen- bzw. Spaltennnachbarn. Sind beide Knoten größer, haben wir ein lokales Minimum gefunden. Andernfalls wähle die Seite des kleineren Nachbarn und entferne die andere Hälfte aus dem Graph. Der verbleibende Graph hat nur noch eine Kantenlänge $\frac{n}{2}$ und der Algorithmus kann erneut angewadt werden.\\
+Dies führt zu folgender Rekursionsgleichung: $T(n) = T\left(\frac{n}{2}\right) + 2\cdot n$\\
+Hier lässt sich das MT anwenden mit $a = 1, b =2$ und $f(n) = 2 \cdot n$:
+\begin{align*}
+         n^{\log_b a} &= n^{\log_2 1} = n^0 = 1 \\
+         f(n) &= \Omega(n^{0+\varepsilon}) \tag{z. B.: für $\varepsilon = \frac{1}{2}$} \\
+         a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{1}{2}$} \\
+        1 \cdot 2 \cdot \frac{n}{2} & \leq \frac{1}{2} \cdot 2 \cdot n
+\end{align*}
+Fall 3: $T(n) = \Theta(n)$\\
+\begin{description}
+	\item[Korrektheit des Algorithmus] Wenn ein lokales Minimum der Spalte (Zeile) nicht ein lokales Minimum ist, bedeutet es, dass es einen Weg von diesem Knoten in die eine Hälfte gibt. Dieser Weg kann möglicherweise so verlaufen, dass er an anderer Stelle die Spalte erneut trifft oder sogar überschreitet. So kann es sein, dass es in der so ausgewählten Hälfte kein lokales Minimum gibt. Wenn man jedoch das absolute Minimum verwendet, muss der so gefundene Weg in der entsprechenden Hälfte enden. Dieses Ende ist ein lokales Minimum. Somit gibt es in dem ausgewählten Bereich mindestens ein lokales Minimum.
+\end{description}
 \end{enumerate}
 
 \section{Matrizenmultiplikation}
