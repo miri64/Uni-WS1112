@@ -166,9 +166,9 @@ L2:
 \begin{enumerate}
 \item   Aussagen (wahr, falsch) können durch $B \to WR \to \{t,f\}R \to \{t,f\}$ dargestellt werden, Klammerausdrücke durch $B \to (B)$, Nicht-Aussagen durch $B \to \neg B$ und $B \to WR \to W\{\land,\lor\}B$ bildet entsprechend Konjunktion und Disjunktion ab.
 \item   Eindeutig. Es kann für beliebige boolsche Ausdrücke nur ein Parsebaum gefunden werden.
-\item   Jain, würde $W \to t\ |\ f$ in die $B$-Produktionen reingezogen werden, wäre es prädiktiv parsebar.
-\item   
-\item   Ja. Ausdrücke wie z. B. $(w \land f) \lor (w \lor f)$ können ohne Umformung nicht produziert werden.
+\item   Würde $W \to t\ |\ f$ in die $B$-Produktionen reingezogen werden, wäre es prädiktiv parsebar. Aber so wie die Grammatik gegeben ist ist sie nicht prädikativ parsebar, da der Ausdruck $WR$ kein Prädikat hat und auch kein Terminalsymbol darstellt.
+\item   Dies liegt daran, dass nicht in jedem Knoten im Parsebaum eine Auswertung des booleschen Ausdrucks stattfinden kann. Die Produktion $R$ als Knoten im Parsebaum kann nie ein boolescher Wert zugewiesen werden, da eine Auswertung von des Ausdrucks $\{\land,\lor\}B$ allein nie möglich ist. Den ersten booleschen Term, der zur Verknüpfung mit $\land$ oder $\lor$ nötig ist, treffen wir erst weiter 'oben' (über Knoten $R$) im Parsebaum an.
+\item   Ja. Ausdrücke wie z. B. $(t \land f) \lor (t \lor f)$ können ohne Umformung nicht produziert werden.
 \end{enumerate}
 
 \end{document}
