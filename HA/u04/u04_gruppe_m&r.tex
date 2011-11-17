@@ -85,9 +85,50 @@ Fall 3: $T(n) = \Theta(n)$\\
 
 \section{Matrizenmultiplikation}
 \begin{enumerate}
-\item 
-\item 
-\item 
+\item \begin{description}
+	\item[Rekursionsanker] $P\left[i, i\right] = 0$
+	\item[Rekursionsgleichung] $P\left[i, j\right] = \min\limits_{i \leq k < j}\left\{P\left[i, k\right] + P\left[k + 1, j\right] + M_{i.height} \cdot M_{j.width} \cdot \left( 2 \cdot M_{k.width} - 1 \right) \right\}$
+\end{description} 
+\item \begin{description}
+	\item[Voraussetzung:] Da die Breite einer Matrix gleich der Höhe der nachfolgenden Matrix ist, benötigt man nur $n + 1$ Einträge, um alle Matrixdimensionen abzuspeichern. Diese seien im Array $M$ abgespeichert. Die Optimierungsmatrix, die unsere Kosten (und später die optimale Klammerung) enthält, heißt KOSTEN. Auf der horizontalen Achse liegt $i$ und auf der vertikalen liegt j. Der gesuchte Eintrag befindet sich demnach ganz unten links. Ein Element benötigt für seine Berechnung alle Elemente, die genau rechts oder genau über ihm liegen.
+	\item[Algorithmus] KLAMMERUNG
+\begin{lstlisting}[mathescape=true]
+KLAMMERUNG(){
+	for(i=1;i<n;i++){
+		KOSTEN[i,i].Value=0;
+	}
+	for(k=1;k<n;k++){
+		for(i=1;i<=n-k;i++){
+			min=maxInt;
+			j=i+k;
+			for(t=1;t<=k;t++){
+				val=KOSTEN[i,j-t].Value+KOSTEN[i+t,j].Value+M[i]*M[j+1]*(2*M[j-t+1]-1);
+				if(val<min){
+					min=val;
+					minIndex=j-t;
+				}
+			}
+			KOSTEN[i,j].Value=min;
+			KOSTEN[i,j].Index= minIndex;
+		}
+	}
+	return KOSTEN[1,n].Value;
+}
+\end{lstlisting}
+	\item[Analyse:] Grundlage für den Platzbedarf sind die Maße der Matrix KOSTEN. Die Zeilen und Spalten bestimmen die optimale Klammerung eines Teilterms. Von daher kann jede Koordinate von $1$ bis $n$. Weiterer Platzbedarf ist nur linear. Daraus folgt für den Platzbedarf O($n^2$).\\
+Die Laufzeit, um ein Element der Matrix zu berechnen, liegt in O($n$), da alle Elemente rechts davon oder darüber betrachtet werden müssen. Für das gesuchte Element sind das im Detail $2 \cdot \left( n - 1 \right)$. Da die Matrix $n^2$ viele Einträge hat, die alle überprüft werden müssen, hat der Algorithmus eine Laufzeit von O($n^3$).
+	\end{description}
+\item \begin{description}
+	\item Erweitere die Matrix um ein Feld \textbf{Index}. In diesem wird der Index der Matrix gespeichert, welche zuletzt in der linken optmialen Matrixkette enthalten ist (Im vorigen Aufgabenteil ist dies schon eingearbeitet worden). Dadurch kann man nach der Berechnung der optimalen Kosten - von KOSTEN[1, n] aus - top-down die Matrixkette optimal klammern.
+	\item[Algorithmus] AUSGABE
+\begin{lstlisting}[mathescape=true]
+AUSGABE(i,j){
+	if(i=j){
+		return "(M_"+i+"="+M[i]+"$\times$"+M[i+1]+")";
+	return "("+AUSGABE(i,KOSTEN[i,j].Index)+"*"+AUSGABE(KOSTEN[i,j].Index+1,j)+")";
+}
+\end{lstlisting}
+\end{description}
 \item 
 \end{enumerate}
 \end{document}
