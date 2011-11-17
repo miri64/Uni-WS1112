@@ -1,4 +1,4 @@
-\documentclass[a4paper,10pt]{scrartcl}
+\documentclass[a4paper,10pt]{article}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
@@ -19,7 +19,7 @@
 
 \newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
 
-\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\thesection}{Aufgabe \arabic{section}:}
 \renewcommand{\labelenumi}{(\theenumi)}
 \renewcommand{\theenumi}{\alph{enumi}}
 \renewcommand{\labelenumii}{(\theenumii)}
@@ -68,14 +68,18 @@ Die asymptotische Laufzeit bleibt davon unbeeinflusst, da diese Modifikation kei
         Daher existiert definitiv ein globales Minimum, das auch ein lokales Minimum ist.
 \item  Es kann Verteilungen geben, sodass manbeispielsweise jede zweite Zeile von einem Rand zum anderen anderen abläuft, dort auf die übernächste Zeile wechselt und wieder zum anderen Rand läuft. Dies kann man prinzipiell für jeden Startpunkt erreichen, sodass man O($n \cdot \frac{n}{2} + n$) = O($n^2$) erhält.\\
 Siehe auch: FASS-Kurven.
-\item Wähle Spalte $x = \lceil\frac{n}{2}\rceil$ und Zeile $y = \lceil\frac{n}{2}\rceil$. Finde das absolute Minimum je Zeile und Spalte in O($n$). Betrachte anschließend dessen Zeilen- bzw. Spaltennnachbarn. Sind beide Knoten größer, haben wir ein lokales Minimum gefunden. Andernfalls wähle die Seite des kleineren Nachbarn und entferne die andere Hälfte aus dem Graph. Der verbleibende Graph hat nur noch eine Kantenlänge $\frac{n}{2}$ und der Algorithmus kann erneut angewadt werden.\\
+\item Wähle Spalte $x = \left\lceil\frac{n}{2}\right\rceil$ und Zeile $y = \left\lceil\frac{n}{2}\right\rceil$. Finde das absolute Minimum je Zeile und Spalte in O($n$). Betrachte anschließend dessen Zeilen- bzw. Spaltennnachbarn. Sind beide Knoten größer, haben wir ein lokales Minimum gefunden. Andernfalls wähle die Seite des kleineren Nachbarn und entferne die andere Hälfte aus dem Graph. Der verbleibende Graph hat nur noch eine Kantenlänge $\frac{n}{2}$ und der Algorithmus kann erneut angewadt werden.\\
 Dies führt zu folgender Rekursionsgleichung: $T(n) = T\left(\frac{n}{2}\right) + 2\cdot n$\\
 Hier lässt sich das MT anwenden mit $a = 1, b =2$ und $f(n) = 2 \cdot n$:
 \begin{align*}
-         n^{\log_b a} &= n^{\log_2 1} = n^0 = 1 \\
-         f(n) &= \Omega(n^{0+\varepsilon}) \tag{z. B.: für $\varepsilon = \frac{1}{2}$} \\
-         a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{1}{2}$} \\
-        1 \cdot 2 \cdot \frac{n}{2} & \leq \frac{1}{2} \cdot 2 \cdot n
+         n^{\log_b a} &= n^{\log_2 1} \\
+                      &= n^0 \\
+                      &= 1 \\
+         f(n) &= \Omega\left(n^{0+\varepsilon}\right) \tag{z. B. $\varepsilon = \frac{1}{3}$}
+\end{align*}
+\begin{align*}
+         c \cdot f(n) &\geq a \cdot f\left(\frac{n}{b}\right) \tag*{$\|\ c = \frac{1}{2}$} \\
+         \frac{1}{2} \cdot 2 \cdot n &\geq 1 \cdot 2 \cdot \frac{n}{2}
 \end{align*}
 Fall 3: $T(n) = \Theta(n)$\\
 \begin{description}
@@ -83,52 +87,45 @@ Fall 3: $T(n) = \Theta(n)$\\
 \end{description}
 \end{enumerate}
 
-\section{Matrizenmultiplikation}
+\section{Matrizenkettenmultiplikation}
 \begin{enumerate}
 \item \begin{description}
-	\item[Rekursionsanker] $P\left[i, i\right] = 0$
-	\item[Rekursionsgleichung] $P\left[i, j\right] = \min\limits_{i \leq k < j}\left\{P\left[i, k\right] + P\left[k + 1, j\right] + M_{i.height} \cdot M_{j.width} \cdot \left( 2 \cdot M_{k.width} - 1 \right) \right\}$
+    Seien $\operatorname{h}{:} \mathbb{R}^{n \times m} \to \mathbb{N}$ und $\operatorname{w}{:} \mathbb{R}^{n \times m} \to \mathbb{N}$ jeweils Funktionen die die Höhe bzw. Breite einer Matrix bestimmen.
+	\begin{align*}
+     P[i, i] &= 0\\
+     P\left[i, j\right] &= \min\limits_{i \leq k < j}\left\{P\left[i, k\right] + P\left[k + 1, j\right] + \operatorname{h}(M_i) \cdot \operatorname{w}(M_j) \cdot \left( 2 \cdot \operatorname{w}(M_k) - 1 \right) \right\}
+    \end{align*}
 \end{description} 
 \item \begin{description}
 	\item[Voraussetzung:] Da die Breite einer Matrix gleich der Höhe der nachfolgenden Matrix ist, benötigt man nur $n + 1$ Einträge, um alle Matrixdimensionen abzuspeichern. Diese seien im Array $M$ abgespeichert. Die Optimierungsmatrix, die unsere Kosten (und später die optimale Klammerung) enthält, heißt KOSTEN. Auf der horizontalen Achse liegt $i$ und auf der vertikalen liegt j. Der gesuchte Eintrag befindet sich demnach ganz unten links. Ein Element benötigt für seine Berechnung alle Elemente, die genau rechts oder genau über ihm liegen.
-	\item[Algorithmus] KLAMMERUNG
-\begin{lstlisting}[mathescape=true]
-KLAMMERUNG(){
-	for(i=1;i<n;i++){
-		KOSTEN[i,i].Value=0;
-	}
-	for(k=1;k<n;k++){
-		for(i=1;i<=n-k;i++){
-			min=maxInt;
-			j=i+k;
-			for(t=1;t<=k;t++){
-				val=KOSTEN[i,j-t].Value+KOSTEN[i+t,j].Value+M[i]*M[j+1]*(2*M[j-t+1]-1);
-				if(val<min){
-					min=val;
-					minIndex=j-t;
-				}
-			}
-			KOSTEN[i,j].Value=min;
-			KOSTEN[i,j].Index= minIndex;
-		}
-	}
-	return KOSTEN[1,n].Value;
-}
+\begin{lstlisting}[mathescape=true,language=Python,caption={KLAMMERUNG}]
+def KLAMMERUNG():
+    for i in range(n):
+        KOSTEN[i,i].value = 0
+    for k in range(n):
+        for i in range(n-k):
+            min = maxInt
+            j = i+k
+            for t in range(k):
+                val = KOSTEN[i,j-t].value + KOSTEN[i+t,j].value + 
+                        M[i] * M[j+1] * (2*M[j-t+1]-1)
+                if val < min:
+                    min = val
+                    minIndex = j-t
+            KOSTEN[i,j].value=min
+            KOSTEN[i,j].index= minIndex
+    return KOSTEN[1,n].value
 \end{lstlisting}
 	\item[Analyse:] Grundlage für den Platzbedarf sind die Maße der Matrix KOSTEN. Die Zeilen und Spalten bestimmen die optimale Klammerung eines Teilterms. Von daher kann jede Koordinate von $1$ bis $n$. Weiterer Platzbedarf ist nur linear. Daraus folgt für den Platzbedarf O($n^2$).\\
 Die Laufzeit, um ein Element der Matrix zu berechnen, liegt in O($n$), da alle Elemente rechts davon oder darüber betrachtet werden müssen. Für das gesuchte Element sind das im Detail $2 \cdot \left( n - 1 \right)$. Da die Matrix $n^2$ viele Einträge hat, die alle überprüft werden müssen, hat der Algorithmus eine Laufzeit von O($n^3$).
 	\end{description}
-\item \begin{description}
-	\item Erweitere die Matrix um ein Feld \textbf{Index}. In diesem wird der Index der Matrix gespeichert, welche zuletzt in der linken optmialen Matrixkette enthalten ist (Im vorigen Aufgabenteil ist dies schon eingearbeitet worden). Dadurch kann man nach der Berechnung der optimalen Kosten - von KOSTEN[1, n] aus - top-down die Matrixkette optimal klammern.
-	\item[Algorithmus] AUSGABE
-\begin{lstlisting}[mathescape=true]
-AUSGABE(i,j){
-	if(i=j){
-		return "(M_"+i+"="+M[i]+"$\times$"+M[i+1]+")";
-	return "("+AUSGABE(i,KOSTEN[i,j].Index)+"*"+AUSGABE(KOSTEN[i,j].Index+1,j)+")";
-}
+\item Erweitere die Matrix um ein Feld \textbf{index}. In diesem wird der Index der Matrix gespeichert, welche zuletzt in der linken optmialen Matrixkette enthalten ist (Im vorigen Aufgabenteil ist dies schon eingearbeitet worden). Dadurch kann man nach der Berechnung der optimalen Kosten - von KOSTEN[1, n] aus - top-down die Matrixkette optimal klammern.
+\begin{lstlisting}[mathescape=true,language=Python,caption={AUSGABE}]
+def AUSGABE(i,j):
+    if i = j:
+        return "(M_"+i+"="+M[i]+" x "+M[i+1]+")"
+    return "("+AUSGABE(i,KOSTEN[i,j].index)+" * "+AUSGABE(KOSTEN[i,j].index+1,j)+")"
 \end{lstlisting}
-\end{description}
 \item 
 \end{enumerate}
 \end{document}
