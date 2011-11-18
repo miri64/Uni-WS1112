@@ -107,7 +107,7 @@ def KLAMMERUNG():
             min = maxInt
             j = i+k
             for t in range(k):
-                val = KOSTEN[i,j-t].value + KOSTEN[i+t,j].value + 
+                val = KOSTEN[i,j-t].value + KOSTEN[i+k-t,j].value + 
                         M[i] * M[j+1] * (2*M[j-t+1]-1)
                 if val < min:
                     min = val
@@ -126,6 +126,7 @@ def AUSGABE(i,j):
         return "(M_"+i+"="+M[i]+" x "+M[i+1]+")"
     return "("+AUSGABE(i,KOSTEN[i,j].index)+" * "+AUSGABE(KOSTEN[i,j].index+1,j)+")"
 \end{lstlisting}
-\item 
+\item Die wichtigen Stellen im folgenden Code sind \textbf{naiv} und \textbf{optimiert}. In diesen beiden Methoden wird die jeweils benötigte Anzahl an Rechenschritten bestimmt. Die Zahl bei der naiven Variante kann ganz einfach bestimmt werden, während bei der optimierten Variante der Pseudocode implementiert wurde. Die anderen Methoden dienen nur zur Hilfe in dem Programm und zur Erstellung der besten Klammerung. In \textbf{main} befindet sich nur noch das User Interface, sowie die entsprechenden Methodenaufrufe.
+      \lstinputlisting[caption=Klammerung.java]{src/Klammerung.java}
 \end{enumerate}
 \end{document}
