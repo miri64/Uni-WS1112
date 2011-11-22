@@ -1,0 +1,149 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Christian Cikryt (Di. 14-16), Jakob Pfender (Mi. 14-16)}
+\title{H\"ohere Algorithmik - 4. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+    escapeinside={((*}{*))},
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Bestimmen des engsten Paares}
+Die Annahme, dass alle $x$-Koordinaten in $P$ verschieden sind, ist nur
+von Bedeutung, wenn die Punkte anhand ihrer $x$-Koordinaten sortiert
+werden sollen. Bei diesem Schritt können die Punkte, deren
+$x$-Koordinaten identisch sind, einfach noch zusätzlich anhand ihrer
+$y$-Koordinaten sortiert werden. Dies hat keinen Einfluss auf die
+Laufzeit.
+
+\section{Rekursionsgleichungen}
+\begin{enumerate}
+\item	ist trivial: Da die Beschriftungen der $x_v$ paarweise
+	verschieden sind und $\mathbb{R}$ eine geordnete Menge ist, gilt:
+	\[\exists i \in {1,...,n}, \forall j \in {1,...,n}, i \neq j:
+	x_{v_i} < x_{v_j}\]
+	Es gibt also ein globales und damit auch mindestens ein lokales
+	Minimum.
+\item
+\item	Finde das absolute Minimum von Spalte $x = \lceil \frac{n}{2}
+	\rceil$. Vergleiche es mit seinen Zeilennachbarn. Sind diese größer,
+	haben wir ein lokales Minimum gefunden. Ansonsten wiederhole den Vorgang
+	mit allen Spalten auf der Seite des kleineren Knotens.
+
+	Dieser Algorithmus hat die Rekursionsgleichung $T(n) =
+	T(\frac{n}{2}) + 2 \cdot n$. Hier kann das Mastertheorem mit
+	$a=1, b=2, f(n)=2$ angewendet werden:
+
+	\begin{align*}
+		 n^{\log_b a} &= n^{\log_2 1} = n^0 = 1 \\
+		 f(n) &= \Omega(n^{0+\varepsilon}) \tag{z. B.: für $\varepsilon = \frac{1}{2}$} \\
+		 a \cdot f\left(\frac{n}{b}\right) &\leq c \cdot f\left(n\right) \tag*{$\|\ c = \frac{1}{2}$} \\
+		1 \cdot 2 \cdot \frac{n}{2} & \leq \frac{1}{2} \cdot 2 \cdot n
+	\end{align*}
+
+Es gilt also Fall 3 des MT: $T(n) = \Theta(n)$.
+\end{enumerate}
+
+\section{Matrizenmultiplikation}
+\begin{enumerate}
+\item \begin{description}
+	\item[Rekursionsanker:] $P\left[i, i\right] = 0$
+	\item[Rekursionsgleichung:] $P\left[i, j\right] = \min\limits_{i \leq k < j}\left\{P\left[i, k\right] + P\left[k + 1, j\right] + M_{i.height} \cdot M_{j.width} \cdot \left( 2 \cdot M_{k.width} - 1 \right) \right\}$
+\end{description} 
+\item \begin{description}
+	\item[Voraussetzung:] Wir speichern alle Matrixdimensionen im
+	Array DIMENSIONS. Dieses hat Länge $n+1$, da die Breite einer
+	Matrix gleich der Höhe der nachfolgenden Matrix ist.
+	Desweiteren benötigen wir eine Optimierungsmatrix OPT. Diese hat
+	$i$ auf der horizontalen und $j$ auf der vertikalen Achse. Ein
+	Element benötigt für seine Berechnung die Elemente, die genau rechts oder genau über ihm liegen.
+\begin{lstlisting}[mathescape=true,numbers=none]
+BRACKETS(){
+	for(i = 1; i < n; i++){
+		OPT[i, i].Val = 0;
+	}
+	for(k = 1; k < n; k++){
+		for(i = 1; i <= (n - k); i++){
+			min = maxInt;
+			j = i + k;
+			for(t = 1; t <= k; t++){
+				val = OPT[i, j - t].Val 
+				+ OPT[i + t, j].Value + DIMENSIONS[i] 
+				* DIMENSIONS[j + 1] 
+				* (2 * DIMENSIONS[j - t + 1] - 1);
+				if(val < min){
+					min = val;
+					minIndex = j - t;
+				}
+			}
+			OPT[i, j].Val = min;
+			OPT[i, j].Index = minIndex;
+		}
+	}
+	return OPT[1, n].Val;
+}
+\end{lstlisting}
+	\item[Laufzeit:] $O(n^3)$, da die Matrix $n^2$ Einträge hat,
+	welche sich jeweils in in $O(n)$ berechnen lassen.
+	\item[Platzbedarf:] $O(n^2)$, da dieser von den Maßen von OPT
+	abhängt.
+	\end{description}
+\item 
+\begin{lstlisting}[mathescape=true,numbers=none]
+OPTIMAL(i,j){
+	if(i=j){
+		return "(DIMENSIONS_"+i+"="+DIMENSIONS[i]+"$\times$"+DIMENSIONS[i+1]+")";
+	return "("+OPTIMAL(i,OPT[i,j].Index)+"*"+OPTIMAL(OPT[i,j].Index+1,j)+")";
+}
+\end{lstlisting}
+\end{enumerate}
+\end{document}

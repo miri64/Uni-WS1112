@@ -1,4 +1,4 @@
-\documentclass[a4paper,10pt]{scrartcl}
+\documentclass[a4paper,10pt]{article}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
@@ -19,7 +19,7 @@
 
 \newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
 
-\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\thesection}{Aufgabe \arabic{section}:}
 \renewcommand{\labelenumi}{(\theenumi)}
 \renewcommand{\theenumi}{\alph{enumi}}
 \renewcommand{\labelenumii}{(\theenumii)}
@@ -58,21 +58,75 @@
 \maketitle
 
 \section{Bestimmen des engsten Paares}
+Die Differenz der $x$-Werte ist nur bei dem Punkt notwendig, wenn die Menge in zwei annähernd gleichgroße Mengen aufgeteilt werden soll. Mit dem bisherigen Algorithmus kann es dazu führen, dass alle Punkte in die gleiche Menge getan werden. Um dies zu verhindern, können die Punkte zusätzlich anhand ihres $y$-Wertes sortiert werden. Dies gilt jedoch nur innerhalb der Punktmengen, die die gleichen $x$-Koordinaten haben. Haben zwei oder mehr Punkte sowohl gleiche $x$- und $y$-Koordinaten, ist damit das engste Paar gefunden.\\
+Die asymptotische Laufzeit bleibt davon unbeeinflusst, da diese Modifikation keine Veränderung auf die Laufzeit des Aufteilens hat.
 
 \section{Rekursionsgleichungen}
 \begin{enumerate}
 \item   Da die Beschriftungen $x_v \in \mathbb{R}$ paarweise verschieden sind und $\mathbb{R}$ eine geordnete Menge ist, gilt 
         \[\forall i \in \{1, ..., n\}, \exists j \in \{1, ..., n\}, i \neq j{:}\ x_{v_i} < x_{v_j}\]
         Daher existiert definitiv ein globales Minimum, das auch ein lokales Minimum ist.
-\item 
-\item 
+\item  Es kann Verteilungen geben, sodass manbeispielsweise jede zweite Zeile von einem Rand zum anderen anderen abläuft, dort auf die übernächste Zeile wechselt und wieder zum anderen Rand läuft. Dies kann man prinzipiell für jeden Startpunkt erreichen, sodass man O($n \cdot \frac{n}{2} + n$) = O($n^2$) erhält.\\
+Siehe auch: FASS-Kurven.
+\item Wähle Spalte $x = \left\lceil\frac{n}{2}\right\rceil$ und Zeile $y = \left\lceil\frac{n}{2}\right\rceil$. Finde das absolute Minimum je Zeile und Spalte in O($n$). Betrachte anschließend dessen Zeilen- bzw. Spaltennnachbarn. Sind beide Knoten größer, haben wir ein lokales Minimum gefunden. Andernfalls wähle die Seite des kleineren Nachbarn und entferne die andere Hälfte aus dem Graph. Der verbleibende Graph hat nur noch eine Kantenlänge $\frac{n}{2}$ und der Algorithmus kann erneut angewadt werden.\\
+Dies führt zu folgender Rekursionsgleichung: $T(n) = T\left(\frac{n}{2}\right) + 2\cdot n$\\
+Hier lässt sich das MT anwenden mit $a = 1, b =2$ und $f(n) = 2 \cdot n$:
+\begin{align*}
+         n^{\log_b a} &= n^{\log_2 1} \\
+                      &= n^0 \\
+                      &= 1 \\
+         f(n) &= \Omega\left(n^{0+\varepsilon}\right) \tag{z. B. $\varepsilon = \frac{1}{3}$}
+\end{align*}
+\begin{align*}
+         c \cdot f(n) &\geq a \cdot f\left(\frac{n}{b}\right) \tag*{$\|\ c = \frac{1}{2}$} \\
+         \frac{1}{2} \cdot 2 \cdot n &\geq 1 \cdot 2 \cdot \frac{n}{2}
+\end{align*}
+Fall 3: $T(n) = \Theta(n)$\\
+\begin{description}
+	\item[Korrektheit des Algorithmus] Wenn ein lokales Minimum der Spalte (Zeile) nicht ein lokales Minimum ist, bedeutet es, dass es einen Weg von diesem Knoten in die eine Hälfte gibt. Dieser Weg kann möglicherweise so verlaufen, dass er an anderer Stelle die Spalte erneut trifft oder sogar überschreitet. So kann es sein, dass es in der so ausgewählten Hälfte kein lokales Minimum gibt. Wenn man jedoch das absolute Minimum verwendet, muss der so gefundene Weg in der entsprechenden Hälfte enden. Dieses Ende ist ein lokales Minimum. Somit gibt es in dem ausgewählten Bereich mindestens ein lokales Minimum.
+\end{description}
 \end{enumerate}
 
-\section{Matrizenmultiplikation}
+\section{Matrizenkettenmultiplikation}
 \begin{enumerate}
-\item 
-\item 
-\item 
-\item 
+\item \begin{description}
+    Seien $\operatorname{h}{:} \mathbb{R}^{n \times m} \to \mathbb{N}$ und $\operatorname{w}{:} \mathbb{R}^{n \times m} \to \mathbb{N}$ jeweils Funktionen die die Höhe bzw. Breite einer Matrix bestimmen.
+	\begin{align*}
+     P[i, i] &= 0\\
+     P\left[i, j\right] &= \min\limits_{i \leq k < j}\left\{P\left[i, k\right] + P\left[k + 1, j\right] + \operatorname{h}(M_i) \cdot \operatorname{w}(M_j) \cdot \left( 2 \cdot \operatorname{w}(M_k) - 1 \right) \right\}
+    \end{align*}
+\end{description} 
+\item \begin{description}
+	\item[Voraussetzung:] Da die Breite einer Matrix gleich der Höhe der nachfolgenden Matrix ist, benötigt man nur $n + 1$ Einträge, um alle Matrixdimensionen abzuspeichern. Diese seien im Array $M$ abgespeichert. Die Optimierungsmatrix, die unsere Kosten (und später die optimale Klammerung) enthält, heißt KOSTEN. Auf der horizontalen Achse liegt $i$ und auf der vertikalen liegt j. Der gesuchte Eintrag befindet sich demnach ganz unten links. Ein Element benötigt für seine Berechnung alle Elemente, die genau rechts oder genau über ihm liegen.
+\begin{lstlisting}[mathescape=true,language=Python,caption={KLAMMERUNG}]
+def KLAMMERUNG():
+    for i in range(n):
+        KOSTEN[i,i].value = 0
+    for k in range(n):
+        for i in range(n-k):
+            min = maxInt
+            j = i+k
+            for t in range(k):
+                val = KOSTEN[i,j-t].value + KOSTEN[i+k-t,j].value + 
+                        M[i] * M[j+1] * (2*M[j-t+1]-1)
+                if val < min:
+                    min = val
+                    minIndex = j-t
+            KOSTEN[i,j].value=min
+            KOSTEN[i,j].index= minIndex
+    return KOSTEN[1,n].value
+\end{lstlisting}
+	\item[Analyse:] Grundlage für den Platzbedarf sind die Maße der Matrix KOSTEN. Die Zeilen und Spalten bestimmen die optimale Klammerung eines Teilterms. Von daher kann jede Koordinate von $1$ bis $n$. Weiterer Platzbedarf ist nur linear. Daraus folgt für den Platzbedarf O($n^2$).\\
+Die Laufzeit, um ein Element der Matrix zu berechnen, liegt in O($n$), da alle Elemente rechts davon oder darüber betrachtet werden müssen. Für das gesuchte Element sind das im Detail $2 \cdot \left( n - 1 \right)$. Da die Matrix $n^2$ viele Einträge hat, die alle überprüft werden müssen, hat der Algorithmus eine Laufzeit von O($n^3$).
+	\end{description}
+\item Erweitere die Matrix um ein Feld \textbf{index}. In diesem wird der Index der Matrix gespeichert, welche zuletzt in der linken optmialen Matrixkette enthalten ist (Im vorigen Aufgabenteil ist dies schon eingearbeitet worden). Dadurch kann man nach der Berechnung der optimalen Kosten - von KOSTEN[1, n] aus - top-down die Matrixkette optimal klammern.
+\begin{lstlisting}[mathescape=true,language=Python,caption={AUSGABE}]
+def AUSGABE(i,j):
+    if i = j:
+        return "(M_"+i+"="+M[i]+" x "+M[i+1]+")"
+    return "("+AUSGABE(i,KOSTEN[i,j].index)+" * "+AUSGABE(KOSTEN[i,j].index+1,j)+")"
+\end{lstlisting}
+\item Die wichtigen Stellen im folgenden Code sind \textbf{naiv} und \textbf{optimiert}. In diesen beiden Methoden wird die jeweils benötigte Anzahl an Rechenschritten bestimmt. Die Zahl bei der naiven Variante kann ganz einfach bestimmt werden, während bei der optimierten Variante der Pseudocode implementiert wurde. Die anderen Methoden dienen nur zur Hilfe in dem Programm und zur Erstellung der besten Klammerung. In \textbf{main} befindet sich nur noch das User Interface, sowie die entsprechenden Methodenaufrufe.
+      \lstinputlisting[caption=Klammerung.java]{src/Klammerung.java}
 \end{enumerate}
 \end{document}
