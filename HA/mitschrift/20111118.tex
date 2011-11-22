@@ -1,0 +1,54 @@
+\paragraph*{Lösung mit dynamischen Programmieren}
+\begin{enumerate}[start=0]
+\item Problem verstehen (\textbf{Satz von Bayes})
+     \[\operatorname{Pr}[A|B] = \frac{\operatorname{Pr}[B|A] \cdot \operatorname{Pr}[A]}{\operatorname{Pr}[B]}\]
+     Also:
+     \begin{align*}
+     &\operatorname{Pr}[\underbrace{\text{Zustandsfolge $q_0...q_{l-1}$}}_{A}\ |\ \underbrace{\text{Beobachtung $\sigma_0...\sigma_{l-1}$}}_{B}] \\&= \frac{\operatorname{Pr}[\text{Beobachtung $\sigma_0...\sigma_{l-1}$}\ |\ \text{Zustandsfolge $q_0...q_{l-1}$}] \cdot \operatorname{Pr}[\text{Zustandsfolge $q_0...q_{l-1}$}]}{\operatorname{Pr}[\text{Beobachtung $\sigma_0...\sigma_{l-1}$}]}\\
+     &\underset{q_0...q_{l-1}}{\operatorname{argmax}} \frac{\operatorname{Pr}[\text{Beobachtung $\sigma_0...\sigma_{l-1}$}\ |\ \text{Zustandsfolge $q_0...q_{l-1}$}] \cdot \operatorname{Pr}[\text{Zustandsfolge $q_0...q_{l-1}$}]}{\operatorname{Pr}[\text{Beobachtung $\sigma_0...\sigma_{l-1}$}]} \\
+     &= \underset{q_0...q_{l-1}}{\operatorname{argmax}} \operatorname{Pr}[\text{Beobachtung $\sigma_0...\sigma_{l-1}$}\ |\ \text{Zustandsfolge $q_0...q_{l-1}$}] \cdot \operatorname{Pr}[\text{Zustandsfolge $q_0...q_{l-1}$}]\\
+     &= \underset{q_0...q_{l-1}}{\operatorname{argmax}}\ o(q_0,\sigma_0) \cdot ... \cdot o(q_{l-1},\sigma_{l-1}) \cdot a(q_0) \cdot 
+         t(q_0,q_1) \cdot t(q_1,q_2) \cdot ... \cdot t(q_{l-2}, q_{l-1})
+     \end{align*}
+\item Teilprobleme finden:
+\begin{center}
+    \begin{tabular}{rp{0.6\linewidth}}
+        $q \in Q, j = 0, ..., l-1{:}\ E[q,j] =$&$\max$ Wahrscheinlichkeit einer Zustandsfolge, die in $q$ endet und Länge $j-1$ hat und die Ausgabe $\sigma_0...\sigma_i$ erzeugt.
+     \end{tabular}
+\end{center}
+\begin{align*}
+ &= \underset{\underset{q_i = q}{q_0,q_1,...,q_i}}{\max} o(q_0,\sigma_0) \cdot o(q_1,\sigma_1) \cdot ... \cdot o(q_j, \sigma_j)
+     \cdot a(q_0) \cdot t(q_0,q_1) \cdot ... \cdot t(q_{j-1}, q_j)
+\end{align*}
+\paragraph*{Ziel:} Finde $\underset{q \in Q}{\max}\ E[q, l-1]$
+\item Rekursion:
+ \begin{align*}
+  \forall q \in Q{:}\ E[q, 0] &= a(q) \cdot o (q, \sigma_0) \\
+                      E[q, j] &= \max\limits_{r \in Q}\ E[r, j-1] \cdot t(r,q) \cdot o(q,\sigma_j)
+ \end{align*}
+\end{enumerate}
+
+\paragraph*{Zurück zum Beispiel:}
+\begin{itemize}
+ \item $Q = \{\text{R}, \text{S}\}$
+ \item $\Sigma = \{\text{{\color{blue}N}ass},\text{{\color{blue}T}rocken}\}$
+\end{itemize}
+\begin{center}
+ \psset{arrows=->}
+ \begin{tabular}{c||c|c}
+  & R & S \\\hline\hline
+  $\sigma_0 =$ N & \rnode{0R}{0{,}56} & \rnode{0S}{0{,}09} \\\hline
+  $\sigma_1 =$ T & \rnode{1R}{0{,}0612} & \rnode{1S}{0{,}1568} \\\hline
+  $\sigma_2 =$ T & \rnode{2R}{} & \rnode{2S}{} \\\hline
+  $\sigma_3 =$ N & \rnode{3R}{} & \rnode{3S}{} \\\hline
+  $\sigma_4 =$ T & \rnode{4R}{} & \rnode{4S}{} \\\hline
+  $\sigma_5 =$ N & \rnode{5R}{} & \rnode{5S}{} \\\hline
+  $\sigma_6 =$ N & \rnode{6R}{} & \rnode{6S}{}
+\end{tabular}\ncline{1R}{0R}\ncline{1S}{0R}
+\end{center}
+\begin{description}
+ \item[Speicherplatz:] $\Theta(|Q| \cdot l)$
+ \item[Zeit:] $\Theta(|Q|^2 \cdot l)$
+\end{description}
+
+

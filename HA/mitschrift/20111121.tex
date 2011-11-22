@@ -1,0 +1,94 @@
+\section[Greedy Algorithmen]{Greedy (dt. gierige) Algorithmen}
+Algorithmus triff lokal optimale Entscheidung in der Hoffnung, dass diese Entscheidung zu einer global optimalen Lösung führt.
+
+\subsection{Beispiel: Vorlesungsplanung / Intervall-Auswahl}
+\Geg     $n$ Intervalle $R = {I_1, I_2, ..., I_n}$
+         \[I_i = (a(i), e(i))\]
+\Ges     Größte Teilmenge $A \subseteq R$, so dass sich keine Intervalle überlappen.
+         Es gilt also:
+         \[ \forall I_i, I_j \in A{:}\ a(i) \geq e(j) \lor a(j) \geq e(i) \]
+\paragraph*{Grundidee:} Beginne mit $A \neq \emptyset$ und füge so lange wie müglich Intervalle aus $R$ in $A$ ein, die kein Intervall aus $A$ schneiden.
+
+\paragraph*{Regel zur Auswahl der Intervalle:} Nimm Intervall mit dem zeitigsten Ende
+\begin{algorithmic}
+ \STATE $A \gets \emptyset$
+ \WHILE{$R \neq \emptyset$}
+ \STATE wähle aus $R$ das Intervall mit minimalen $e(i)$, füge es in $A$ ein
+ \STATE entferne alle Intervalle $I_j$ aus $R$ mit $a(j) < e(i)$
+ \ENDWHILE
+\end{algorithmic}
+
+\paragraph*{Korrektheit} Sei $S$ eine optimale (größtmögliche) Teilmenge von $R$. Wir wollen zeigen: 
+\[|A| = |B|\]
+Seien $i_1,...,i_k$ und $j_1,...,j_m$ die Indizes der Intervalle von $A_i$ bzw. $S_i$ in zeitlich geordneter Reihenfolge.
+
+\paragraph*{Behauptung:} $\forall r \in \{1,...,n\}{:}\ e(i_r) \leq e(j_r)$
+
+\paragraph{Induktionsbeweis:}
+\begin{description}
+ \item[IA] $r = 1$ $e(i_1) \leq e(j_1)$ klar, denn der Greedy-Algorithmus wählt das Intervall mit minmalem $e(i)$
+ \item[IS] ($r \Rightarrow r + 1$)\\
+     Es gilt $e(i_r) \leq e(j_r)$ (nach Induktionsbehauptung).\\
+     Nach Auswahl von $I_{i_r}$ steht das Intervall $I_{j_{r+1}}$ noch zur Verfügung, da $e(i_r) \leq e(j_r) \leq a(j_{r+1})$\\
+     $\Rightarrow$ das nächste Intervall in $A$ ist eins mit $e(i_{r+1}) \leq e(j_{r+1})$ \hfill \carsten\\
+     Also gilt $k \geq m$ und damit $|A| \geq |S|$.
+\end{description}
+
+\paragraph*{Widerspruchsbeweis:} Angenommen $k < m$, dann gilt $e(i_k) \leq e(j_k)$ und es gibt noch ein Intervall $I_{j_{k+1}}$. Also enthält $R$ noch $I_{j_{k+1}}$ nachdem die intervalle $I_{i_n},...,I_{i_k}$ ausgewählt wurden. Das heißt der Algorithmus ist terminiert, bevor $R = \emptyset$
+
+\paragraph*{Konkrete Implementierung:}
+\begin{enumerate}
+ \item Sortiere $R$ bzgl. $e(i)$, danach gilt $e(1) \leq e(2) \leq ... \leq e(n)$
+ \item Bilde Array $B = \{a(1), a(2), ..., a(n)\}$
+ \item Aufbau von $A$
+ \begin{algorithmic}
+  \STATE $A = \emptyset$
+  \STATE $i = 1$
+  \WHILE{$i \leq n$}
+  \STATE füge $I_i$ in $A$ ein
+  \STATE $j \gets i + 1$
+  \WHILE{$a(j) \leq e(i)$ und $j \leq n$}
+  \STATE $j \gets j+1$
+  \ENDWHILE
+  \STATE $i = j$
+  \ENDWHILE
+ \end{algorithmic}
+\end{enumerate}
+
+\paragraph*{Laufzeit}
+\begin{enumerate}
+ \item $\Theta(n \log n)$
+ \item $O(n)$
+ \item $O(n)$
+\end{enumerate}
+\[T(n) = \Theta(n \log n)\]
+
+\subsection{Beispiel: Intervallunterteilungsproblem}
+\Geg $n$ Intervalle $I_1, I_2,...,I_n$
+\Ges Minimale Anzahl von Labeln, so dass jedes Intervall ein Label hat und Intervalle nur dann das gleiche Label haben, wenn sie sich nicht überlappen.
+
+\paragraph*{Grundidee:} Teste für jedes Intervall, ob ein bereits vorhandenes Label benutzt werden kann. Wenn nicht füge neues Label in die Labelmenge ein.
+
+\paragraph*{Regel zum Durchlaufen der Intervalle:} Nimm Intervalle mit dem zeitigsten Start
+\begin{algorithmic}
+ \STATE Sortiere die Intervalle nacht ihrem Startpunkt. Sei die Reihenfolge $I_1, I_2, ..., I_n$
+ \STATE $i \gets 1$
+ \FOR{$i \in \{1, ...,n\}$}
+  \FOR{jedes Intervall $I_k$, das vor $I_j$ startet und $I_j$ überlappt}
+      \STATE Schließe Label von $I_k$ für $I_j$ aus
+  \ENDFOR
+  \IF{es gibt ein Label $\{1,...,i\}$, das nicht ausgeschlossen wurde}
+      \STATE weise das Label $I_j$ zu
+  \ELSE
+      \STATE weise $I_j$ das Label $i+1$ zu
+      \STATE $i \gets i + 1$
+  \ENDIF 
+ \ENDFOR
+\end{algorithmic}
+\[T(n) = O(n \log n)\]
+
+\paragraph*{Korrektheit:} Sei $d$ die Tiefe der Menge der Intervalle, d. h. die maximale Anzahl an Intervallen, die zu einem bestimmten Zeitpunkt parallel laufen.
+\Beh Die Anzahl der benötigten Label ist mindestens $d$.
+\Bew Es gibt einen Zeitpunkt zu dem $d$ Intevalle gleichzeitig laufen. Jedes dieser Intervalle benötigt ein eigenes Label.
+\Beh Der Algorithmus benutzt höchstens $d$ Label.
+\Bew Betrachte ein Intervall $I_j$ für das ein neues Label eingefügt wird. Sei $t$ die Anzahl der Intervalle, die vor $I_j$ starten und $I_j$ überlappen. Es gibt $t + 1 \leq d$, d. h. $t = d - 1$. Die Menge der Label ist höchstens $d$. \hfill $ \square$ 
