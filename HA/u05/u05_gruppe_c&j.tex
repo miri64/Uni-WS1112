@@ -5,6 +5,7 @@
 \usepackage[ngerman]{babel}
 \usepackage{listingsutf8}
 \usepackage{color}
+\usepackage{algorithmic}
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{multicol}
@@ -55,15 +56,124 @@
 
 \section{Varianten der Vorlesungsbeispiele}
 \begin{enumerate}
- \item 
  \item
+  Der hier vorgestellte Algorithmus ist eine Abwandlung des in der Vorlesung behandelten und geht von folgender Rekursionsgleichung aus:
+   \begin{align*}
+     E[0,b] &= 0 \qquad \forall b \in \mathbb{N} \\
+     E[m,0] &= 0 \qquad \forall m \in \mathbb{N} \\
+     E[m,b] &= \begin{cases}
+                \max(E[m-1,b], w_m + E[m-1, b-p_m], w_m + E[m, b - p_m]), & \text{wenn } b \geq p_m \\
+                E[m-1,b], & \text{sonst}
+               \end{cases}
+    \end{align*}
+  Diese Gleichung berücksichtigt, dass man denselben Gegenstand erneut auswählen kann ($w_m + E[m, b - p_m]$).
+  Der abgewandelte Algorithmus im Pseudocode (genau wie in der Vorlesung wird die Bestimmung der tatsächlichen Lösung zunächst beiseite gelassen):
+\begin{center}
+        \begin{algorithmic}
+            \FOR{$m \in \{0, \hdots, n\}$}
+                \STATE $E[m,0] \gets 0$
+            \ENDFOR
+            \FOR{$b \in \{0, \hdots, B\}$}
+                \STATE $E[0,b] \gets 0$
+            \ENDFOR
+            \FOR{$m \in \{1, \hdots, n\}$}
+                \FOR{$b \in \{1, \hdots, B\}$}
+                    \IF{$p[m] > b$}
+                        \STATE $E[m,b] \gets E[m-1,b]$
+                    \ELSE
+                        \STATE $E[m,b] \gets \max\{E[m-1,b], w[m] + E[m-1,b-p[m]], E[m, b - p[m]]\}$
+                    \ENDIF
+                \ENDFOR
+            \ENDFOR
+            \RETURN $E[n, B]$
+        \end{algorithmic}
+       \end{center}
+  Der einzige Unterschied im Vergleich zum Vorlesungsalgorithmus ist der 3. Term bei der Maximumsbestimmung, der in jedem Schritt konstante Zeit mehr beansprucht.
+ Somit verändert sich die Wachstumsklasse nicht. Diese ist bestimmt durch die Anzahl der Kästen der Tabelle und somit O(m * B).
+ Die letztendliche Lösung kann man aufzeichnen, indem man in jedem Schritt die Entscheidung speichert. Dies erfordert zwar mehr Speicherplatz, verändert aber die asymptotische Laufzeit nicht.
+
+ \item
+Gegeben: $n$ Städte $0, 1, \hdots, n - 1$. Genau wie in der Vorlesung auch bezeichne $T[S, m]$ die Länge einer optimalen Tour, die bei 0 anfängt, bei m aufhört und zwischen 0 und m genau die Städte aus
+$S$ besucht. \newline
+Gesucht: $T[\{1, \hdots, n - 1\}, 0]$ \newline
+Zu dem im Folgenden vorgestellten Algorithmus seien einige Bemerkungen gestattet:
+\begin{itemize}
+ \item $T[\emptyset, m] = d(0, m) \forall m \in \{0, \hdots, n - 1\}$
+ \item $d(i, j) = d(j, i)$ ist der Abstand zweier Städte $i$ und $j$.
+ \item Sei $m \in S$ und $A \subseteq S \setminus \{0, m\}$. Dann gilt $T[A, m] = min\{d(m,j) + T[A \setminus \{ j \}] \left. \right| j \in A\}$. Denn für jede nicht-leere Menge
+ A wird der optimale Weg wie folgt definiert: Teste für alle $j \in A$ den Weg, der von $m$ aus zunächst nach $j$ führt. Für den optimalen Weg gilt, dass auch der Rest des Weges (von $j$ nach $0$) optimal ist.
+ Dieser Weg wurde aber genau so definiert: $T[A \setminus \{ j \}, j]$.
+ \item Der optimale Weg selbst wird in dem Feld O gespeichert ($O[0] = 0, O[n] = 0$)
+\end{itemize}
+
+Algorithmus:
+
+
+  \begin{algorithmic}
+   \FOR{$m \in \{0, \hdots, n - 1\}$}
+      \STATE $T[\emptyset, m] \gets d(m,0)$
+   \ENDFOR
+  \STATE $O[0] \gets 0$, $O[n] \gets 0$
+  \FOR{$k \in \{1, \hdots, n - 1\}$}
+    \FOR{$A \subseteq S \setminus \{0\} $ mit $ \left| A \right| = k$}
+      \FOR{$m \in \{0, \hdots, n - 1\}$}
+	\IF{$m \notin A$}
+	  \STATE $T[A,m] \gets min\{d(m, j) + T[A \setminus \{j\}, j] \left. \right|  j \in A\}$
+	  \STATE $0[k] = j $ mit $ j$ erzielte das Minimum in der vorangehenden Zeile.
+	\ENDIF
+      \ENDFOR
+    \ENDFOR
+  \ENDFOR
+  \RETURN $T[0,\{1, \hdots, n - 1\}], O$
+  \end{algorithmic}
+
 \end{enumerate}
 
 \section{Münzwechseln}
 \begin{enumerate}
  \item 
+
+  \begin{enumerate}
+  \item Finde geeignete Teilprobleme:
+    
+  $c[n,i]$ gibt an, auf wieviele Arten $n$ Cent mit den $i$ kleinsten Münzen dargestellt werden können. \newline
+  $c[n, 0] = 0$ \newline
+  $c[0, i] = 1$ \newline
+  Für $c[n, i]$ hat man zwei Möglichkeiten zum Wechseln. Entweder man benutzt die $i$-te Münzart ($c[n - value_i, i]$) oder man wechselt den Betrag ohne die $i$-te Münzart ($c[n, i - 1]$).
+  Uns interessiert die Summe der beiden rekursiven Möglichkeiten.
+  \item Rekursion:
+
+  $c[n, 0] = 0$ \newline
+  $c[0, i] = 1$ \newline
+   $c[< 0, i] = 0$ \newline
+  $c[n, i] = c[n - value_i, i] + c[n, i - 1]$
+  \item Pseudocode zum Ausfüllen der Tabelle (dynamische Programmierung):
+
+  \begin{algorithmic}
+   \FOR{$i \in \{1, \hdots, n\}$}
+      \STATE $c[i, 0] \gets 0$
+   \ENDFOR
+   \FOR{$i \in \{0, \hdots, k\}$}
+      \STATE $c[0,k] \gets 1$
+    \ENDFOR
+  \FOR{$i \in \{1, \hdots, k\}$}
+    \FOR{$j \in \{1, \hdots, n\}$}
+      \IF{$n - v_i < 0$}
+	\STATE $c[j, i] = 0 + c[n, i - 1]$
+      \ELSE
+	\STATE $c[j, i] = c[n - v_i, i] + c[n, i - 1]$
+      \ENDIF
+    \ENDFOR
+  \ENDFOR
+  \RETURN $c[n,k]$
+  \end{algorithmic}
+
+  \end{enumerate}
+
+ \item Die Laufzeit des Algorithmus wird durch die zwei verschachtelten for-Schleifen bestimmt (Größe der Tabelle), da in der innersten Schleife konstante Zeit gebraucht wird.
+  Daraus folgt: Laufzeit $\in O(n*k)$.
  \item
- \item
+  \lstinputlisting[gobble=4,firstnumber=9,caption={SchoolMethod.java}]{src/ChangingMoney.java}
 \end{enumerate}
 
 \section{Versteckte Markov-Modelle}
