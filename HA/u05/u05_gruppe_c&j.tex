@@ -138,7 +138,7 @@ Algorithmus:
   $c[n, 0] = 0$ \newline
   $c[0, i] = 1$ \newline
   Für $c[n, i]$ hat man zwei Möglichkeiten zum Wechseln. Entweder man benutzt die $i$-te Münzart ($c[n - value_i, i]$) oder man wechselt den Betrag ohne die $i$-te Münzart ($c[n, i - 1]$).
-  Uns interessiert die Summe der beiden rekursiven Möglichkeiten.
+  Uns interessiert die Summe der beiden rekursiven Möglichkeiten. $v_i = value_i$ ist der Münzwert der $i$-ten Münze.
   \item Rekursion:
 
   $c[n, 0] = 0$ \newline
