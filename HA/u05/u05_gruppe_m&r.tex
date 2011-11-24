@@ -67,11 +67,29 @@
 		\item[Rekursionsgleichung:] Bei diesem Einkaufsproblem, kann man sich entweder gegen einen Artikel entscheiden oder dafür. Entscheidet man sich für einen Artikel, hat man danach wieder die Wahl, ihn zu kaufen.\begin{align*}
 			E[n, B] = \max\left\{E[n, B-p_n] + w_n, E[n-1, B]\right\}
 		\end{align*}
-		\item[Laufzeit:] Stellt man die Matrix auf, so errechnet sich jedes Element aus dem Element darüber und daneben. Daraus ergibt sich eine gesamte Laufzeit von $O(nB)$.
+		\item[Laufzeit:] Stellt man die Matrix auf, so errechnet sich jedes Element aus dem Element darüber und daneben. Da die Matrix die Maße $n\cdot B$ hat, erhält man eine gesamte Laufzeit von $O(nB)$.
 	\end{description}
 	\item \begin{description}
-		\item[Beschreibung:]
-		\item[Pseudocode:]
+		\item[Beschreibung:] Die Problemstellung ist das Finden einer kürzesten Strecke, die alle Punkte miteinander verbindet. Grundlage ist die Überlegung, auf dem kürzesten Weg von einer Stadt$_0$ zu einer Stadt$_n$ zu kommen. Die dazwischen besuchten Städte bilden die Menge $S$. Der kürzeste Weg von Stadt$_0$ zu Stadt$_n$ ist nun das Minimum der kürzesten Weg von Stadt$_0$ zu jeder Stadt$_s$ aus $S$ plus der Strecke von Stadt$_s$ zu Stadt$_n$. Den kürzesten Weg von Stadt$_0$ zu jeder Stadt$_s$ errechnet man nach dem gleichen Schema.
+		\item[Algorithmus:] Als Hilfsfunktion sei die d(x,y) gegeben, die die Entfernung von Stadt$_x$ zu Stadt$_y$ liefert. Als Achsenbezeichner wählen wir die möglichen Mengen sowie die Endstadt.
+			\begin{lstlisting}[language=Clean,mathescape=true]
+RUNDREISE(){
+	for i=0 to n-1
+		M[$\emptyset$,i] = d(0,i);
+	for i=1 to n
+		foreach S' in {M| M $\in$ P({x_j| x_j $\in$ S, j<i}), M.size=i-1}{  // P = Potenzmenge
+			min=maxInt;
+			foreach x_j in S'{
+				value=M[S'-s,i-1]+d(j,i);
+				if(value<min)
+					min=value;
+			}
+			M[S',i]=min;
+		}
+	}
+	return M[S,n-1];
+}
+		\end{lstlisting}
 	\end{description}
 \end{enumerate}
 
@@ -89,14 +107,86 @@
 				C[n,i-1], & \text{sonst}
 			\end{cases}
 			\end{align*}
+		\item[Algorithmus:] WECHSEL\begin{lstlisting}[mathescape=true]
+WECHSEL(n,i){
+	for j=0 to i
+		M[0,j]=1;
+	for j=0 to n
+		M[j,1]=1;
+	for c=1 to n{
+		for j=1 to i{
+			if(n>=w_i){
+				sum=0;
+				for l=0 to n/w_i
+					sum+=M[n-l*w_i,i-1];
+				M[c,j]=sum;
+			}else
+				M[c,j]=M[c,j-1];
+		}
+	}
+	return M[n,i];
+}
+			\end{lstlisting}
 		\end{description}
-	\item
+	\item Durch die beiden \textbf{for}-Schleifen hat man bereits eine Laufzeit von$O(n\cdot i)$. Die innerste \textbf{for}-Schleife hängt ebenfalls linear von n ab. So hat man eine Gesamtlaufzeit von $O(i\cdot n^2)$. Dabei ist $i$ die Zahl der verschiedenen Münzen und $n$ der zu wechselnde Münzwert.
 \end{enumerate}
 
 \section{Versteckte Markov-Modelle}
 \begin{enumerate}
-	\item
-	\item
+	\item Der Viterbi-Algorithmus verwendet folgende Gleichungen: \begin{align*}
+		&E[q,0] = a(q) \cdot o(q, \sigma_0)\\
+		&E[q,j] = \max\limits_{q\in Q} \left\{E[r,j-1]\cdot t(r,q)\cdot o(q,\sigma_j)\right\}
+		\end{align*}
+		Es gilt also, folgende Tabelle zu füllen. \begin{align*}
+		\begin{tabular}{ c | l | l | l | }
+			 & q & r & s \\
+			\hline
+			0 = \texttt{a} &  &  &\\
+			\hline
+			1 = \texttt{b} &  &  &\\
+			\hline
+			2 = \texttt{b} &  &  &\\
+			\hline
+			3 = \texttt{a} &  &  &\\
+			\hline
+		\end{tabular} \end{align*}
+		Mit den oben genannten Formeln und den aus der Aufgabenstellung gegebenen Werten, lassen sich die Felder ganz einfach berechnen. Für die ersten paar Felder sind die Berechnungen exemplarisch vollständig gezeigt, werden aber später abgekürzt. Der jeweils unterstrichene Term zeigt das Maximum an. \begin{align*}
+			E[q, 0] &= a(q) * o(q, \sigma_0) = 0.1 * 0.2 = 0.02\\
+			E[r, 0] &= a(r) * o(r, \sigma_0) = 0.4 * 0.7 = 0.28\\
+			E[s, 0] &= a(s) * o(s, \sigma_0) = 0.5 * 0.5 = 0.25\\
+			\\
+			E[q, 1] &= \max\left\{E[q, 0] * t(q, q) * o(q, \texttt{a}); E[r, 0] * t(r, q) * o(q, \texttt{a}); E[s, 0] * t(s, q) * o(q, \texttt{a})\right\}\\
+			&= \max\left\{0.02 * 0.8 * 0.2; 0.28 * 0.3 * 0.2; 0.25 * 0.2 * 0.2\right\}\\
+			&= \max\left\{0.0128; \underline{0.0672}; 0.04\right\}\\
+			E[r, 1] &= \max\left\{E[q, 0] * t(q, r) * o(r, \texttt{a}); E[r, 0] * t(r, r) * o(r, \texttt{a}); E[s, 0] * t(s, r) * o(r, \texttt{a})\right\}\\
+			&= \max\left\{0.02 * 0.1 * 0.7; 0.28 * 0.3 * 0.7; 0.25 * 0.4 * 0.7\right\}\\
+			&= \max\left\{0.0006; 0.0252; \underline{0.03}\right\}\\
+			E[s, 1] &= \max\left\{E[q, 0] * t(q, s) * o(s, \texttt{a}); E[r, 0] * t(r, s) * o(s, \texttt{a}); E[s, 0] * t(s, s) * o(r, \texttt{a})\right\}\\
+			&= \max\left\{0.02 * 0.1 * 0.5; 0.28 * 0.4 * 0.5; 0.25 * 0.4 * 0.5\right\}\\
+			&= \max\left\{0.001; \underline{0.056}; 0.05\right\}\\
+			\\
+			E[q, 2] &= \max\left\{\underline{0.043008}; 0.0072; 0.00896\right\}\\
+			E[r, 2] &= \max\left\{0.002016; 0.0027; \underline{0.00672}\right\}\\
+			E[s, 2] &= \max\left\{0.00336; 0.006; \underline{0.0112}\right\}\\
+			\\
+			E[q, 3] &= \max\left\{\underline{0.00688128}; 0.0004032; 0.000448\right\}\\
+			E[r, 3] &= \max\left\{0.00301056; 0.0014112; \underline{0.003136}\right\}\\
+			E[s, 3] &= \max\left\{0.0021504; 0.001344; \underline{0.00244}\right\}
+		\end{align*}
+		Wir erhalten also folgende Tabelle:\begin{align*} \begin{tabular}{ c | l | l | l | }
+			 & q & r & s \\
+			\hline
+			0 = \texttt{a} & 0.02  & 0.28 & 0.25\\
+			\hline
+			1 = \texttt{b} & 0.0672 & 0.03 & 0.056\\
+			\hline
+			2 = \texttt{b} & 0.043008 & 0.00772 & 0.0112\\
+			\hline
+			3 = \texttt{a} & \textbf{0.00688128} & 0.003136 & 0.00244\\
+			\hline
+		\end{tabular} \end{align*}
+		In der letzten Zeile ist in Spalte q der höchste Wert. Die Wahscheinlichste Zustandsfolge ist also die, die zu diesem Feld führt. Wenn man sich die entsprechenden Gleichungen anschaut und schaut, welcher Term unterstrichen wurde, kommt man auf die Folge \textbf{rqqq}.
+	\item Da beim Viterbi-Algorithmus jedesmal Wahrscheinlichkeiten zwischen 0 und 1 multipliziert werden, kommt es nach vielen Anwendungsschritten zu betragsmäßig sehr kleinen Werten. Diese können im Computer nur mit immer geringer werdender Genauigkeit abgespeichert werden. Nach einer gewissen Anzahl von Anwendungsschritten kommt es bei Vergleichen und mathematischen Operationen unweigerlich zu Rechenfehlern. Durch das Logarithmieren erhält man betragsmäßig große negative Zahlen, die sich im Computer leichter abspeichern lassen. Das Logarithmieren führt zu keiner Verfälschung des Ergebnisses, welche Abfolge am wahrscheinlichsten ist, da nicht die Wahrscheinlichkeit an sich gesucht ist und eine streng monoton steigende Funktion ist.
 	\item
 \end{enumerate}
 
