@@ -180,6 +180,18 @@ Algorithmus:
 \begin{enumerate}
  \item 
  \item
+  Die Wahrscheinlichkeiten durch die Multiplikationen sehr klein. Um dem exponentiellen Absinken entgegen zu wirken, bietet sich eine logarithmische
+  Darstellung an. So können Ungenauigkeiten durch das Rechnen mit kleinsten Zahlen vermieden werden. Insgesamt ist der Einsatz des Logarithmus möglich, da der Logarithmus eine monoton wachsende Funktion ist.
  \item
+  Zur Fehlerkorrektur eines deutschsprachigen Textes soll ein Markov-Modell verwendet werden. Dabei sind die tatsächlich gemeinten Buchstaben die \textbf{Zustände}, das \textbf{Ausgabealphabet} sind die
+  empfangenen Buchstaben. Die \textbf{Ausgabewahrscheinlichkeit}, dass der empfangene Buchstabe auch gemeint war, ist 90 Prozent. Die \textbf{Ausgangswahrscheinlichkeiten} können durch Analyse von korrekten Deutschen Schriften,
+  Wörterbüchern etc. ermittelt werden, um herauszufinden, mit welchem Zeichen ein Satz mit welcher Wahrscheinlichkeit anfängt. Genauso können auch durch Analyse von Wörtern die \textbf{Übergangsverteilungen} bestimmt werden.
+  Hilfreich wäre es den Kontext zu wissen, da in einem umgangssprachlichen Chat andere Worte, mitunter nicht-korrekte Wörter und Schreibweisen verwendet werden. Auch die Häufigkeit der Wörter in einem
+ historischen Text weicht beispielsweise erheblich von einem zeitgenössischen ab.  Man muss insofern Annahme machen anhand derer das Analysematerial auswählen. Ohne weitere Anhaltspunkte wird das Ergebnis
+ nicht überzeugend sein, zumal die Fehlerwahrscheinlichkeit von 10 Prozent recht hoch ist. Die Annahme dass die Fehlerwahrscheinlichkeit bestimmt werden kann ist unrealitisch, sie ist bei einer 
+ Übertragung in aller Regel in der Realität nicht konstant verteilt.
+
+Randbemerkung: Dass in der Realität schwierig ist zu berechnen welches Wort gemeint war, zeigen Worterbuchvorschläge von Smartphones beispielsweise. Daran sieht man auch dass man durch Beibringen von
+persönlich häufig verwendeten Wörtern (Anpassung des Wortschatzes) das Ergebnis verbessern kann.
 \end{enumerate}
 \end{document}
