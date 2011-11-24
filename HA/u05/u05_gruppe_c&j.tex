@@ -103,7 +103,6 @@ Zu dem im Folgenden vorgestellten Algorithmus seien einige Bemerkungen gestattet
  \item Sei $m \in S$ und $A \subseteq S \setminus \{0, m\}$. Dann gilt $T[A, m] = min\{d(m,j) + T[A \setminus \{ j \}] \left. \right| j \in A\}$. Denn für jede nicht-leere Menge
  A wird der optimale Weg wie folgt definiert: Teste für alle $j \in A$ den Weg, der von $m$ aus zunächst nach $j$ führt. Für den optimalen Weg gilt, dass auch der Rest des Weges (von $j$ nach $0$) optimal ist.
  Dieser Weg wurde aber genau so definiert: $T[A \setminus \{ j \}, j]$.
- \item Der optimale Weg selbst wird in dem Feld O gespeichert ($O[0] = 0, O[n] = 0$)
 \end{itemize}
 
 Algorithmus:
@@ -119,12 +118,11 @@ Algorithmus:
       \FOR{$m \in \{0, \hdots, n - 1\}$}
 	\IF{$m \notin A$}
 	  \STATE $T[A,m] \gets min\{d(m, j) + T[A \setminus \{j\}, j] \left. \right|  j \in A\}$
-	  \STATE $0[k] = j $ mit $ j$ erzielte das Minimum in der vorangehenden Zeile.
 	\ENDIF
       \ENDFOR
     \ENDFOR
   \ENDFOR
-  \RETURN $T[0,\{1, \hdots, n - 1\}], O$
+  \RETURN $T[0,\{1, \hdots, n - 1\}]$
   \end{algorithmic}
 
 \end{enumerate}
@@ -178,7 +176,7 @@ Algorithmus:
 
 \section{Versteckte Markov-Modelle}
 \begin{enumerate}
- \item 
+ \item Siehe handschriftlichen Beipackzettel.
  \item
   Die Wahrscheinlichkeiten durch die Multiplikationen sehr klein. Um dem exponentiellen Absinken entgegen zu wirken, bietet sich eine logarithmische
   Darstellung an. So können Ungenauigkeiten durch das Rechnen mit kleinsten Zahlen vermieden werden. Insgesamt ist der Einsatz des Logarithmus möglich, da der Logarithmus eine monoton wachsende Funktion ist.
