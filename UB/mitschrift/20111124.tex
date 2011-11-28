@@ -1,0 +1,122 @@
+\chapter{Syntaxanalyse (Parser)}
+\begin{itemize}
+ \item kontextfreie Grammatiken bieten eine präzise, formale Spezifikation der grammatikalischen Struktur typischer Programmiersprachen; meist gegeben in Form von BNF und EBNF
+ \item Gewisse \emph{eingeschränkte} Klassen kontextfreie Sprachen lassen sich effizient parsen und sogar Parsergeneratoreb schreiben.
+ \item Grammatikalische Struktur der Programme bieten das \textit{Gerüst}, an dem der Übersetzungsprozess induktiv organisiert werden kann als auch systematische Fehlererkennung erlaubt.
+ \item kontextfreie Struktur erlaubt \textit{inkrementelle Entwicklung}.
+\end{itemize}
+Nicht-kontextfreie Features werden abgesondert und einzeln regelhaft behandelt!
+\begin{center}
+\begin{psmatrix}[colsep=2cm,rowsep=0.5cm]
+& & \framebox{Fehlerbehandlung}\\
+Quellsprache & \framebox{Lexer} & \framebox{Parser} &
+ \framebox{\begin{minipage}{1.5cm}
+            weitere Phasen des Frontends
+           \end{minipage}} & ...\\
+& & \framebox{Symboltabelle}
+\end{psmatrix}\ncline{<->}{1,3}{2,2}\ncline{<->}{1,3}{2,3}\ncline{<->}{1,3}{2,4}\ncline{2,1}{2,2}\ncline[offset=0.5em]{2,2}{2,3}\naput{Token}\ncline[offset=0.5em]{2,3}{2,2}\naput{getNextToken}
+\ncline[linestyle=dashed]{2,3}{2,4}\naput{Parsebaum} \ncline{2,4}{2,5}\naput{Zwischen-}\nbput{code}
+\ncline{<->}{3,3}{2,2}\ncline{<->}{3,3}{2,3}\ncline{<->}{3,3}{2,4}
+\end{center}
+
+\section{Drei Klassen von \emph{Syntaxanalysemethoden}}
+\begin{itemize}
+ \item universelle: jede kontextfreie Grammatik ist analysierbar ($O(n^3)$, \emph{nicht} akzeptabel)
+ \item top-down: effiziente Teilklassen LL-Grammatiken
+ \item bottom-up: effiziente Teilklassen LR-Grammatiken
+\end{itemize}
+L (Eingabe wird von \textbf{l}inks nach rechts gelesen) L (Linksherleitung)\\
+L (Eingabe wird von \textbf{l}inks nach rechts gelesen) R (Rechtsherleitung, in umgekehrter Reihenfolge)
+\[\text{LL} \subseteq \text{LR}\]
+\begin{itemize}
+ \item Parser für LL-Grammatiken sind leicht von Hand geschrieben
+ \item Parser für LR-Grammatiken werden mit Parsergeneratoren generiert
+\end{itemize}
+
+\paragraph*{Beispielgrammatiken} (hier Ausdrücke):
+\begin{align*}
+ G_1{:} \quad E &\to E + E\ |\ E * E\ |\ \operatorname{id}\ |\ (E)
+\end{align*}
+Ist mehrdeutig, lässt sich \emph{nicht effektiv parsen}
+\begin{align*}
+ G_2{:} \quad E &\to E + T\ |\ T\\
+ T &\to T * F\ |\ F\\
+ F &\to \operatorname{id}\ |\ (E)
+\end{align*}
+\begin{itemize}
+ \item eindeutig
+ \item ist LR-Grammatik, d. h. effizient bottom-up zu parsen
+\end{itemize}
+\begin{align*}
+ G_3{:} \quad E &\to TE'\\
+ E' &\to + TE'\ |\ \varepsilon\\
+ T &\to FT' \\
+ T' &\to *FT'\ |\ \varepsilon\\
+ F &\to \operatorname{id}\ |\ (E)
+\end{align*}
+\begin{itemize}
+ \item eindeutig
+ \item effizient zu parsen
+ \item LL-Grammatik
+\end{itemize}
+
+\section{Fehlerbehandlung}
+\paragraph*{Kriterien}
+\begin{itemize}
+ \item Präzision (Lokalisierung, Beschreibung)
+ \item Qualität (Erkenngun möglichst aller Fehler, schnelle Erholung)
+ \item Effizienz
+\end{itemize}
+
+\paragraph*{Typische Methoden}
+\begin{itemize}
+ \item \textbf{Konstruktorientierte (lokale) Methoden:}
+  \begin{itemize}
+  \item lokale Manipulation beim Auftreten eines Fehlers, z. B. Vertauschen zweier Symbole, Ersetzen eines ein anderes, Weglassen... \item effizient und in typischen Fällen zielführend
+  \end{itemize}
+ \item \textbf{Panic Mode (Panische Fehlererholung):}
+  \begin{itemize}
+  \item Streiche alle Symole bis man auf ein Synchronisationssymbol stößt, typische Trenn- und Abschlusssymbol, unter anderen z. B. "`;"'
+  \item besonders effizient (überspringt weitere Fehler in fehlerhafter Teilstruktur)
+  \end{itemize}
+ \item \textbf{Globale Korrektur}
+  \begin{itemize}
+  \item Manipulation der Tokenfolge durch minimale Anzahl elementarer Operationen; wie
+   \begin{itemize}
+   \item weglassen
+   \item vertauschen
+   \item einfügen
+   \item ersetzen
+   \end{itemize}
+  \item Optimal hinsichtlich Qualität; Zyklen möglich
+  \end{itemize}
+ \item \textbf{Fehlerproduktionen}
+  \Bsp $\texttt{stmt} \to \textbf{if}\ \texttt{expr}\ \textbf{then}\ \texttt{stmt}$ (Pascal) \\
+    Fehlerproduktion: $\texttt{stmt} \to \textbf{if}\ \texttt{expr}\ \texttt{stmt}$ (Java)
+    \begin{itemize}
+     \item Reperatur einfach möglich durch Einfügen von \textbf{then}
+    \end{itemize}
+    Sehr präzise, effizient, nicht allgemein verwendbar
+ \item \textbf{Mehrdeutigkeit}
+  \begin{itemize}
+  \item gewisse Mehrdeutigkeit in der Grammatik enthalten, die durch zusätzliche Regeln aufgelöst wird\\
+  \paragraph*{Typisches Beispiel:} \emph{Dangling-Else}
+    \begin{verbatim}
+S -> if E then S          // bedingte Anweisung
+  |  if E then S else S   // Verzweigung
+  |  other
+    \end{verbatim}
+    Methode (fast immer möglich) besteht aus Transformation der Grammatik
+    \begin{verbatim}
+S -> M                    // (matched-Anwesiung, geschlossen)
+  | U                     // (unmatched Anweisung, offen)
+M -> if E then M else M
+  |  other
+U -> if E then S
+  |  if E then M else U
+    \end{verbatim}
+    Eindeutigkeit
+  \end{itemize}
+\end{itemize}
+
+
