@@ -1,0 +1,134 @@
+\section{Automatische Erzeugung von Lexern - Endliche Automaten}
+In der Praxis vorhandene Werkzeuge wie \textsc{Lex} oder \textsc{Flex} folgen den Prinzipien regulärer Definitionen $\rightsquigarrow$ endliche nichtdeterministische Automaten $\rightsquigarrow$ deterministischer Automate ( $\rightsquigarrow$ Optimierung ).
+
+\paragraph*{Allgemeiner Prozess am Beispiel Lex:}
+\begin{center}\psset{rowsep=0.5cm}
+ \begin{psmatrix}
+  \texttt{lex.l} & \framebox{lex compiler} & \texttt{lex.yy.c} & \framebox{C compiler} & \texttt{a.out} \\
+  & Quellprogramm & \framebox{\texttt{a.out}} & Tokenfolge
+ \end{psmatrix}\ncline{1,1}{1,2}\ncline{1,2}{1,3}\ncline{1,3}{1,4}\ncline{1,4}{1,5}\ncline{2,2}{2,3}\ncline{2,3}{2,4}
+\end{center}
+\begin{itemize}
+ \item \texttt{lex.l} ist in \emph{formaler Sprache} lex-language geschriebene reguläre Definition plus Zusatzinfos
+ \item Tokenfolge: Jeweils ein Tokenname als Ergebniswert und Attribut in globaler Variable \texttt{yylval}
+\end{itemize}
+
+Formale Sprache lex-language am Beispiel aus vorheriger Vorlesung:
+\paragraph*{Struktur:}\hspace*{0cm}\\
+\begin{lstlisting}[language=,mathescape=true]
+%%
+Deklarationsteil        /* Variablen, sympolische Konstanten
+                         * wie LE, GT, ..., IF, ELSE, ...
+                         * regulaere Definitionen
+                         */       | %%
+                                  | delim {\n\t }
+                                  | ws    {delim}+
+                                  | ...
+                                  | letter ...
+                                  | id    {letter}({letter}|{digit})*
+%%                                | ...
+Uebersetzungsregeln               | %%
+Form: Muster {Aktionen}           | {ws}  {/* keine Aktion, keine Rueckgabe */}
+                                  | if    {return (IF);}
+                                  | {id}  {yylval = (int)installID(); return (ID);}
+                                  | "<="  {yylval = LE; return (RELOP);}
+%%                                | ...
+Hilfsfunktionen, z. B. installID  | %%
+                                  | ...
+\end{lstlisting}
+
+\subsection{Endliche Automaten}
+Nichtdeterministische endliche Automaten (NEA), deterministische endliche Automaten (DEA)
+\Defi Ein 5-Tupel der Form $(Z, \Sigma, \delta, Z_0, E)$ heißt \textbf{nichtdeterministischer endlicher Automat}, genau dann wenn
+\begin{enumerate}
+ \item $Z$ ist eine endl Menge von \emph{Zuständen}
+ \item $\Sigma$ ist Eingabealphabet
+ \item $\delta{:}\ Z \times (\{\varepsilon\} \cup \Sigma) \to \mathcal{P}(Z)$ Folgezustände zu $z$ und $a$ bzw. $\varepsilon$
+ \item $z_0 \in Z$ Anfangszustand
+ \item $E \subseteq Z$ Endzustände
+\end{enumerate}
+\Defi Ein nichtdeterministischer endlicher Automat $A = (Z, \Sigma, \delta, z_0, E)$ \textbf{erkennt die Sprache} $\mathcal{L}(A)$ mit 
+     \[\mathcal{L}(A) = \{w  \in \Sigma^*\ |\ \text{es gibt eine Überführung von $z_0$ nach $z \in E$ unter Eingabe von $w$}\}\]
+\Defi Ein 5-Tupel der Form $(Z, \Sigma, \delta, Z_0, E)$ heißt \textbf{deterministischer endlicher Automat}, genau dann wenn
+\begin{enumerate}
+ \item $Z$ ist eine endl Menge von \emph{Zuständen}
+ \item $\Sigma$ ist Eingabealphabet
+ \item {\color{red} $\delta{:}\ (Z \times \Sigma) \to Z$}
+ \item $z_0 \in Z$ Anfangszustand
+ \item $E \subseteq Z$ Endzustände
+\end{enumerate}
+\Defi Ein deterministischer endlicher Automat $A$ \textbf{erkennt die Sprache} $\mathcal{L}(A)$ mit
+    \[\mathcal{L}(A) = \{w  \in \Sigma^*\ |\ z_0 \xrightarrow[\delta]{a_1} z_1 \to ... \xrightarrow{a_n} z_n,\ w = a_1...a_n, z_n \in E\}\]
+\begin{description}
+ \item[Beschreibung endlicher Automaten] (für menschliche Leser) sind Transitionsgraphen, deren Knoten die Zustände sind und es genau dann eine Kante von $s$ nach $t$ mit der Markierung $a$ gibt, wenn $t \in \delta(s, a), s \in Z, a \in \Sigma \cup \{\varepsilon\}$. Markiere Anfangszustand mit $\xrightarrow{\text{start}}$ und Endzustände mit \pscircle[doubleline=true,unit=1em](0.5,0.5){0.5em}\hspace{1em}.
+ \item[Zur maschinellen Verarbeitung] daraus abgeleitete Übergangstabellen, deren Zeilen und Zutände markiert sind, Spaltn mit $\Sigma \cup \{\varepsilon\}$ und Einträge aus $\mathcal{P}(Z)$
+ \Bsp $A$:
+     \begin{center}
+      \psset{colsep=1cm,rowsep=1cm,arrows=->}
+      \begin{psmatrix}[mnode=circle]
+      [mnode=none]$\xrightarrow{\text{start}}$ & 0 & 1 & 2 & [doubleline=true] 3
+      \end{psmatrix} erkennt $(a | b)* abb$
+      \nccurve[angleA=60,angleB=120,ncurv=4]{1,2}{1,2}\ncput{$a$}
+      \nccurve[angleA=-60,angleB=-120,ncurv=4]{1,2}{1,2}\ncput{$b$}
+      \ncline{1,2}{1,3}\naput{$a$}
+      \ncline{1,3}{1,4}\naput{$b$}
+      \ncline{1,4}{1,5}\naput{$b$}
+     \end{center}
+     Zu gegebener Eingabe z. B. $aabb$ gibt es eine Vielfalt von Überführungen.
+     \begin{itemize}\psset{colsep=1cm,rowsep=1cm,arrows=->}
+      \item z. B. \begin{psmatrix}[mnode=circle]
+                   0 & 0 & 0 & 0 & 0
+                  \end{psmatrix}
+                  \ncline{1,1}{1,2}\naput{$a$}\ncline{1,2}{1,3}\naput{$a$}\ncline{1,3}{1,4}\naput{$b$}\ncline{1,4}{1,5}\naput{$b$} und
+                  \begin{psmatrix}[mnode=circle]
+                   0 & 0 & 1 & 2 & 3
+                  \end{psmatrix}
+                  \naput{$a$}\ncline{1,2}{1,3}\naput{$a$}\ncline{1,3}{1,4}\naput{$b$}\ncline{1,4}{1,5}\naput{$b$}
+     \end{itemize}
+     Übergangstabelle:
+     \begin{center}
+      \begin{tabular}{c|c|c|c}
+       \textbf{Zustände} & $a$ & $b$ & $\varepsilon$ \\\hline
+       0 & \{0,1\} & \{0\} & $\emptyset$ \\
+       1 & $\emptyset$ & \{2\} & $\emptyset$ \\
+       2 & $\emptyset$ & \{3\} & $\emptyset$ \\
+       3 & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+      \end{tabular}
+     \end{center}
+        Allgemein: Eingabe abgeschlossen mit eof
+    \subsection{Transformation von NEA in DEA}
+    \paragraph*{Idee:} Potenzmengenautomat! Zustandsmenge des DEA = $\mathcal{P}(Z)$\\
+        $\varepsilon$-Hülle($z$), $\varepsilon$-Hülle($T$), move($T, a$)
+    \paragraph*{strukturelle Induktion} für reguläre Definitionen $\rightsquigarrow$ endliche nichtdeterministische Automaten
+    \paragraph*{Basis:}\psset{colsep=1cm,rowsep=1cm,arrows=->}\hfill\\
+    \begin{psmatrix}[mnode=circle]
+     [mnode=none] $\varepsilon$ $\xrightarrow{\text{start}}$ & $i$ & [doubleline=true] $f$
+    \end{psmatrix}, wobei $i, f$ neue Zustände \ncline{1,2}{1,3}\naput{$\varepsilon$}\\
+    \begin{psmatrix}[mnode=circle]
+     [mnode=none] $a \in \Sigma$ $\xrightarrow{\text{start}}$ & $i$ & [doubleline=true] $f$
+    \end{psmatrix}, wobei $i, f$ neue Zustände \ncline{1,2}{1,3}\naput{$a$}
+\paragraph*{Induktionsannahme:} Endliche Automaten $N(s)$ und $N(t)$ seien für geg. $s$ und $t$ konstruiert:
+\begin{enumerate}
+ \item $r = s|t{:}\ N(r)$ \begin{psmatrix}[mnode=circle,rowsep=0cm]
+     & & $\quad$ &[doubleline=true] $\quad$  \\
+     [mnode=none] $\xrightarrow{\text{start}}$ & $i$ &&& [doubleline=true] $f$ \\
+     & & $\quad$ &[doubleline=true] $\quad$
+    \end{psmatrix}\ncline{2,2}{1,3}\naput{$\varepsilon$}\ncline{2,2}{3,3}\naput{$\varepsilon$}\ncbox{1,3}{1,4}\naput{$N(s)$}\ncbox{3,3}{3,4}\naput{$N(r)$}\ncline{1,4}{2,5}\naput{$\varepsilon$}\ncline{3,4}{2,5}\naput{$\varepsilon$}
+ \item $r = st{:}\ N(r)$
+     \begin{psmatrix}[mnode=circle,rowsep=0.5cm]
+      [mnode=none] $\xrightarrow{\text{start}}$ & $i$ & $\quad$ & [doubleline=true] $\quad$ & $\quad$ & [doubleline=true] $\quad$ & [doubleline=true] $f$ 
+     \end{psmatrix}\ncline{1,2}{1,3}\naput{$\varepsilon$}\ncbox{1,3}{1,4}\naput{$N(s)$}\ncline{1,4}{1,5}\naput{$\varepsilon$}\ncbox{1,5}{1,6}\naput{$N(r)$}\ncline{1,6}{1,7}\naput{$\varepsilon$}
+ \item $r = s^*{:}\ N(r)$ 
+     \begin{psmatrix}[mnode=circle,rowsep=0.5cm]
+     \\
+      [mnode=none] $\xrightarrow{\text{start}}$ & $i$ & $\quad$ & [doubleline=true] $\quad$ & [doubleline=true] $f$ \\
+     \end{psmatrix}\ncline{2,2}{2,3}\naput{$\varepsilon$}\ncbox{2,3}{2,4}\naput{$N(s)$}\ncline{2,4}{2,5}\naput{$\varepsilon$}
+         \nccurve[angleA=100,angleB=80]{2,4}{2,3}\nbput{$\varepsilon$}
+         \nccurve[angleA=-30,angleB=-150]{2,2}{2,5}\nbput{$\varepsilon$}
+ \item $r = (s){:}\ N(r) = N((s))$
+\end{enumerate}
+
+
+
+
+\end{description}
