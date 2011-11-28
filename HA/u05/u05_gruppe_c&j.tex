@@ -1,0 +1,195 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{algorithmic}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Christian Cikryt (Tut. Di. 14-16), Jakob Pfender (Mi. 14-16)}
+\title{H\"ohere Algorithmik - 5. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{(\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+
+\begin{document}
+
+\maketitle
+
+\section{Varianten der Vorlesungsbeispiele}
+\begin{enumerate}
+ \item
+  Der hier vorgestellte Algorithmus ist eine Abwandlung des in der Vorlesung behandelten und geht von folgender Rekursionsgleichung aus:
+   \begin{align*}
+     E[0,b] &= 0 \qquad \forall b \in \mathbb{N} \\
+     E[m,0] &= 0 \qquad \forall m \in \mathbb{N} \\
+     E[m,b] &= \begin{cases}
+                \max(E[m-1,b], w_m + E[m-1, b-p_m], w_m + E[m, b - p_m]), & \text{wenn } b \geq p_m \\
+                E[m-1,b], & \text{sonst}
+               \end{cases}
+    \end{align*}
+  Diese Gleichung berücksichtigt, dass man denselben Gegenstand erneut auswählen kann ($w_m + E[m, b - p_m]$).
+  Der abgewandelte Algorithmus im Pseudocode (genau wie in der Vorlesung wird die Bestimmung der tatsächlichen Lösung zunächst beiseite gelassen):
+\begin{center}
+        \begin{algorithmic}
+            \FOR{$m \in \{0, \hdots, n\}$}
+                \STATE $E[m,0] \gets 0$
+            \ENDFOR
+            \FOR{$b \in \{0, \hdots, B\}$}
+                \STATE $E[0,b] \gets 0$
+            \ENDFOR
+            \FOR{$m \in \{1, \hdots, n\}$}
+                \FOR{$b \in \{1, \hdots, B\}$}
+                    \IF{$p[m] > b$}
+                        \STATE $E[m,b] \gets E[m-1,b]$
+                    \ELSE
+                        \STATE $E[m,b] \gets \max\{E[m-1,b], w[m] + E[m-1,b-p[m]], E[m, b - p[m]]\}$
+                    \ENDIF
+                \ENDFOR
+            \ENDFOR
+            \RETURN $E[n, B]$
+        \end{algorithmic}
+       \end{center}
+  Der einzige Unterschied im Vergleich zum Vorlesungsalgorithmus ist der 3. Term bei der Maximumsbestimmung, der in jedem Schritt konstante Zeit mehr beansprucht.
+ Somit verändert sich die Wachstumsklasse nicht. Diese ist bestimmt durch die Anzahl der Kästen der Tabelle und somit O(m * B).
+ Die letztendliche Lösung kann man aufzeichnen, indem man in jedem Schritt die Entscheidung speichert. Dies erfordert zwar mehr Speicherplatz, verändert aber die asymptotische Laufzeit nicht.
+
+ \item
+Gegeben: $n$ Städte $0, 1, \hdots, n - 1$. Genau wie in der Vorlesung auch bezeichne $T[S, m]$ die Länge einer optimalen Tour, die bei 0 anfängt, bei m aufhört und zwischen 0 und m genau die Städte aus
+$S$ besucht. \newline
+Gesucht: $T[\{1, \hdots, n - 1\}, 0]$ \newline
+Zu dem im Folgenden vorgestellten Algorithmus seien einige Bemerkungen gestattet:
+\begin{itemize}
+ \item $T[\emptyset, m] = d(0, m) \forall m \in \{0, \hdots, n - 1\}$
+ \item $d(i, j) = d(j, i)$ ist der Abstand zweier Städte $i$ und $j$.
+ \item Sei $m \in S$ und $A \subseteq S \setminus \{0, m\}$. Dann gilt $T[A, m] = min\{d(m,j) + T[A \setminus \{ j \}] \left. \right| j \in A\}$. Denn für jede nicht-leere Menge
+ A wird der optimale Weg wie folgt definiert: Teste für alle $j \in A$ den Weg, der von $m$ aus zunächst nach $j$ führt. Für den optimalen Weg gilt, dass auch der Rest des Weges (von $j$ nach $0$) optimal ist.
+ Dieser Weg wurde aber genau so definiert: $T[A \setminus \{ j \}, j]$.
+\end{itemize}
+
+Algorithmus:
+
+
+  \begin{algorithmic}
+   \FOR{$m \in \{0, \hdots, n - 1\}$}
+      \STATE $T[\emptyset, m] \gets d(m,0)$
+   \ENDFOR
+  \STATE $O[0] \gets 0$, $O[n] \gets 0$
+  \FOR{$k \in \{1, \hdots, n - 1\}$}
+    \FOR{$A \subseteq S \setminus \{0\} $ mit $ \left| A \right| = k$}
+      \FOR{$m \in \{0, \hdots, n - 1\}$}
+	\IF{$m \notin A$}
+	  \STATE $T[A,m] \gets min\{d(m, j) + T[A \setminus \{j\}, j] \left. \right|  j \in A\}$
+	\ENDIF
+      \ENDFOR
+    \ENDFOR
+  \ENDFOR
+  \RETURN $T[0,\{1, \hdots, n - 1\}]$
+  \end{algorithmic}
+
+\end{enumerate}
+
+\section{Münzwechseln}
+\begin{enumerate}
+ \item 
+
+  \begin{enumerate}
+  \item Finde geeignete Teilprobleme:
+    
+  $c[n,i]$ gibt an, auf wieviele Arten $n$ Cent mit den $i$ kleinsten Münzen dargestellt werden können. \newline
+  $c[n, 0] = 0$ \newline
+  $c[0, i] = 1$ \newline
+  Für $c[n, i]$ hat man zwei Möglichkeiten zum Wechseln. Entweder man benutzt die $i$-te Münzart ($c[n - value_i, i]$) oder man wechselt den Betrag ohne die $i$-te Münzart ($c[n, i - 1]$).
+  Uns interessiert die Summe der beiden rekursiven Möglichkeiten. $v_i = value_i$ ist der Münzwert der $i$-ten Münze.
+  \item Rekursion:
+
+  $c[n, 0] = 0$ \newline
+  $c[0, i] = 1$ \newline
+   $c[< 0, i] = 0$ \newline
+  $c[n, i] = c[n - value_i, i] + c[n, i - 1]$
+  \item Pseudocode zum Ausfüllen der Tabelle (dynamische Programmierung):
+
+  \begin{algorithmic}
+   \FOR{$i \in \{1, \hdots, n\}$}
+      \STATE $c[i, 0] \gets 0$
+   \ENDFOR
+   \FOR{$i \in \{0, \hdots, k\}$}
+      \STATE $c[0,k] \gets 1$
+    \ENDFOR
+  \FOR{$i \in \{1, \hdots, k\}$}
+    \FOR{$j \in \{1, \hdots, n\}$}
+      \IF{$n - v_i < 0$}
+	\STATE $c[j, i] = 0 + c[n, i - 1]$
+      \ELSE
+	\STATE $c[j, i] = c[n - v_i, i] + c[n, i - 1]$
+      \ENDIF
+    \ENDFOR
+  \ENDFOR
+  \RETURN $c[n,k]$
+  \end{algorithmic}
+
+  \end{enumerate}
+
+ \item Die Laufzeit des Algorithmus wird durch die zwei verschachtelten for-Schleifen bestimmt (Größe der Tabelle), da in der innersten Schleife konstante Zeit gebraucht wird.
+  Daraus folgt: Laufzeit $\in O(n*k)$.
+ \item
+  \lstinputlisting[gobble=4,firstnumber=9,caption={SchoolMethod.java}]{src/ChangingMoney.java}
+\end{enumerate}
+
+\section{Versteckte Markov-Modelle}
+\begin{enumerate}
+ \item Siehe handschriftlichen Beipackzettel.
+ \item
+  Die Wahrscheinlichkeiten durch die Multiplikationen sehr klein. Um dem exponentiellen Absinken entgegen zu wirken, bietet sich eine logarithmische
+  Darstellung an. So können Ungenauigkeiten durch das Rechnen mit kleinsten Zahlen vermieden werden. Insgesamt ist der Einsatz des Logarithmus möglich, da der Logarithmus eine monoton wachsende Funktion ist.
+ \item
+  Zur Fehlerkorrektur eines deutschsprachigen Textes soll ein Markov-Modell verwendet werden. Dabei sind die tatsächlich gemeinten Buchstaben die \textbf{Zustände}, das \textbf{Ausgabealphabet} sind die
+  empfangenen Buchstaben. Die \textbf{Ausgabewahrscheinlichkeit}, dass der empfangene Buchstabe auch gemeint war, ist 90 Prozent. Die \textbf{Ausgangswahrscheinlichkeiten} können durch Analyse von korrekten Deutschen Schriften,
+  Wörterbüchern etc. ermittelt werden, um herauszufinden, mit welchem Zeichen ein Satz mit welcher Wahrscheinlichkeit anfängt. Genauso können auch durch Analyse von Wörtern die \textbf{Übergangsverteilungen} bestimmt werden.
+  Hilfreich wäre es den Kontext zu wissen, da in einem umgangssprachlichen Chat andere Worte, mitunter nicht-korrekte Wörter und Schreibweisen verwendet werden. Auch die Häufigkeit der Wörter in einem
+ historischen Text weicht beispielsweise erheblich von einem zeitgenössischen ab.  Man muss insofern Annahme machen anhand derer das Analysematerial auswählen. Ohne weitere Anhaltspunkte wird das Ergebnis
+ nicht überzeugend sein, zumal die Fehlerwahrscheinlichkeit von 10 Prozent recht hoch ist. Die Annahme dass die Fehlerwahrscheinlichkeit bestimmt werden kann ist unrealitisch, sie ist bei einer 
+ Übertragung in aller Regel in der Realität nicht konstant verteilt.
+
+Randbemerkung: Dass in der Realität schwierig ist zu berechnen welches Wort gemeint war, zeigen Worterbuchvorschläge von Smartphones beispielsweise. Daran sieht man auch dass man durch Beibringen von
+persönlich häufig verwendeten Wörtern (Anpassung des Wortschatzes) das Ergebnis verbessern kann.
+\end{enumerate}
+\end{document}
