@@ -1,0 +1,96 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Martin Lenders (Mi. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
+\title{H\"ohere Algorithmik - 4. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}:}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+    escapeinside={((*}{*))},
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Unabhängige Mengen in Pfaden}
+\begin{enumerate}
+\item   Gegeben sei ein Pfad $P = (V,E)$ mit $v_1,v_2,v_3 \in V$ und $w_1 = 2, w_2 = 4, w_3 = 3$. 
+        Intuitiv ist zu sehen, dass die unabhängige Menge von maximalem Gewicht $S = \{v_1, v_3\}$ mit Gewicht = 5 ist. 
+        Der gegebene Algorithus wählt jedoch $v_2$ für die Menge $S$ aus und verwirft dann $v_1$ und $v_2$.
+        $S$ hat damit allerdings nur ein Gewicht von 4.
+        Das Ergebnis entspricht also nicht der gesuchten Menge.
+\item   Gegeben sei ein Pfad $P = (V,E)$ mit $v_1,v_2,v_3,v_4,v_5 \in V$ und $w_1 = 8, w_2 = 1, w_3 = 2, w_4 = 11, w_5 = 3$. 
+        Intuitiv ist zu sehen, dass die unabhängige Menge von maximalem Gewicht $S = \{v_1, v_4\}$, mit Gewicht = 19 ist. 
+        Der gegebene Algorithus wählt jedoch zunächst die beiden Mengen $S_1 = \{v_1, v_3, v_5\}$ mit Gewicht = 13 und $S_2 = \{v_2, v_4\}$ mit Gewicht = 12. 
+        Zurückgegeben wird dann $S_1$, welches nicht der gesuchten Menge entspricht.
+\item   Sei $W(n)$ das Gewicht der unabhängigen Menge von maximalem Gewicht für den Pfad $P = (V,E)$ mit $v_1, ..., v_n \in V$ 
+        und sei dies wie folgt definiert:
+        \begin{align*}
+            W(1) &= w_1 \\
+            W(2) &= w_2 \\
+            W(i) &= \max\{W(i-1), W(i-2)+w_i\} 
+        \end{align*}
+        Die eigentliche unabhängige Menge kann dann mit Backtracing ermittelt werden (jedes mal, wenn $W(i-2)+w_i$ gewählt wird, füge $v_i$ zu $S$ hinzu).
+        Die Laufzeit liegt in $O(n)$, sowie auch der Speicherplatzbedarf in $O(n)$ liegt.
+\end{enumerate}
+
+\section{Vorlesungsplanung}
+\begin{enumerate}
+\item   
+\item   
+\item   
+\item   
+\item   
+\end{enumerate}
+
+\section{Autobahnfahrt}
+Die Straßenkarte mit den Abständen zwischen den Tankstellen kann als Graph mit Kantengewichten gesehen werden.
+Hannelore und Werner können Strecken fahren auf denen der Abstand zwischen 2 Tankstellen kleiner $n$ ist. 
+Entfernen wir die Kanten mit Gewicht $> n$ also aus unserem Ausgangsgraphen, so können wir den Dijkstra-Algorithmus auf den verbleibenden Graphen anwenden.
+% für Pseudocode und Laufzeitanalyse hab ich grad keine Lust :P
+\end{document}
