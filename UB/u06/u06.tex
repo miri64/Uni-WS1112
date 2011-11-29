@@ -1,0 +1,253 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 4}
+\author{Christian Cikryt (4285814; Tutorium: Mo. 16-18 Uhr)\\
+  Robert Fels (4210496; Tutorium: Mi. 8-10 Uhr)\\
+  Martin Lenders (4206090; Tutorium: Mi. 10-12 Uhr)
+  }
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Martin Lenders, Christian Cikryt}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\makeatletter
+\newcommand{\Rm}[1]{\textrm{\expandafter\@slowromancap\romannumeral #1@}}
+\makeatother
+\newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
+\newcommand{\add}[1]{\{\texttt{s += #1})\}}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+\psset{arrows=->,colsep=1cm,rowsep=0.5cm}
+\begin{enumerate}
+\item   NEA/DEA:
+        \begin{center}
+            \begin{psmatrix}[mnode=circle]
+               [mnode=r]\  & [doubleline=true] $q_0$
+            \end{psmatrix}
+            \ncline{1,1}{1,2}\naput{start}
+            \nccurve[angleA=-20,angleB=20,ncurv=4]{1,2}{1,2}\nbput{$a,b$}
+        \end{center}
+\item   NEA:
+        \begin{center}
+            \begin{psmatrix}[mnode=circle]
+               [mnode=r]\  & $q_0$ & $q_1$ & $q_2$ & [doubleline=true] $q_3$
+            \end{psmatrix}
+            \ncline{1,1}{1,2}\naput{start}
+            \nccurve[angleA=70,angleB=110,ncurv=4]{1,2}{1,2}\nbput{$a,b$}
+            \nccurve[angleA=-20,angleB=20,ncurv=4]{1,5}{1,5}\nbput{$a,b$}
+            \ncline{1,2}{1,3}\naput{$a$}
+            \ncline{1,3}{1,4}\naput{$b$}
+            \ncline{1,4}{1,5}\naput{$b$}
+        \end{center}
+        DEA:
+        \begin{center}
+            \begin{psmatrix}[mnode=circle]
+               [mnode=r]\  & $q_0$ & $q_1$ & $q_2$ & [doubleline=true] $q_3$
+            \end{psmatrix}
+            \ncline{1,1}{1,2}\naput{start}
+            \nccurve[angleA=70,angleB=110,ncurv=4]{1,2}{1,2}\nbput{$b$}
+            \nccurve[angleA=70,angleB=110,ncurv=4]{1,3}{1,3}\nbput{$a$}
+            \nccurve[angleA=-160,angleB=-20]{1,4}{1,3}\naput{$a$}
+            \nccurve[angleA=-20,angleB=20,ncurv=4]{1,5}{1,5}\nbput{$a,b$}
+            \ncline{1,2}{1,3}\naput{$a$}
+            \ncline{1,3}{1,4}\naput{$b$}
+            \ncline{1,4}{1,5}\naput{$b$}
+        \end{center}
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+ \item  Linksableitung:
+        \begin{align*}
+         \underline S &  \to (\underline L) \to (\underline L,S) \to (\underline L,S,S) \to (\underline S,S,S) 
+                         \to ((\underline L),S,S) \to ((\underline L,S),S,S) \to ((\underline S,S),S,S) \\
+                      &  \to ((a,\underline S),S,S) \to ((a,a),\underline S,S) \to ((a,a),a,\underline S) 
+                         \to ((a,a),a,(\underline L)) \to ((a,a),a,(\underline S)) \\
+                      &  \to ((a,a),a,(a))
+        \end{align*}
+        Rechtsableitung:
+        \begin{align*}
+         \underline S &  \to (\underline L) \to (L,\underline S) \to (L,(\underline L)) \to (L, (\underline S)) 
+                         \to (\underline L,(a)) \to (L,\underline S,(a)) \to (\underline L,a,(a)) \to ((\underline L),a,(a))\\
+                      &  \to (((L,\underline S),a,(a)) \to ((\underline L,a),a,(a)) \to ((\underline S,a),a,(a)) \to ((a,a),a,(a))
+        \end{align*}
+\item   \hspace{0cm}\\
+        \begin{center}
+            \pstree{\Tr{$S$}}{
+                \Tr{(}
+                \pstree{\Tr{$L$}}{
+                    \pstree{\Tr{$L$}}{
+                        \pstree{\Tr{$S$}}{
+                            \pstree{\Tr{$L$}}{
+                                \Tr{(}
+                                \pstree{\Tr{$S$}}{
+                                    \pstree{\Tr{$L$}}{
+                                        \pstree{\Tr{$S$}}{
+                                            \Tr{$a$}
+                                        }
+                                    }
+                                    \Tr{,}
+                                    \pstree{\Tr{$S$}}{
+                                        \Tr{$a$}
+                                    }
+                                }
+                                \Tr{)}
+                            }
+                        }
+                    }
+                    \Tr{,}
+                    \pstree{\Tr{$S$}}{
+                        \Tr{$a$}
+                    }
+                }
+                \Tr{)}
+            }
+        \end{center}
+\item   eindeutig, expandiert nur in eine Rictung
+\item   LISP-Listen oder Tupel (von Tupeln, von Tupeln, ...)
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+ \item $S \to 0S0\ |\ 1S1\ |\ \varepsilon\ |\ 0\ |\ 1$
+ \item $S \to 0S1S\ |\ 1S0S\ |\ \varepsilon$
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+\item   \begin{align*}
+            S &\to XS\ |\ \varepsilon & \Longleftrightarrow && S &\to \{X\} \\
+            S &\to X\ |\ \varepsilon & \Longleftrightarrow && S &\to [X]
+        \end{align*}
+\item   \begin{align*}
+            S &\to \underline{\textrm{if}}\ E\ \underline{\textrm{then}}\ S\ [\underline{\textrm{else}}\ S]\ |\ \underline{\textrm{begin}}\ L\ \underline{\textrm{end}} \\
+            L &\to S\{; S\}
+        \end{align*}
+\end{enumerate}
+
+\section{}
+Gegenbeispiel für Eindeutigkeit
+\begin{center}
+ \underline{if} $E$ \underline{then} \underline{if} $E$ \underline{then} \underline{other} \underline{else} \underline{if} $E$  \underline{then} \underline{other} \underline{else} \underline{other}
+\end{center}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\roman{enumi}}
+\begin{enumerate}
+ \item Syntaxbaum 1:\\
+       \begin{center}
+        \pstree{\Tr{$S$}}{
+            \pstree{\Tr{$G$}}{
+                \Tr{\underline{if}}
+                \Tr{$E$}
+                \Tr{\underline{then}}
+                \pstree{\Tr{$G$}}{
+                    \Tr{\underline{if}}
+                    \Tr{$E$}
+                    \Tr{\underline{then}}
+                    \pstree{\Tr{$G$}}{
+                        \Tr{\underline{other}}
+                    }
+                    \Tr{\underline{else}}
+                    \pstree{\Tr{$S$}}{
+                        \Tr{\underline{if}}
+                        \Tr{$E$}
+                        \Tr{\underline{then}}
+                        \pstree{\Tr{$S$}}{
+                            \pstree{\Tr{$G$}}{
+                                \Tr{\underline{other}}
+                            }
+                        }
+                    }
+                }
+                \Tr{\underline{else}}
+                \pstree{\Tr{$S$}}{
+                    \pstree{\Tr{$G$}}{
+                        \Tr{\underline{other}}
+                    }
+                }
+            }
+        }
+       \end{center}
+\item   Syntaxbaum 2:
+        \begin{center}
+            \pstree{\Tr{$S$}}{
+                \Tr{\underline{if}}
+                \Tr{$E$}
+                \Tr{\underline{then}}
+                \pstree{\Tr{$S$}}{
+                    \pstree{\Tr{$G$}}{
+                        \Tr{\underline{if}}
+                        \Tr{$E$}
+                        \Tr{\underline{then}}
+                        \pstree{\Tr{$G$}}{
+                            \Tr{\underline{other}}
+                        }
+                        \Tr{\underline{else}}
+                        \pstree{\Tr{$S$}}{
+                            \Tr{\underline{if}}
+                            \Tr{$E$}
+                            \Tr{\underline{then}}
+                            \pstree{\Tr{$G$}}{
+                                \Tr{\underline{other}}
+                            }
+                            \Tr{\underline{else}}
+                            \pstree{\Tr{$S$}}{
+                                \pstree{\Tr{$G$}}{
+                                    \Tr{\underline{other}}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        \end{center}
+\end{enumerate}
+\end{document}
