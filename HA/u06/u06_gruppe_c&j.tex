@@ -1,0 +1,74 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{algorithmic}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Christian Cikryt (Tut. Di. 14-16), Jakob Pfender (Mi. 14-16)}
+\title{H\"ohere Algorithmik - 6. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{(\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+
+\begin{document}
+
+\maketitle
+
+\section{Unabhängige Mengen in Pfaden}
+\begin{enumerate}
+ \item Sei $P = (V,E)$ ein Pfad mit Knoten $v_1, v_2, v_3$ und Gewichten
+ $w_1 = 3$, $w_2 = 5$, $w_3 = 3$. Dann wählt der gierige Algorithmus im
+ ersten Schritt $v_2$ als Knoten mit maximalem Gewicht und eliminiert
+ dann $v_1$ und $v_3$, so dass die vom Algorithmus bestimmte unabhängige
+ Menge nur aus $v_2$ besteht. Es ist aber trivial zu sehen, dass ${v_1,v_3}$ die
+ maximale unabhängige Menge ist. Also
+ arbeitet der Algorithmus nicht korrekt.
+ \item Sei $P = (V,E)$ ein Pfad mit Knoten $v_1, v_2, v_3, v_4$ und
+ Gewichten $w_1 = 3, w_2 = 2, w_3 = 1, w_4 = 3$. Dann gibt der
+ Algorithmus ${v_2,v_4}$ als größte unabhängige Menge mit Gesamtgewicht
+ 5 zurück. Die maximale unabhängige Menge ist allerdings ${v_1,v_4}$ mit
+ Gesamtgewicht 6.
+ \item Sei $U[m,b]$ = Maximale unabhängige Menge, bei der wir nur Knoten
+ $v_1,...,v_m$ zur Verfügung haben und die $b$ Knoten hat.
+\end{enumerate}
+\end{document}
