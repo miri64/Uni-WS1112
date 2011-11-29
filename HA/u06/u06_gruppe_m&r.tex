@@ -72,7 +72,7 @@
         und sei dies wie folgt definiert:
         \begin{align*}
             W(1) &= w_1 \\
-            W(2) &= w_2 \\
+            W(2) &= \max\{w_1,w_2\} \\
             W(i) &= \max\{W(i-1), W(i-2)+w_i\} 
         \end{align*}
         Die eigentliche unabhängige Menge kann dann mit Backtracing ermittelt werden (jedes mal, wenn $W(i-2)+w_i$ gewählt wird, füge $v_i$ zu $S$ hinzu).
