@@ -5,3 +5,7 @@
 *.ps 
 *~ 
 *.tex.backup
+*.out
+*.toc
+*.class
+*~
