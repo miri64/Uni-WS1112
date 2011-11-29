@@ -1,0 +1,167 @@
+\section{Top-Down-Analyse}
+\paragraph{allgemeines Verfahren} (für beliebige kontextfreie Grammatik $G = (\mathcal{N}, \mathcal{T}, S, \mathcal{P})$). Schreibe zu jedem $X$ aus $\mathcal{N}$ eine Methode wie folgt:
+\begin{lstlisting}[language=Java,mathescape=true,morekeywords={to}]
+void $X$() {
+    waehle eine $X$-Produktion $X \to X_1...X_n$ aus // nichtdeterministisch 
+    for ($i$ = 1 to $n$) {
+        if ($X_i \in \mathcal{N}$) $X_i$();           // rofe $X_i$-Methode rekursiv auf
+        else if ($X_i$ == input) input = nextToken();
+        else Fehlermeldung/-behandlung
+    }
+}
+
+// Top-Down-Parser
+void parser() {
+    Token input = nextToken();
+    $S$();
+}
+\end{lstlisting}
+
+\begin{itemize}
+ \item \emph{nichtdeterministisch}: Inakzeptabel hinsichtlich Effizienz\\
+         $\Rightarrow$ Löse Nichtdeterminismus auf!
+ \item Auflösung von Nichtdeterminismen nicht immer möglich, aber in der Praxis in der Regel doch
+ \item Rezept: Entscheide anhand des aktuellen Inputs (Lookahead)
+\end{itemize}
+\Bsp
+\begin{align*}
+ E &\to TE'\\
+ E' &\to +TE'\ |\ \varepsilon \\
+ T &\to FT' \\
+ T' &\to *T'\ |\ \varepsilon \\
+ F & (E)\ |\ \operatorname{id}
+\end{align*}
+\psset{arrows=-}
+\begin{description}
+ \item[Eingabe] \texttt{id + id * id}
+ \item[Syntaxanalyse]
+ \begin{center}
+    \pstree{\Tr*{$E$}}{
+        \pstree{\Tr*{$T$}}{
+            \pstree{\Tr*{$F$}}{
+                \Tr*{id}
+            }
+            \pstree{\Tr*{$T'$}}{
+                \Tr*{$\varepsilon$}
+            }
+        }
+        \pstree{\Tr*{$E'$}}{
+            \Tr*{+}
+            \pstree{\Tr*{$T$}}{
+                \pstree{\Tr*{$F$}}{
+                    \Tr*{id}
+                }
+                \pstree{\Tr*{$T'$}}{
+                    \Tr*{*}
+                    \pstree{\Tr*{$F$}}{
+                        \Tr*{id}
+                    }
+                    \pstree{\Tr*{$T'$}}{
+                        \Tr*{$\varepsilon$}
+                    }
+                }
+            }
+            \Tr*{$E$}
+        }
+    }
+ \end{center}
+\end{description}
+\subsection{Eliminiertung der Linksrekursion}
+\begin{itemize}
+ \item geht immer!
+ \item Bisher: (direkte Linksrekursion) $A \to A \alpha\ |\ \beta \quad \rightsquigarrow \quad A \to \beta A'; A' \to \alpha A'\ |\ \varepsilon$
+ \item mehrere liksrekursive Produktionen: $A \to A\alpha_1\ |\ ...\ |\ A\alpha_n\ |\ \beta_1\ |\ ...\ |\ \beta_m$
+         \begin{align*}
+          \rightsquigarrow \quad   A &\to \beta_1A'\ |\ ...\ |\ \beta_mA' \\
+                              A' &\to \alpha_1A'\ |\ ...\ |\ \alpha_nA'\ |\ \varepsilon
+         \end{align*}
+\end{itemize}
+\Bsp
+\begin{align*}
+ S &\to Aa\ |\ b \\
+ A &\to Ac\ |\ Sd\ |\ \varepsilon
+\end{align*}
+\begin{description}
+ \item[Eingabe:] $bda\$$
+ \item[indirekte Linksrekursion:] $\underline{S} \to \underline{A}a \to Sda...$
+     \begin{center}
+         \pstree{\Tr{$S$}}{
+             \pstree{\Tr{$A$}}{
+                 \Tr{$S$}
+                 \Tr{$d$}
+             }
+             \Tr{a}
+         }
+     \end{center}
+\end{description}
+
+\subsubsection{Allgemeines Verfahren zur Eliminierung der Linksrekursion}
+\begin{lstlisting}[language=Java,mathescape=true,morekeywords={to}]
+Sortiere alle Nichtdeterminimale $A_1...A_n$
+for ($i$ = 1 to $k$) {
+    for ($j$ = 1 to $i-1$) {
+        Ersetze jede Produktion $A_i \to A_j\gamma$ durch $A \to \delta_1\gamma\ |\ ...\ |\ \delta_n\gamma$,
+                wobei $A_j \to \delta_1\ |\ ...\ |\ \delta_n$ alle $A_j$-Produktionen sind
+    }
+    Eliminiere direkte Linksrekursion aus $A_i$-Prod.
+}
+\end{lstlisting}
+
+\Bsp $S = A_1, \quad A = A_2$
+\begin{description}
+ \item $i = 1 \qquad \checkmark$
+ \item $i = 2 \qquad$ Ergebnis:
+     \begin{align*}
+      S &\to Aa\ |\ b
+      A &\to Ac\ |\ Aad\ |\ bd \ |\ \varepsilon
+     \end{align*}
+ \item Eliminiere direkte Linksrekursion aus $A_i$-Prod.
+     \begin{align*}
+      S &\to Aa\ |\ b \\
+      A &\to bdA'\ |\ A' \\
+      A &\to cA'\ |\ adA'\ |\ \varepsilon
+     \end{align*}
+\end{description}
+
+\subsection{Linksfaktorisierung}
+\begin{itemize}
+ \item Vermeiden gemeinsamer, nichttrivialer Präfixe
+ \Bsp $S \to \textbf{if}\ E\ \textbf{then}\ S\ |\ \textbf{if}\ E\ \textbf{then}\ S\ \textbf{else} S\ |\ ...$
+ \paragraph*{Lösung:} 
+     \begin{align*}
+          S &\to \textbf{if}\ E\ \textbf{then} SS' \\
+         S' &\to \textbf{else}\ S\ |\ \varepsilon
+     \end{align*}
+ \paragraph*{allg. Verfahren:} Bestimme zu jedem $A$ den längsten Präfix $\alpha$, der in zwei oder mehr Produktionen zu $A$ vorkommt.
+    Falls $\alpha \neq \varepsilon$, dann ersetzen wir $A \to \alpha\beta_1\ |\ ...\ |\ \alpha\beta_n\ |\ \gamma_1\ |\ ...\ |\ \gamma_m$ durch
+    \begin{align*}
+     A &\to \alpha A'\ |\ \gamma_1\ |\ ...\ |\ \gamma_m \\
+     A' &\to \beta_1\ |\ ...\ |\ \beta_n
+    \end{align*}
+    Erschöpfende Anwendungen
+\end{itemize}
+
+\subsection{Behandlung der $\varepsilon$-Produktionen}
+\begin{itemize}
+ \item $A \to a\ |\ \beta$
+ \item $a \in \operatorname{FIRST}(\alpha)$? $A \to \alpha$ 
+ \item $\varepsilon \in \operatorname{FIRST}(\beta)$ \\
+       $\Rightarrow$ Lookahead steht hinter einem "`leeren Wort"'
+ \item $\operatorname{FIRST}(\alpha) = \{a\ |\ \exists\beta \in \mathcal{T} \cup \mathcal{N} \cup \varepsilon{:}\ \alpha \xrightarrow{*} a\beta\} \cup \{\varepsilon\ |\ \alpha \xrightarrow \varepsilon\}$\\
+       $\operatorname{FOLLOW}(A) = \{a\ |\ \exists\alpha, \beta \in \mathcal{T} \cup \mathcal{N} \cup \varepsilon{:}\ S \to \alpha Aa\beta\} \cup \{\$\ |\ \exists\alpha{:}\ S \xrightarrow{*} \alpha A\}$\\
+       \emph{formale Definition}
+\end{itemize}
+
+\subsubsection{Verfahren zur Berechnung der FIRST- und FOLLOW-Mengen}
+\begin{itemize}
+ \item Berechne für jedes Grammatik-Smbol $X$ FIRST($X$)\\
+     \begin{align*}
+      \forall a \in \mathcal
+     \end{align*}
+
+\end{itemize}
+
+
+
+
+
