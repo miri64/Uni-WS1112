@@ -68,7 +68,35 @@
  Algorithmus ${v_2,v_4}$ als größte unabhängige Menge mit Gesamtgewicht
  5 zurück. Die maximale unabhängige Menge ist allerdings ${v_1,v_4}$ mit
  Gesamtgewicht 6.
- \item Sei $U[m,b]$ = Maximale unabhängige Menge, bei der wir nur Knoten
- $v_1,...,v_m$ zur Verfügung haben und die $b$ Knoten hat.
+ \item Sei $P = (V,E)$ ein Pfad mit Knoten $v_1, v_2, \hdots, v_n$ und entsprechenden Gewichten $w_1, w_2, \hdots, w_n$, dann gilt für das
+  maximalen Gewicht einer unabhängigen Menge ($G(i)$) folgende Rekursionsgleichung, die über die Anzahl $i$ der Knoten geht:
+
+  \begin{align*}
+            G(1) &= w_1 \\
+            G(2) &= \max\{w_1,w_2\} \\
+            G(i) &= \max\{G(i-1), G(i-2) + w_i\} 
+   \end{align*}
+  Die Formeln für die Rekursionsanker gelten offensichtlich. Für ein $i > 2$ hat man die Wahl, entweder den $i$-ten Knoten mit in die Ergebnismenge aufzunehmen oder ihn nicht aufzunehmen.
+  Falls man ihn aufnimmt, kann der $i-1$-te Knoten nicht gewählt werden, sondern frühestens der $i - 2$-te. Bei Nichtaufnahme kann auch der $i-1$-te Knote gewählt werden.
+  Die Berechnung erfolgt nun durch dynamische Programmierung durch das Fülllen des Arrays $G[]$. Jedes Arrayelement besteht aus einem Tupel: 1. das maximale Gewicht, 2. die unabhängige Menge maximalen Gewichts.
+  Mit \verb!first! und \verb!second! greift man auf das 1. bzw. 2. Element des Tupels zu.
+\begin{algorithmic}
+      \STATE $G[1] \gets (w[1], elem_1)$
+      \IF{$w[1] > w[2]$}
+	\STATE $G[2] \gets G[1]$
+      \ELSE
+	\STATE $G[2] \gets (w[2], elem_2)$
+      \ENDIF
+      \FOR{$i \in \{2, \hdots, n\}$}
+	\IF{$G[i-1] > G[i - 2] + w[i]$}
+	  \STATE $G[i] = G[i - 1]$
+	\ELSE
+	  \STATE $G[i] = (G[i - 2].first + w[i], G[i - 2].second + elem_i)$
+	\ENDIF
+    \ENDFOR
+    \RETURN G[n]
+  \end{algorithmic}
+Die Laufzeit liegt in $O(n)$, da die for-Schleife über die n-Elemente des Arrays einmal läuft und in jedem Schritt nur konstant viel Kosten hat. Der Platzbedarf liegt genau genommen in $O(n^2)$,
+da in jedem Eintrag $O(n)$-Elemente gespeichert werden und es $O(n)$-Elemente gibt. Den Platzbedarf könnte man falls kritisch auf $O(n)$ optimieren, indem man sich nur 2 aktuellsten Mengen merkt.
 \end{enumerate}
 \end{document}
