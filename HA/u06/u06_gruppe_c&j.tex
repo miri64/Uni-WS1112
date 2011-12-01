@@ -105,7 +105,22 @@ da in jedem Eintrag $O(n)$-Elemente gespeichert werden und es $O(n)$-Elemente gi
  \item Gegenbeispiel (Algorithmus wählt rotmarkiertes, optimale Lösung grün markiert):
   \vfill
 
-  \item
+  \item Dieses Kriterium ist korrekt. Implementierung: \\
+	Sei $V[]$ die Menge der Vorlesungen und $M[]$ das zu füllende
+	Array mit der größtmöglichen Menge verträglicher Vorlesungen.
+	Jedes Element in $V$ und $M$ habe zwei Felder $a$ und $e$, die
+	Anfang und Ende der Vorlesung entsprechen.
+	\begin{algorithmic}
+		\STATE $i \gets 0$
+		\WHILE{$V \neq \emptyset$}
+			\STATE $m \gets argmax\{v.a | v \in V\}$
+			\STATE $M[i++] \gets m$
+			\STATE $V \gets V \setminus \{v | v \in V, v.e > m.a\}$
+		\ENDWHILE
+		\RETURN M
+	\end{algorithmic}
+	Der Algorithmus hat eine Laufzeit von $O(n)$, da die sortierte
+	Liste der Vorlesungen genau einmal durchlaufen wird.
   \item Gegenbeispiel (Algorithmus wählt rotmarkiertes, optimale Lösung grün markiert):
  \vfill
 
