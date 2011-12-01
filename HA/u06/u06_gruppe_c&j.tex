@@ -132,25 +132,32 @@ da in jedem Eintrag $O(n)$-Elemente gespeichert werden und es $O(n)$-Elemente gi
  \vfill
 \end{enumerate}
 \section{Autobahnfahrt}
-Da das Problem unterspezifiziert ist, werden folgende Annahmen gemacht. Zu Beginn der Fahrt ist das Auto vollgetankt. Die Distanz zur nächsten Tankstelle ist maximal $n$ Kilometer.
+Da das Problem unterspezifiziert ist, werden folgende Annahmen gemacht: Zu Beginn der Fahrt ist das Auto vollgetankt. Die Distanz zur nächsten Tankstelle ist maximal $n$ Kilometer.
 Zwischen Berlin und Dortmund liegen $m$ Tankstellen: $t_1, t_2, \hdots, t_m$, die aufsteigend nach der Entfernung zu Berlin (Entfernung entlang der Strecke) geordnet sind. Berlin kann auch also 0.
 Tankstelle $t_0$ bezeichnet werden.
 $d(1)$ bezeichne die Entfernung von Berlin zur 1. Tankstelle, $d(2)$ die Entfernung zwischen der 1. und der 2. Tankstelle, $\hdots$, $d(m + 1)$ die Entfernung von der $m$-ten Tankstelle nach Dortmund.
 
-Eine minimale Menge $A$ von Tankstellen wird mit folgendem Gierigen Algorithmus gefunden:
-Am Ort der Tankstelle $i$ nimm jeweils die am weitesten entfernte, noch erreichbare Tankstelle ($\le n$ km) in die Zielmenge $A$ auf und suche nun von diese aufgenommenen Tankstelle die nächste aus.
+Eine minimale Menge $A$ von Tankstellen wird mit folgendem gierigen Algorithmus gefunden:
+Am Ort der Tankstelle $i$ nimm jeweils die am weitesten entfernte, noch
+erreichbare Tankstelle ($\le n$ km) in die Zielmenge $A$ auf und suche
+nun von dieser aufgenommenen Tankstelle die nächste aus.
 
 Beweis der Korrektheit:
-Da immer die am weitesten entfernte Tankstelle gewählt wurde, ist Anzahl der gewählten Tankstellen bis zum Ziel offensichtlich minimal.
-Nun ist die Frage, ob man mit dieser Strategie auch ohne liegenzubleiben ans Ziel kommt. Dass dies prinzipiell möglich ist, wurde vorausgesetzt.
+Da immer die am weitesten entfernte Tankstelle gewählt wurde, ist die Anzahl der gewählten Tankstellen bis zum Ziel offensichtlich minimal.
+Nun ist die Frage, ob man mit dieser Strategie auch ohne liegen zu bleiben ans Ziel kommt. Dass dies prinzipiell möglich ist, wurde vorausgesetzt.
 
-Angenommen von einer ausgewählten Tankstellen gäbe es keine nachfolgende die maximal $n$ Kilometer entfernt ist. Die nächste Tankstelle, die somit $> n$ Kilomenter entfernt ist, muss aber laut Voraussetzung eine
-Vorgängertankstelle haben, die maximal $n$ Kilometer entfernt ist. Diese Vorgängertankstelle muss gleichzeitig weiter als $n$ und näher als $n$ an der nächsten Tankstelle sein. Wegen diesem Widerspruch
+Angenommen von einer ausgewählten Tankstellen gäbe es keine
+nachfolgende, die maximal $n$ Kilometer entfernt ist. Die nächste Tankstelle, die somit $> n$ Kilomenter entfernt ist, muss aber laut Voraussetzung eine
+Vorgängertankstelle haben, die maximal $n$ Kilometer entfernt ist. Diese
+Vorgängertankstelle muss gleichzeitig weiter als $n$ und näher als $n$
+an der nächsten Tankstelle sein. Wegen dieses Widerspruchs
 gibt es keine ausgewählte Tankstelle aus der Menge $A$, die keine erreichbare Nachfolge-Tankstelle hat.
-Der Algorithmus terminiert, da man sich bei der Tankstellen suche stets näher an das Ziel bewegt.
+Der Algorithmus terminiert, da man sich bei der Tankstellensuche stets näher an das Ziel bewegt.
 
 
-Die Laufzeit beträgt $O(m)$, wobei $m$ die Anzahl der Tankstellen ist. Denn in jedem Schritt wird die Anzahl der Tankstellen um eine Konstante verkleinert. Diese Konstante ist gleich der Anzahl der Tankstellen
+Die Laufzeit beträgt $O(m)$, wobei $m$ die Anzahl der Tankstellen ist,
+da in jedem Schritt die Anzahl der Tankstellen um eine Konstante
+verkleinert wird. Diese Konstante ist gleich der Anzahl der Tankstellen
 zwischen der letzten und der neu ausgewählten Tankstelle. (Die Anzahl der Tankstellen ist auch proportional zur Länge der Strecke).
 
 
