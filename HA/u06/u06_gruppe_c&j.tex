@@ -105,22 +105,40 @@ da in jedem Eintrag $O(n)$-Elemente gespeichert werden und es $O(n)$-Elemente gi
  \item Gegenbeispiel (Algorithmus wählt rotmarkiertes, optimale Lösung grün markiert):
   \vfill
 
-  \item Dieses Kriterium ist korrekt. Implementierung: \\
-	Sei $V[]$ die Menge der Vorlesungen und $M[]$ das zu füllende
+  \item Dieses Kriterium ist korrekt. 
+    \paragraph*{Implementierung:}
+	Gegeben seien die Vorlesungsintervalle $R = \{I_1, I_2, \hdots, I_n\}$ mit $I_i = (a(i), e(i))$.
+	Gesucht wird die größte Teilmenge $A \subseteq R$, so dass sich keine Intervalle überlappen.
+	Sei $R[]$ die Menge der Vorlesungen und $A[]$ das zu füllende
 	Array mit der größtmöglichen Menge verträglicher Vorlesungen.
-	Jedes Element in $V$ und $M$ habe zwei Felder $a$ und $e$, die
+	Jedes Element in $R$ und $A$ habe zwei Felder $a$ und $e$, die
 	Anfang und Ende der Vorlesung entsprechen.
 	\begin{algorithmic}
 		\STATE $i \gets 0$
-		\WHILE{$V \neq \emptyset$}
-			\STATE $m \gets argmax\{v.a | v \in V\}$
-			\STATE $M[i++] \gets m$
-			\STATE $V \gets V \setminus \{v | v \in V, v.e > m.a\}$
+		\WHILE{$R \neq \emptyset$}
+			\STATE $m \gets argmax\{r.a | r \in R\}$
+			\STATE $A[i++] \gets m$
+			\STATE $R \gets R \setminus \{r | r \in R, r.e > m.a\}$
 		\ENDWHILE
-		\RETURN M
+		\RETURN A
 	\end{algorithmic}
 	Der Algorithmus hat eine Laufzeit von $O(n)$, da die sortierte
 	Liste der Vorlesungen genau einmal durchlaufen wird.
+
+    \paragraph*{Beweis der Korrektheit:}
+  Dieser Beweis ist analog zum Beweis der Vorlesung, da spätester Anfang das gleiche ist wie zeitigster Anfang (Rückwärtslesen der Intervalle).
+  Sei $S$ eine optimale größtmögliche Teilmenge von $R$. \\
+  Wir wollen zeigen: $|A| = |S|$. Seien $i_1, i_2, \hdots, i_k$ und $j_1, j_2, \hdots, j_m$ die Indizes der Intervalle von $A_i$ bzw. $S_j$ in zeitlich geordneter Reihenfolge.\\
+  Behauptung: $a(i_r) \ge a(j_r) \forall r = 1, \hdots, n \Rightarrow |A| \ge |S|$\\
+  Induktionsbeweis: \\
+  IA: $r = 1$ : $a(i_1) \ge a(j_1)$ Trivial, da der Algorithmus immer das Intervall mit dem größten Anfangswert wählt. \\
+  IS ($r \rightarrow r + 1$):
+  Es gilt $a(i_r) \ge a(j_r)$ nach Induktionsbehauptung.
+  Nach Auswahl von $I_{ir}$ steht das Intervall $I_{jr + 1}$ noch zur Verfügung, da $a(i_r) \ge a(j_r) \ge e(j_{r + 1})$
+  Das nächste Intervall in $A$ ist eins mit $a(i_{r+1}) \ge a(j_{r+1})$. Also gilt $k \ge m$ und damit $|A| \ge |S|$
+    
+
+    
   \item Gegenbeispiel (Algorithmus wählt rotmarkiertes, optimale Lösung grün markiert):
  \vfill
 
@@ -131,18 +149,19 @@ da in jedem Eintrag $O(n)$-Elemente gespeichert werden und es $O(n)$-Elemente gi
 
  \vfill
 \end{enumerate}
+\vfill
 \section{Autobahnfahrt}
 Da das Problem unterspezifiziert ist, werden folgende Annahmen gemacht: Zu Beginn der Fahrt ist das Auto vollgetankt. Die Distanz zur nächsten Tankstelle ist maximal $n$ Kilometer.
 Zwischen Berlin und Dortmund liegen $m$ Tankstellen: $t_1, t_2, \hdots, t_m$, die aufsteigend nach der Entfernung zu Berlin (Entfernung entlang der Strecke) geordnet sind. Berlin kann auch also 0.
 Tankstelle $t_0$ bezeichnet werden.
 $d(1)$ bezeichne die Entfernung von Berlin zur 1. Tankstelle, $d(2)$ die Entfernung zwischen der 1. und der 2. Tankstelle, $\hdots$, $d(m + 1)$ die Entfernung von der $m$-ten Tankstelle nach Dortmund.
 
-Eine minimale Menge $A$ von Tankstellen wird mit folgendem gierigen Algorithmus gefunden:
+\paragraph*{Eine minimale Menge $A$ von Tankstellen wird mit folgendem gierigen Algorithmus gefunden:}
 Am Ort der Tankstelle $i$ nimm jeweils die am weitesten entfernte, noch
 erreichbare Tankstelle ($\le n$ km) in die Zielmenge $A$ auf und suche
 nun von dieser aufgenommenen Tankstelle die nächste aus.
 
-Beweis der Korrektheit:
+\paragraph*{Beweis der Korrektheit:}
 Da immer die am weitesten entfernte Tankstelle gewählt wurde, ist die Anzahl der gewählten Tankstellen bis zum Ziel offensichtlich minimal.
 Nun ist die Frage, ob man mit dieser Strategie auch ohne liegen zu bleiben ans Ziel kommt. Dass dies prinzipiell möglich ist, wurde vorausgesetzt.
 
