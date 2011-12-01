@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{multicol}
 \usepackage{pst-tree}
+\usepackage{algorithmic}
 
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
@@ -61,7 +62,7 @@
 \begin{enumerate}
 \item   Gegeben sei ein Pfad $P = (V,E)$ mit $v_1,v_2,v_3 \in V$ und $w_1 = 2, w_2 = 4, w_3 = 3$. 
         Intuitiv ist zu sehen, dass die unabhängige Menge von maximalem Gewicht $S = \{v_1, v_3\}$ mit Gewicht = 5 ist. 
-        Der gegebene Algorithus wählt jedoch $v_2$ für die Menge $S$ aus und verwirft dann $v_1$ und $v_2$.
+        Der gegebene Algorithmus wählt jedoch $v_2$ für die Menge $S$ aus und verwirft dann $v_1$ und $v_2$.
         $S$ hat damit allerdings nur ein Gewicht von 4.
         Das Ergebnis entspricht also nicht der gesuchten Menge.
 \item   Gegeben sei ein Pfad $P = (V,E)$ mit $v_1,v_2,v_3,v_4,v_5 \in V$ und $w_1 = 8, w_2 = 1, w_3 = 2, w_4 = 11, w_5 = 3$. 
@@ -80,12 +81,63 @@
 \end{enumerate}
 
 \section{Vorlesungsplanung}
+Vorlesungen seien verkürzt dargestellt durch $[x,y]$ $x = a(i), y = e(i)$. Zeiten werden der Einfachheit halber als natürliche Zahlen dargestellt. Eine Menge von $n$ Vorlesungen sei als Liste von Vorlesungen (mit Semikolon getrennt) dargestellt.
 \begin{enumerate}
-\item   
-\item   
-\item   
-\item   
-\item   
+\item   Gegenbeispiel:
+        \[[0,1];[1,4];[2,3];[3,4];[4,5]\]
+        Das maximale $M$ der Menge wäre 
+        \[M = [0,1];[2,3];[3,4];[4,5],\] 
+        das Kriterium wählt aber 
+        \[M = [0,1];[1,4];[4,5]\]
+\item   Sei $N$ die Menge der Vorlesungen und $M \subseteq N$ die größtmögliche Menge von verträglichen Vorlesungen. Ein effizienter Algorithmus, der $M$ mit dem vorgeschlagenem Kriterium auswählt ist:
+        \begin{algorithmic}
+        \STATE $M \gets \emptyset$
+        \WHILE{$N \neq \emptyset$}
+            \STATE $m \gets$ $\arg\max \{a(i)\ |\ i \in N\}$
+            \STATE $M = M \cup \{m\}$
+            \STATE $N = N \setminus \{n\ |\ n \in N, e(n) > a(m)\}$
+        \ENDWHILE
+        \RETURN $M$
+        \end{algorithmic}
+        \paragraph*{Korrektheit:} Setzen wir voraus, dass wir nicht wissen, das der Algorithmus korrekt ist (und damit sein Ergebnis wirklich $M$ ist) und nennen wir dessen Ergebnis daher zu Beweiszwecken in $S$ um, so wollen wir für seine Korrektheit zeigen, dass
+        \[|S| = |M|.\]
+        Seien $M' = (m_1, ..., m_j)$ und $S' = (s_1, ..., s_k)$ geordnete Mengen, so dass 
+        \[\{m_1,...,m_j\} = M \land \{s_1,...,s_k\} = S.\] 
+        Die Ordnung sei jeweils 
+        \begin{itemize} 
+        \item   $\forall m_{c}, m_{c+1} \in M{:}\ a(m_{c}) > a(m_{c+1}) \land e(m_{c}) > e(m_{c+1})$ bzw.
+        \item   $\forall s_{c}, s_{c+1} \in M{:}\ a(s_{c}) > a(s_{c+1}) \land e(s_{c}) > e(s_{c+1})$
+        \end{itemize}
+        \begin{description}
+        \item[Induktionsbehauptung] $\forall r \in \{1,...,j\}{:}\ a(s_r) \geq a(m_r) (\Rightarrow |S'| \geq |M'|)$
+        \item[Induktionsanfang] $r = 1{:}\ a(s_1) \geq a(m_1)$, trivial, da der Algorithmus die Vorlesung mit maximalem $a(i)$ wählt.
+        \item[Induktionsschritt] $r \Rightarrow r+1{:}$
+        \begin{itemize}
+        \item   nach \textbf{IV} gilt: $\forall r \in \{1,...,j\}{:}\ a(s_r) \geq a(m_r)$
+        \item   $a(m_r) \geq e(m_{r+1}) \Rightarrow a(s_{r+1}) \geq a(m_{r+1})$ \hfill $\square$
+        \end{itemize}
+        \end{description}
+        \textit{$|S'| = |M'|$ (Beweis durch Widerspruch)}: Angenommen $|S'| < |M'|$, dann ist $e(s_j) < e(m_j)$ und es existiert eine weitere Vorlesung $m_{j+1} \in M'$. $N$ enthält im Algorithmus also $m_{j+1}$ nachdem bereits $m_1, ..., m_j$ ausgewählt wurden. Somit ist aber $N \neq \emptyset$ und die Bedingung zum Terminieren der While-Schleife nicht erfüllt, also $S$ nicht das Ergebnis des Algorithmus. \hfill $\square$
+        \paragraph*{Laufzeit:} Im schlechtesten Fall (alle anfänglich gegebenen $n$ Vorlesungen sind verträglich) ist die Laufzeit $O(n)$, da bei jedem Schleifendurchlauf nur eine Vorlesung entfernt wird.
+        Im besten Fall (keine der anfänglich gegebenen $n$ Vorlesungen sind verträglich) ist die Laufzeit $O(1)$, da nur die Vorlesung mit maximalem $a(i)$ $M$ hinzugefügt wird und alle anderen verworfen werden.
+\item   Gegenbeispiel:
+        \[[0,1];[1,4];[1,2];[2,3];[4,5]\]
+        Das maximale $M$ der Menge wäre 
+        \[M = [0,1];[1,2];[2,3];[4,5],\] 
+        das Kriterium wählt aber 
+        \[M = [0,1];[1,4];[4,5]\]
+\item   Gegenbeispiel:
+        \[[0,3];[2,4];[3,6]\]
+        Das maximale $M$ der Menge wäre 
+        \[M = [0,3];[3,6],\] 
+        das Kriterium wählt aber 
+        \[M = [2,3]\]
+\item   Gegenbeispiel:
+        \[[0,3];[1,2];[2,3]\]
+        Das maximale $M$ der Menge wäre 
+        \[M = [1,2];[2,3],\] 
+        das Kriterium wählt aber 
+        \[M = [0,3]\]
 \end{enumerate}
 
 \section{Autobahnfahrt}
