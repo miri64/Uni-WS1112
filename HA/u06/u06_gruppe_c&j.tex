@@ -60,13 +60,14 @@
  $w_1 = 3$, $w_2 = 5$, $w_3 = 3$. Dann wählt der gierige Algorithmus im
  ersten Schritt $v_2$ als Knoten mit maximalem Gewicht und eliminiert
  dann $v_1$ und $v_3$, so dass die vom Algorithmus bestimmte unabhängige
- Menge nur aus $v_2$ besteht. Es ist aber trivial zu sehen, dass ${v_1,v_3}$ die
+ Menge nur aus $v_2$ besteht. Es ist aber trivial zu sehen, dass
+ $\{v_1,v_3\}$ die
  maximale unabhängige Menge ist. Also
  arbeitet der Algorithmus nicht korrekt.
  \item Sei $P = (V,E)$ ein Pfad mit Knoten $v_1, v_2, v_3, v_4$ und
  Gewichten $w_1 = 3, w_2 = 2, w_3 = 1, w_4 = 3$. Dann gibt der
- Algorithmus ${v_2,v_4}$ als größte unabhängige Menge mit Gesamtgewicht
- 5 zurück. Die maximale unabhängige Menge ist allerdings ${v_1,v_4}$ mit
+ Algorithmus $\{v_2,v_4\}$ als größte unabhängige Menge mit Gesamtgewicht
+ 5 zurück. Die maximale unabhängige Menge ist allerdings $\{v_1,v_4\}$ mit
  Gesamtgewicht 6.
  \item Sei $P = (V,E)$ ein Pfad mit Knoten $v_1, v_2, \hdots, v_n$ und entsprechenden Gewichten $w_1, w_2, \hdots, w_n$, dann gilt für das
   maximalen Gewicht einer unabhängigen Menge ($G(i)$) folgende Rekursionsgleichung, die über die Anzahl $i$ der Knoten geht:
