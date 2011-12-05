@@ -28,8 +28,8 @@ void parser() {
  E &\to TE'\\
  E' &\to +TE'\ |\ \varepsilon \\
  T &\to FT' \\
- T' &\to *T'\ |\ \varepsilon \\
- F & (E)\ |\ \operatorname{id}
+ T' &\to *FT'\ |\ \varepsilon \\
+ F &\to (E)\ |\ \operatorname{id}
 \end{align*}
 \psset{arrows=-}
 \begin{description}
@@ -147,21 +147,83 @@ for ($i$ = 1 to $k$) {
  \item $a \in \operatorname{FIRST}(\alpha)$? $A \to \alpha$ 
  \item $\varepsilon \in \operatorname{FIRST}(\beta)$ \\
        $\Rightarrow$ Lookahead steht hinter einem "`leeren Wort"'
- \item $\operatorname{FIRST}(\alpha) = \{a\ |\ \exists\beta \in \mathcal{T} \cup \mathcal{N} \cup \varepsilon{:}\ \alpha \xrightarrow{*} a\beta\} \cup \{\varepsilon\ |\ \alpha \xrightarrow \varepsilon\}$\\
+ \item $\operatorname{FIRST}(\alpha) = \{a\ |\ \exists\beta \in \mathcal{T} \cup \mathcal{N} \cup \varepsilon{:}\ \alpha \xrightarrow{*} a\beta\} \cup \{\varepsilon\ |\ \alpha \xrightarrow{*} \varepsilon\}$\\
        $\operatorname{FOLLOW}(A) = \{a\ |\ \exists\alpha, \beta \in \mathcal{T} \cup \mathcal{N} \cup \varepsilon{:}\ S \to \alpha Aa\beta\} \cup \{\$\ |\ \exists\alpha{:}\ S \xrightarrow{*} \alpha A\}$\\
        \emph{formale Definition}
 \end{itemize}
 
 \subsubsection{Verfahren zur Berechnung der FIRST- und FOLLOW-Mengen}
 \begin{itemize}
- \item Berechne für jedes Grammatik-Smbol $X$ FIRST($X$)\\
-     \begin{align*}
-      \forall a \in \mathcal
-     \end{align*}
-
+ \item FIRST-Mengen zu allen rechten Regelseiten
+ \item FOLLOW-Mengen zu allen Nichtterminalen
+ \item Wende folgende Regel an, bis keine neuen  Elemente hinzutreten
+     \begin{enumerate}
+      \item $\forall a \in \mathcal{T}{:}\ FIRST(a) = \{a\}$
+      \item Für jede Produktion $A \to X_1...X_n$ mit $n \geq 1$ und jedes $1 \leq i < n$ füge $\operatorname{FIRST}(X_i)$ zu $\operatorname{FIRST}(A)$ hinzu, falls alle $\operatorname{FIRST}(X_j)$ das Element $\varepsilon$ enthalten mit $1 \leq j < i$.
+      Füge $\varepsilon$ zu $\operatorname{FIRST}(A)$ hinzu, falls alle $\operatorname{FIRST}(X_i)$ das Element $\varepsilon$ enthalten ($1 \leq i \leq n$)
+      \item Füge $\varepsilon$ zu $\operatorname{FIRST}(A)$, falls $A \to \varepsilon$ in $\mathcal{P}$
+     \end{enumerate}
+     Zur Bestimmung von $\operatorname{FIRST}(\alpha)$ zu jeder rechten Regelseite, verfahre analog zu Regel 2 $\alpha = X_1...X_n$
+  \Bsp  $\mathcal{T} = \{+,*,(,),\textbf{id}\}$,
+        $\mathcal{N} = \{E, E', T, T', F\}$
+        \begin{align*}
+         \operatorname{FIRST}(E) &= \{{\color{blue}(, \textbf{id}}\} \\
+         \operatorname{FIRST}(E') &= \{+, \varepsilon\} \\
+         \operatorname{FIRST}(T) &= \{{\color{red}(, \textbf{id}}\} \\
+         \operatorname{FIRST}(T') &= \{*, \varepsilon\} \\
+         \operatorname{FIRST}(F) &= \{(, \textbf{id}\}
+        \end{align*}
+        (1. Durchlauf, {\color{red}2. Durchlauf}, {\color{blue}3. Durchlauf})
+        \begin{align*}
+         \operatorname{FIRST}(+TE') &= \{+\}  & \operatorname{FIRST}(\varepsilon) &= \{\varepsilon\} \\
+         \operatorname{FIRST}(*FT') &= \{*\} \\
+         \operatorname{FIRST}((E)) &= \{(\}   & \operatorname{FIRST}(\textbf{id}) &= \{\textbf{id}\}
+        \end{align*}
+ \item FOLLOW-Generieriung ("`Erschöpfende Anwendung folgender Regeln"'):
+     \begin{enumerate}
+      \item Füge $\$$ zu $\operatorname{FOLLOW}(S)$ hinzu.
+      \item Für jede Produktion der Form $A \to \alpha B \beta$ füge $\operatorname{FIRST}(\beta) \setminus \{\varepsilon\}$ zu $\operatorname{FOLLOW}(B)$ hinzu.
+      \item Für jede Produktion der Form $A \to \alpha B$ oder $A \to \alpha B \beta$ mit $\varepsilon \in \operatorname{FIRST}(\beta)$ füge $\operatorname{FOLLOW}(A)$ zu $\operatorname{FOLLOW}(B)$ hinzu
+     \end{enumerate}
+  \Bsp  \begin{align*}
+         \operatorname{FOLLOW}(E) &= \{\$,)\} \\
+         \operatorname{FOLLOW}(E') &= \{\$,)\} \\
+         \operatorname{FOLLOW}(T) &= \{+,\$, )\} \\
+         \operatorname{FOLLOW}(T') &= \{+, \$, )\} \\
+         \operatorname{FOLLOW}(F) &= \{*, +, \$, )\}
+        \end{align*}
 \end{itemize}
+\Defi Eine kontextfreie Grammatik $G = (\mathcal{N},\mathcal{T},S,\mathcal{P})$ heißt \emph{LL(1)-Grammatik}, genau dann wenn zu je zwei Produktionen $A \to \alpha$ und $A \to \beta$ gilt:
+\begin{enumerate}
+ \item $\operatorname{FIRST}(\alpha) \cap \operatorname{FIRST}(\beta) = \emptyset$
+ \item Falls $\varepsilon \in \operatorname(\alpha)$ enthält, dann $\operatorname{FIRST}(\beta) \cap \operatorname{FOLLOW}(A) = \emptyset$
+\end{enumerate}
 
+\subsection{Tabellengesteuerter Kellerautomat}
+Fehlersituation:
+\begin{enumerate}
+ \item Stackelement stimmt nicht mit gelesener Eingabe überein
+ \item Eintrag in Parse-Tabelle ist leer
+\end{enumerate}
 
+Stelle zu gegebene Grammatik $G$ die Parsetabelle $\mathcal{M}$ wie folgt auf:
+\begin{enumerate}
+ \item Zu $A \to \alpha$ und $a \in \operatorname{FIRST}(\alpha), a \in \mathcal{T}$, trage $A \to \alpha$ in das Feld $\mathcal{M}[A,\alpha]$ ein.
+ \item Wenn $\varepsilon \in \operatorname{FIRST}(\alpha)$ und $A \to \alpha \in \mathcal{P}$ mit $a \in \operatorname{FOLLOW}(A)$, trage $A \to \alpha$ in $\mathcal{M}[A,a]$ ein. Wenn $\varepsilon \in \operatorname{FIRST}(\alpha)$ und $\$ \in \operatorname{FOLLOW}(A)$, dann trage $A \to \alpha$ in $\mathcal{M}[A, \$]$ ein.
+ \item Alle Felder, die leer bleiben werden als Fehlersituation interpretiert!
+\end{enumerate}
+\Bsp Parsetabellle zu Beispielgrammatik
+\begin{center}
+    \begin{tabular}{r||c|c|c|c|c|c|}
+         & +                    & *            & (           & )                    & \textbf{id}         & \$                   \\\hline\hline
+      E  &                      &              & $E \to TE'$ &                      & $E \to TE'$         &                      \\\hline
+      E' & $E' \to +TE'$        &              &             &                      &                     &                      \\\hline
+      T  &                      &              & $T \to FT'$ &                      & $E \to FT'$         &                      \\\hline
+      T' & $T' \to \varepsilon$ & $T \to *FT'$ &             & $T' \to \varepsilon$ &                     & $T' \to \varepsilon$ \\\hline
+      F  &                      &              & $F \to (E)$ &                      & $F \to \textbf{id}$ &                      \\\hline
+    \end{tabular}
+\end{center}
+\Lemma $G$ ist eindeutig.
+\Bew Parsetabelle zu $G$ enthält in jedem Feld höchstens \emph{einen} Eintrag.
 
-
-
+ 
