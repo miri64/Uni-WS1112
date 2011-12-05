@@ -1,5 +1,5 @@
 \documentclass[a4paper,10pt]{article}
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
 \usepackage[ngerman]{babel}
@@ -131,7 +131,7 @@ Vorlesungen seien verkürzt dargestellt durch $[x,y]$ $x = a(i), y = e(i)$. Zeit
         Das maximale $M$ der Menge wäre 
         \[M = [0,3];[3,6],\] 
         das Kriterium wählt aber 
-        \[M = [2,4]\]
+        \[M = [2,3]\]
 \item   Gegenbeispiel:
         \[[0,3];[1,2];[2,3]\]
         Das maximale $M$ der Menge wäre 
@@ -141,8 +141,47 @@ Vorlesungen seien verkürzt dargestellt durch $[x,y]$ $x = a(i), y = e(i)$. Zeit
 \end{enumerate}
 
 \section{Autobahnfahrt}
-Die Straßenkarte mit den Abständen zwischen den Tankstellen kann als Graph mit Kantengewichten gesehen werden.
-Hannelore und Werner können Strecken fahren auf denen der Abstand zwischen 2 Tankstellen kleiner $n$ ist. 
-Entfernen wir die Kanten mit Gewicht $> n$ also aus unserem Ausgangsgraphen, so können wir den Dijkstra-Algorithmus auf den verbleibenden Graphen anwenden.
-% für Pseudocode und Laufzeitanalyse hab ich grad keine Lust :P
+\begin{description}
+	\item[Problemspezifizierung:] Wir gehen davon aus, dass die Strecken zwischen verbundenen Tankstellen mit einer Tankfüllung zu erreichen sind, andernfalls entferne diese aus dem Graphen. Gesucht ist eine Strecke im Graph, der die wenigsten Stopps benötigt. Es kann Fälle geben, in denen eine längere Strecke weniger Stopps benötigt als eine kürzere Strecke. Daher liefert der kürzeste Weg nicht zwangsweise auch die Strecke mit den wenigsten Stopps. Gleiches gilt, wenn man die Anzahl der Tankstellen auf einer Strecke als Kriterium wählt.
+	\item[Idee:] Unser Lösungsansatz ist eine modifizierte Breitensuche über den Graph G=(V, E). Jeder Knoten v $\in$ V erhält dabei ein Attribut, welches die minimale Anzahl an Stopps speichert, die man benötigt, um zu diesem Knoten zu gelangen, sowie die maximale restliche Tankfüllung zu dieser Anzahl von Stopps. Um am Ende die optimale Route zu erhalten, erhält eine Knoten noch das Atribut, von welchem Knoten man gekommen ist, mit dem die beiden anderen Attribute erzeugt werden.
+	\item[Algorithmus:] STOPS\begin{lstlisting}[mathescape=true]
+STOPS(){
+	foreach Vertex v in G{
+		v.fuel = 0;
+		v.stops = maxInt;
+	}
+	StartVertex.stops = 0;
+	currentVertices.add(StartVertex);
+	do{
+		foreach Vertex v in currentVertices{
+			foreach Edge e in v.outgoingEdges{
+				nextVertex = e.next;
+				if(e.distance < v.fuel){
+					if(nextVertex.stops > stops || (nextVertex.stops == stops && nextVertex.fuel < fuel-e.distance)){
+						nextVertex.stops = stops;
+						nextVertex.fuel = fuel-e.distance;
+						nextVertices.add(nextVertex);
+					}
+				}else{
+					if(nextVertex.stops > stops+1 || (nextVertex.stops == stops+1 && nextVertex.fuel < n-e.distance)){
+						nextVertex.stops = stops+1;
+						nextVertex.fuel = n-e.distance;
+						nextVertices.add(nextVertex);
+					}
+				}
+			}
+		}
+		currentVertices = nextVertices;
+		nextVertices.clear();
+	}while (currentVertices.size != 0);
+	return EndVertex.stops;
+}
+\end{lstlisting}
+	\item[Korrektheit und Laufzeit:] Der Algorithmus arbeitet iterativ auf dem Graph. In jeder Iteration können die Attribute in einem Knoten nur verbessert werden, sodass dieser irgendwann ein Optimum erreicht. Ein Knoten kann nur verbessert werden, wenn einer seiner Nachbarn verbessert wurde. Diese Nachbarn können durch die eigene Verbesserung jedoch nicht erneut verbessert werden. Ebenso sind kreisförmige Verbesserungen und damit auch negative Kanten ausgeschlossen. Somit hat jeder Knoten einen optimalen Zustand und der Algorithmus terminiert. Da die geringste Anzahl an Stopps gesucht ist, versucht der Algorithmus mit einer Tankfüllung möglichst weit zu kommen. Trifft er auf einen besuchten Knoten mit besseren Attributen, kann er dort die Suche beenden und andere Knoten überprüfen. Hat ein Knoten jedoch schlechtere Werte, werden diese verbessert und dessen Nachbarknoten werden betrachtet.
+Die Laufzeit ist schwerer zu ermitteln.\\
+\textbf{Lemma:} In jedem Iterationsschritt wird mindestens ein Knoten optimal.\\
+\textbf{Induktionsvoraussetzung:} Im ersten Schritt wird der dichteste Nachbar vom Startknoten optimal, da alle anderen Wege zu diesem Knoten länger sind.\\
+\textbf{Induktionsschluss:} Im $n$-ten Schritt existiert eine optimaler zusammenhängender Teilgraph. Dann existiert ein Knoten $v$ in diesem Teilgraph mit nicht optimalem Nachbarknoten $u$ und Kante $(v, u)$ Teil des optimalen Pfades vom Startknoten zu $u$. Dann wird $u$ im nächsten Schritt optimal. (Auf den Beweis der Existenz eines solchen Paares wird verzichtet.)\\
+\textbf{Folgerung:} Der Algorithmus betrachtet alle Nachbarn der in einem Schritt verbesserten Knoten. In einem vollständigen Graph ist das immer die Anzahl der Kanten, also $O(n^2)$. Da aber in jedem Schritt ein Element optimal wird, kann man dessen Kanten ignorieren und der Algorithmus terminiert nach $n$ Schritten. So kommt man auf eine Laufzeit von $O(\sum\limits_{k=1}^n{k^2}) = O(\frac{1}{6}\cdot n \cdot (n+1)(2n+1)) = O(n^3)$.
+\end{description}
 \end{document}
