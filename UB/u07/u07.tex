@@ -120,17 +120,78 @@ Bestimmung der FIRST- und FOLLOW-Mengen + Erstellung der Parsetabelle:
         B' & B' \to \e & B \to \underline{\textrm{or}} TB' &                 &                 &           & B' \to \e &             &            \\\hline
         T  &           &               &                 & T \to FT'       & T \to FT' &           & T \to FT'   & T \to FT'  \\\hline
         T' & T \to \e  &               & T' \to \underline{\textrm{and}} FT' &                 &           & T' \to \e &             &            \\\hline
-        F  &           &               &                 & F \to \underline{\textrm{and}} FT'  & F \to (B) &           & F \to \true & F \to \false \\\hline 
+        F  &           &               &                 & F \to \underline{\textrm{and}} FT'  & F \to (B) &           & F \to \true & F \to \false \\\hline
     \end{array}$
 \end{center}
 
-
-
 \section{}
+Linksfaktorisierung:
+\begin{align*}
+ S &\to SSS'\ |\ a \\
+ S' &\to +\ |\ *
+\end{align*}
+Linksrekursion:
+\begin{align*}
+ S &\to aR \\
+ R &\to SS'R\ |\ \varepsilon \\
+ S' &\to +\ |\ *
+\end{align*}
+indirekte Linksrekursion
+\begin{align*}
+ S &\to aR \\
+ R &\to aRS'R\ |\ \varepsilon \\
+ S' &\to +\ |\ * 
+\end{align*}
+Bestimmung der FIRST- und FOLLOW-Mengen:
+\begin{align*}
+ \FIRST(S') &= \{+,*\} \\
+ \FIRST(R) &= \{a, \varepsilon\} \\
+ \FIRST(S) &= \{a\} \\\hline
+ \FOLLOW(S) &= \{\$\} \\
+ \FOLLOW(R) &= \{\$, +, *\} \\
+ \FOLLOW(S') &= \{\$,+,*,a\}
+\end{align*}
+\[
+ \begin{array}{r|c|c|c|c|}
+   & + & * & a & \$ \\\hline
+   S &  &  & S \to aR & \\\hline
+   R & R \to \varepsilon & R \to \varepsilon & R \to aRS'R & R \to \varepsilon \\\hline
+   S' & S' \to + & S' \to * & & \\\hline 
+ \end{array}
+\]
+
+
+
+Erstellung der Parsetabelle:
 
 \section{}
 \begin{enumerate}
- \item 
- \item   
+ \item \begin{align*}
+        S &\to G\ |\ O \\
+        G &\to \underline{\textrm{if}}\ e\ \underline{\textrm{then}}\ G\ \underline{\textrm{else}}\ G\ |\ a \\
+        O &\to \underline{\textrm{if}}\ e\ \underline{\textrm{then}}\ S\ |\ \underline{\textrm{if}}\ e\ \underline{\textrm{then}}\ G\ \underline{\textrm{else}}\ O \\
+    \end{align*}
+ \item   \begin{align*}
+          \FIRST(O) &= \{\underline{\textrm{if}}\}\\
+          \FIRST(G) = \FIRST(S) &= \{\underline{\textrm{if}}, a\} \\\hline
+          \FOLLOW(S) = \FOLLOW(O) &= \{\$\} \\
+          \FOLLOW(G) &= \{\underline{\textrm{else}}, \$\}
+         \end{align*}
+         \[
+          \begin{array}{r|c|c|c|}
+            & \underline{\textrm{if}} & a & \$ \\\hline
+            S & \begin{matrix}
+                 S \to G \\
+                 S \to O
+                \end{matrix} & S \to G & \\\hline
+            G & G \to \underline{\textrm{if}}\ e\ \underline{\textrm{then}}\ G\ \underline{\textrm{else}}\ G & G \to a & \\\hline
+            O & \begin{matrix}
+                 O \to \underline{\textrm{if}}\ e\ \underline{\textrm{then}}\ S  \\
+                 O \to \underline{\textrm{if}}\ e\ \underline{\textrm{then}}\ G\ \underline{\textrm{else}}\ O
+                \end{matrix} & & \\\hline
+ 
+          \end{array}
+         \]
+         $\Rightarrow$ Keine LL(1)-Grammatik
 \end{enumerate}
 \end{document}
