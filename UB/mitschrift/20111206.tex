@@ -1,0 +1,119 @@
+\newcommand{\FIRST}{\operatorname{FIRST}}
+\newcommand{\FOLLOW}{\operatorname{FOLLOW}}
+
+\Satz Wenn Parsetabelle $M$ zu kontextfreier Grammatik $G$ höchstens \emph{einen} Eintrag in jedem Feld besitzt, dann ist $G$ eindeutig und eine LL(1)-Grammatik.
+\Bsp Dangling \textbf{else}:
+\begin{align*}
+ S &\to iEtSS'\ |\ a \\
+ S' &\to eS\ |\ \varepsilon \\
+ E &\to b
+\end{align*}
+\begin{itemize}
+ \item \textbf{Eingabe:} $ib\underbrace{\underbrace{ibta}ea}$
+\end{itemize}
+\begin{align*}
+ \FOLLOW(S') &= \{\$, e\}
+\end{align*}
+
+\begin{center}
+    \begin{tabular}{r|c|c|c|c|c|c|}
+     $\mathcal{M}$ & $i$            & $t$ & $e$            & $a$       & $b$       & $\$$                 \\\hline
+     $S$           & $S \to iEtSS'$ &     &                & $S \to a$ &           &                      \\\hline
+     $S'$          &                &     & \begin{minipage}{2cm}
+                                             $S' \to eS$ \\
+                                             $S' \to \varepsilon$
+                                            \end{minipage} &           &           & $S' \to \varepsilon$ \\\hline
+     $E$           &                &     &                &           & $E \to b$ &                      \\\hline
+    \end{tabular}
+\end{center}
+\begin{itemize}
+ \item \textbf{Methode brutale:} Lösche aus dem Feld mit zwei Einträgen, die Regel $S' \to \varepsilon$
+\end{itemize}
+
+\paragraph*{Algorithmus} (Tabellengesteuerte, prädiktibve Syntaxanalyse)
+\begin{algorithmic}
+ \REQUIRE $w \in \mathcal{T}^*$ gefolgt von \$ mit $\$ \in \mathcal{T}$ und Parsetabelle $\mathcal{M}$ zu gegegebener Grammatik $G$
+ \ENSURE  Wenn $w \in \mathcal{L}(G)$ Linksableitung von $w$, Fehler sonst.
+ \STATE Anfangszustand: Eingabe enthält $w\$$, Stack enthält $S\$$ ($S$ über $\$$)
+ \STATE $a \gets$ first symbol of $w$
+ \STATE $X \gets$ top of the stack
+ \WHILE{$X \neq \$$}
+  \IF{$X = a$}
+   \STATE pop den Stack
+   \STATE $a \gets$ nächstes Eingabesymbol
+  \ELSIF{$X$ ist Terminal}
+   \STATE Fehlermeldung
+  \ELSIF{$\mathcal{M}[X,a]$ ist leer}
+   \STATE Fehlermeldung
+  \ELSIF{$\mathcal{M}[X,a]$ enthält $X \to Y_1...Y_k$}
+   \STATE pop Stack
+   \STATE push $Y_k, ..., Y_1$ auf Stack
+   \STATE gib $X \to Y_1...Y_k$ aus
+  \ENDIF
+  \STATE Setze $X$ auf top of stack
+ \ENDWHILE
+ \IF{$a = \$$}
+  \STATE accept
+ \ENDIF
+\end{algorithmic}
+
+\begin{center}
+ \begin{tabular}{l|l|l}
+  \textbf{Eingabe} & \textbf{Stack}        & \textbf{Ausgabe} \\\hline
+  $ibtibtaea\$$    & $S\$$                 & $S \to iEtSS'$   \\
+                   & $iEtSS'\$$            &                  \\
+  $btibtaea\$$     & $EtSS'\$$             & $E \to b$        \\
+                   & $btSS'\$$             &                  \\
+  $tibtaea\$$      & $tSS'\$$              &                  \\
+  $ibtaea\$$       & $SS'\$$               & $S \to iEtSS'$   \\
+                   & $\cancel{i}EtSS'S'\$$ & $E \to b$        \\
+                   & $\cancel{b}tSS'S'\$$  & $S \to a$        \\
+                   & $\cancel{a}S'S'\$$    & $S' \to eS$      \\
+                   & $\cancel{e}SS'\$$     & $S \to a$        \\
+                   & $\cancel{a}S'\$$      & $S' \to \varepsilon$ \\
+                   & $\$$                  & accept!
+ \end{tabular}
+\end{center}
+
+\subsection{Fehlerbehandlung (panic mode) (Heuristiken)}
+\begin{enumerate}
+ \item Nimm alle Symbole aus $\FOLLOW(A)$ zu Synchronisationsmenge für $A$. \\
+       Überspringe im Fehlerfall alle Eingabesymbole bis zum nächsten Synchronisationssymbol. \\
+       Entferne $A$ vom Stack.
+ \item (Reflektiere hierarchische Sprachstruktur)
+ \item Füge $\FIRST(A)$ zur Synchronisationsmenge von $A$. Überspringe alle Eingabesymbole bist zu einem Terminal aus $\FIRST(A)$, entferne $A$ \emph{nicht} vom Stack!
+ \item (Wende $\varepsilon$-Produktionen im Default-Fall an)
+ \item Wenn Kellerspitze $b$ ein Terminal ungleich aktueller Eingabe ist, dann entferne $b$ vom Keller und gib Warnung aus: "`$b$ wurde eingefügt!"'
+\end{enumerate}
+
+Parsetabelle für $G$ (auf arithmetische Ausdrücke) mit Synchronisationseinträgen
+\begin{align*}
+ \FIRST(E) = \FIRST(T) = \FIRST(F) &= \{(,\textbf{id}\} \\
+ \FIRST(E') &= \{+,\varepsilon\} \\
+ \FIRST(T') &= \{*,\varepsilon\} \\\hline
+ \FOLLOW(E) = \FOLLOW(E') &= \{),\$\} \\
+ \FOLLOW(T) = \FOLLOW(T') &= \{+,),\$\} \\
+ \FOLLOW(F) &= \{+, *, ), \$\}
+\end{align*}
+
+\begin{center}
+    \newcommand{\synch}{\underline{\textbf{synch}}}
+    \begin{tabular}{r|c|c|c|c|c|c|}
+             & +                    & *             & (           & )                    & \textbf{id} & \$                   \\\hline
+        $E$  &                      &               & $E \to TE'$ & \synch               & $E \to TE'$ & \synch               \\\hline
+        $E'$ & $E' \to +TE'$        &               &             & $E' \to \varepsilon$ &             & $E' \to \varepsilon$ \\\hline
+        $T$  & \synch               &               & $T \to FT'$ & \synch               & $T \to ET'$ & \synch               \\\hline
+        $T'$ & $T' \to \varepsilon$ & $T' \to *FT'$ &             & $T' \to \varepsilon$ &             & $T' \to \varepsilon$ \\\hline
+        $F$  & \synch               & \synch        & $F \to (E)$ & \synch               & $F \to \textbf{id}$ & \synch       \\\hline
+    \end{tabular}
+\end{center}
+Wende Heuristiken 1, 3 und 5 an. Genügt im Allgemeinen für Ausdrücke.
+\begin{center}
+    \begin{tabular}{c|c|c}
+        Stack & Eingabe & Ausgabe \\\hline
+    \end{tabular}
+\end{center}
+
+
+
+
