@@ -1,0 +1,136 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 4}
+\author{Christian Cikryt (4285814; Tutorium: Mo. 16-18 Uhr)\\
+  Robert Fels (4210496; Tutorium: Mi. 8-10 Uhr)\\
+  Martin Lenders (4206090; Tutorium: Mi. 10-12 Uhr)
+  }
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Martin Lenders, Christian Cikryt}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\makeatletter
+\newcommand{\Rm}[1]{\textrm{\expandafter\@slowromancap\romannumeral #1@}}
+\makeatother
+\newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
+\newcommand{\add}[1]{\{\texttt{s += #1})\}}
+\newcommand{\FIRST}{\operatorname{FIRST}}
+\newcommand{\FOLLOW}{\operatorname{FOLLOW}}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+$B \to Se$ ist eine indirekte Rekursion, alle anderen Regeln bleiben erhalten.
+\begin{align*}
+ B &\to Se \\
+ B &\to Aae\ |\ Bbe\ |\ ce \\
+ B &\to Bdae\ |\ dae\ |\ Bbe\ |\ ce
+\end{align*}
+Wir haben nun eine direkte Linksrekusion erzeugt, die wir nun, durch hinzufügen eines neuen Nichtterminals, auflösen:
+\begin{align*}
+ S &\to Aa\ |\ Bb\ |\ c \\
+ A &\to Bd\ |\ d \\
+ B &\to ceR\ |\ daeR \\
+ R &\to daeR\ |\ beR\ |\ \varepsilon
+\end{align*}
+
+\section{}
+\begin{align*}
+ S &\to aS' \\
+ S' &\to aS''\ |\ Bc \\
+ S'' &\to S\ |\ Ab \\
+ A &\to aAb\ |\ c \\
+ B &\to aBa\ |\ c
+\end{align*}
+
+\section{}
+Beseitigung der Linksrekursion:
+\begin{align*}
+ B &\to TB' \\
+ B' &\to \underline{\textrm{or}} TB'\ |\ \varepsilon \\
+ T &\to FT' \\
+ T' &\to \underline{\textrm{and}} FT'\ |\ \varepsilon
+ F &\to \underline{\textrm{not}} F\ |\ (B)\ |\ \underline{\textrm{true}}\ |\ \underline{\textrm{false}}
+\end{align*}
+
+Bestimmung der FIRST- und FOLLOW-Mengen + Erstellung der Parsetabelle:
+\begin{align*}
+ \FIRST(B) = \FIRST(T) = \FIRST(F) &= \{\underline{\textrm{not}}, \underline{\textrm{true}}, \underline{\textrm{false}}\} \\
+ \FIRST(B') &= \{\underline{\textrm{or}}, \varepsilon\} \\
+ \FIRST(T') &= \{\underline{\textrm{and}}, \varepsilon\} \\\hline
+ \FOLLOW(B) &= \FOLLOW(B') = \{\$, )\}\\
+ \FOLLOW(T) &= \FOLLOW(T') = \{\$, ), \underline{\textrm{or}}\}\\
+ \FOLLOW(F) &= \{\$, ), \underline{\textrm{or}}, \underline{\textrm{and}}\}
+\end{align*}
+    \renewcommand{\not}{\underline{\textrm{not}}}
+    \newcommand{\true}{\underline{\textrm{true}}}
+    \newcommand{\false}{\underline{\textrm{false}}}
+    \newcommand{\e}{\varepsilon}
+\begin{center}
+    $\begin{array}{r|c|c|c|c|c|c|c|c|}
+           & \$        & \underline{\textrm{or}}           & \underline{\textrm{and}}            & \not            & (         & )         & \true       & \false     \\\hline
+        B  &           &               &                 & B \to TB'       & B \to TB' &           & B \to TB'   & B \to TB'  \\\hline
+        B' & B' \to \e & B \to \underline{\textrm{or}} TB' &                 &                 &           & B' \to \e &             &            \\\hline
+        T  &           &               &                 & T \to FT'       & T \to FT' &           & T \to FT'   & T \to FT'  \\\hline
+        T' & T \to \e  &               & T' \to \underline{\textrm{and}} FT' &                 &           & T' \to \e &             &            \\\hline
+        F  &           &               &                 & F \to \underline{\textrm{and}} FT'  & F \to (B) &           & F \to \true & F \to \false \\\hline 
+    \end{array}$
+\end{center}
+
+
+
+\section{}
+
+\section{}
+\begin{enumerate}
+ \item 
+ \item   
+\end{enumerate}
+\end{document}
