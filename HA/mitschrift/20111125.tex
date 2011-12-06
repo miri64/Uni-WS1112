@@ -1,0 +1,106 @@
+\subsection{Caching}
+Speicherhierarchie
+\begin{center}
+ \begin{psmatrix}
+  \framebox{CPU} & \frame{Cache} & \framebox{Hauptspeicher}
+ \end{psmatrix}\ncline{1,1}{1,2} \ncline{1,2}{1,3}\ncline{1,3}{1,4}
+\end{center}
+\begin{itemize}
+ \item Hauptspeicher kann $n$ Wörter speichern
+ \item Cache kann $k$ Wörter speichern
+ \item $k < n$
+\end{itemize}
+\Geg Eine Folge
+\[d_1, d_2, ..., d_m\ \text{von Zugriffen auf den Hauptspeicher}\]
+\Ges für jeden Zugriff:
+     \begin{itemize}
+      \item soll ein Wort aus dem Hauptspeicher in den Cache geholt werden
+      \item wenn ja: welches Wort soll aus dem Cache gelöscht werden
+      \item jedes Datenwort muss bei einem Zugriff im Cache vorhanden sein
+     \end{itemize}
+\paragraph*{Ziel:} Minimiere Anzahl der Zugriffe auf den Hauptspeicher
+\Bsp
+\begin{itemize}
+ \item Speicher: $n$ = 3 Wörter
+    \begin{center}
+    \begin{tabular}{ccc}\hline
+     \multicolumn{1}{|c|}{$\quad$} &
+     \multicolumn{1}{|c|}{$\quad$} &
+     \multicolumn{1}{|c|}{$\quad$} \\\hline
+     1, & 2, & 3
+    \end{tabular}
+    \end{center}
+ \item Cache: $k$ = 2 Wörter 
+    \begin{center}
+    \begin{tabular}{|c|c|}\hline
+     [1] & [2] \\\hline
+    \end{tabular} $\rightarrow$
+    \begin{tabular}{|c|c|}\hline
+     [3] & [2] \\\hline
+    \end{tabular} $\rightarrow$
+    \begin{tabular}{|c|c|}\hline
+     [1] & [2] \\\hline
+    \end{tabular}
+    \end{center}
+    Zugriffsfolge: 1, 2, 3, 2, 3, 1, 2 \\
+    2 Zugriffe auf Hauptspeicher 
+\end{itemize}
+\paragraph*{Beobachtung:} Wir dürfen annehmen, Speicherzugriffe passieren nur bei Cache Misses (= Zugriffe auf ein Wort, das nicht im Cache ist).
+\paragraph*{Denn:} Wir können jede Ersetzunggsstrategie so anpassen , dass die Zugriffe erst bei einem Cache Miss passieren, ohne die Anzahl der Speicherzugriffe zu erhöhen. Die nennen wir eine \emph{reduzierte} Strategie.
+\subsubsection{Furthest-in-the-Future-Regel}
+Bei einem Cache-Miss, entfrene das Element, dessen nächster Zugriff am weitesten in der Zukunft liegt.
+\Satz Furthest-in-the-Future ist optimal, das heißt es liefert eine reduzierte Strategie mit minimaler Anzahl von Cache Misses.
+\Bew Austauschargument: Nimm eine optimale Lösung $S^*$ her, transformiere $S^*$ sukzessive in die ff-Lösung $S_{\text{ff}}$ ohne die Anzahl der Cache Misses zu erhöhen.
+\paragraph{Austauschlemma:} Sei $S$ eine reduzierte Strategie, die in den ersten $j$ Zugriffen mit $S_{\text{ff}}$ übereinstimmt. Dann existiert eine reduzierte Strategie $S'$, die in den ersten $j+1$ Schritten mit $S_{\text{ff}}$ übereinstimmt und die höchstens so viele Cache Misses erfährt wie $S$.
+\Bew (Austauschlemma) Sei $d = d_{j+1}$ (der $j+1$-te Zugriff)
+\begin{description}
+ \item[Fall 1:] $d$ ist im Cache.\\
+     Setze $S' = S$, denn $S$ ist reduziert und tut nichts bei $d_{i-1}$.
+ \item[Fall 2:] $d$ ist nicht im Cache und $S$ und $S_{\text{ff}}$ entfernen das gleiche Element.\\
+     Setze $S' = S$, fertig.
+ \item[Fall 3:] $d$ ist nicht im Cache und $S_{\text{ff}}$ entfernt $e$, $S$ entfernt $f$ mit $e \neq f$\\
+     Konstruierte $S'$ wie folgt:
+     \begin{itemize}
+      \item für die ersten $j+1$ Schritte, tue das gleiche wie $S_{\text{ff}}$. D. h. im $j+1$-ten Schritt, entferne $e$.
+      \item nach $j+1$-ten Zugriff:
+          \begin{itemize}
+           \item $S$ hat $e$ im Cache
+           \item $S$ hat $f$ im Cache
+          \end{itemize}
+     \end{itemize}
+\end{description}
+$S'$ verhält sich genau so wie $S$ bis einder der folgenden Ereignisse eintritt:
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\roman{enumi}}
+\begin{enumerate}
+ \item Zugriff auf $g \neq e, f$ mit Cache Miss und $S$ entfernt $e$ aus dem Cache\\
+     $\Rightarrow$ $S'$ entfernt $f$ aus dem Cache. Danach sind die Caches fpr $S$ un $S'$ wieder gleich und $S'$ verhält sich wie $S$.
+ \item Zugriff auf $f$:
+    \begin{itemize}
+     \item $S$ hat $f$ nicht im Cache
+     \item $S$ entfernt $e'$
+     \renewcommand{\labelenumii}{(\theenumii)}
+     \renewcommand{\theenumii}{\alph{enumii}}
+     \begin{enumerate}
+     \item $e' = e$: $S'$ muss nichts machen, danach sind die Caches gleich\\
+         $\Rightarrow$ $S'$ verfahren wie $S$.
+     \item $e' = e$: 2 Schritte:
+     \renewcommand{\labelenumiii}{\theenumiii. Schritt:}
+     \renewcommand{\theenumiii}{\arabic{enumiii}}
+         \begin{enumerate}
+         \item $s'$ entfernt $e'$ und holt $e$, verfährt danach wie $S$\\
+                 Diese Strategie ist noch nicht reduziert
+         \item Wandle $S'$ in eine reduzierte Strategie um. Das erhöht die Anzahl der Speicherzugriffe nicht und lässt die ersten $j+1$ Ereignisse gleich.
+         \end{enumerate}
+     \end{enumerate}
+    \end{itemize}
+ \item Zugriff auf $e$:\\
+     kann nicht passieren, weil der nächste Zugriff auf $e$ am weitesten in der Zukunft liegt (also kommt Fall (ii) auf jeden Fall vor Fall (iii))
+\end{enumerate}
+Beweis des Satzes:
+\begin{itemize}
+ \item \textbf{Beweis 1:} Wandle eine optimale Lösung Schritt für Schritt mit Austauschlemma zu $S_{\text{ff}}$ um.
+ \item \textbf{Beweis 2:} Nimm optimale Lösung $S^*$, so dass $S^*$ und $S_{\text{ff}}$ ein längstes Präfix gemeinsam haben. Nimm an $S^* = S_{\text{ff}}$. Erhalte Widerspruch mit dem Austauschlemma. \hfill$\square$
+\end{itemize}
+
+

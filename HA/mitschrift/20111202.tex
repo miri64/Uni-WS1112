@@ -1,0 +1,239 @@
+\chapter{Datenstrukturen}
+\section{Union-Find-Struktur}
+\Geg Menge $S = \{1, ..., n\}$
+\begin{itemize}
+ \item Speichere Partition $\{S_1,S_2,...,S_k\}$ von $S$ und unterstütze $\operatorname{UNION}(S_i,S_j)$ und $\operatorname{FIND}(S)$.
+ \item Darstellung durch Dijoint Set Forest (= Wald)
+ \item 2 Heuristiken: \textsc{Union-by-Rank}, Pfadkompression
+ \item \textsc{Union-by-Rank} gibt $O(1)$ UNION, $O(\log n)$ FIND
+ \item Was ist mit Pfadkompression?
+     \begin{itemize}
+      \item Hilft nicht im Worst-Case: Erstes FIND braucht evtl immer noch $\Theta(\log n)$ Zeit.
+     \end{itemize}
+ \item Frage: Gegeben Folge $X$ von $m$ UNION-FIND-Operationen, beginnend mit der Partition $\{\{1\}, \{2\}, ..., \{n\}\}$ mit \textsc{Union-by-Rank} und Pfadkompression. Was ist die Gesamtlaufzeit
+ \item Nur \textsc{Union-by-Rank}: $\Omega(m \log n)$ worst-case. Wie hilft Pfadkompression?
+     \begin{itemize}
+      \item \textbf{1. Schritt:} UNION-Operationen loswerden.
+      \Defi Sei $F$ ein Wald.
+          \begin{description}
+           \item[Elternpfad:] Folge $v_1v_2...v_k$ von Knoten in $F$, so dass $v_{i+1}$ Eltern Knoten von $v_i$ ist für $i = 1,..., k-1$
+           \item[Wurzelpfad:] Elternpfad, dessn letzter Knoten die Wurzel ist.
+          \end{description}
+      \paragraph*{veralgemeinerte Kompression}
+      \begin{itemize}
+       \item Gegeben ein Elternpfad $P= v_1v_2...v_k$. Hänge alle Knoten unter den Elternknoten von $v_k$
+           \begin{center}
+            \begin{minipage}{3cm}
+            \psset{levelsep=0.5cm}
+            \def\dred{\ncline[linecolor=red]}
+            \pstree{\Tdot}{
+                \pstree{\Tdot}{\Tdot}
+                \Tdot
+                \pstree{\Tdot}{
+                    \pstree{\Tdot}{
+                        \Tdot
+                        \Tdot
+                        \Tdot
+                    }
+                    \pstree{\Tdot[linecolor=red,edge=\dred]}{
+                        \pstree{\Tdot[linecolor=red,edge=\dred]}{
+                            \Tdot[linecolor=red,edge=\dred]
+                        }
+                    }
+                }
+            }
+            \end{minipage}
+            {\LARGE $\Rightarrow$}
+            \begin{minipage}{3cm}
+            \psset{levelsep=0.5cm}
+            \def\dred{\ncline[linecolor=red]}
+            \pstree{\Tdot}{
+                \pstree{\Tdot}{\Tdot}
+                \Tdot
+                \pstree{\Tdot}{
+                    \pstree{\Tdot}{
+                        \Tdot
+                        \Tdot
+                        \Tdot
+                    }
+                    \Tdot[linecolor=red,edge=\dred]
+                    \Tdot[linecolor=red,edge=\dred]
+                    \Tdot[linecolor=red,edge=\dred]
+                }
+            }
+            \end{minipage}
+           \end{center}
+       \item Spezialfall: $f$ ist Wurzelpfad: $v_1v_2...v_k$ sind Wurzeln neuer Bäume
+           \begin{center}
+            \begin{minipage}{1.5cm}
+             \psset{levelsep=0.5cm}
+             \def\dred{\ncline[linecolor=red]}
+             \pstree{\Tdot[linecolor=red]}{
+                 \Tdot
+                 \pstree{\Tdot[linecolor=red,edge=\dred]}{
+                     \Tdot
+                     \pstree{\Tdot[linecolor=red,edge=\dred]}{
+                         \pstree{\Tdot}{
+                             \Tdot
+                         }
+                         \Tdot
+                     }
+                 }
+             }
+            \end{minipage}
+            {\LARGE $\Rightarrow$}
+            \begin{minipage}{1.5cm}
+             \psset{levelsep=0.5cm}
+             \def\dred{\ncline[linecolor=red]}
+             \pstree{\Tdot[linecolor=red]}{
+                 \Tdot
+             }
+             \hfill
+             \pstree{\Tdot[linecolor=red]}{
+                 \Tdot
+             }
+             \hfill
+             \pstree{\Tdot[linecolor=red]}{
+                 \pstree{\Tdot}{
+                     \Tdot
+                 }
+                 \Tdot
+             }
+            \end{minipage}
+           \end{center}
+       \item Kosten sind
+           \begin{itemize}
+           \item 0 für Wurzelpfad
+           \item $k-1$, sonst
+           \end{itemize}
+      \item Folge von verallgemeinerten Kompressionen:
+              \[C = (P_1,P_2,...,P_l)\]
+            Sei $F$ Wald:
+            \begin{itemize}
+            \item Setze $F_0 := F$
+            \item Es muss gelten $P_i$ ist Elternpfad für $F_{i-1}$
+            \item Sei $F_i$ der Wald nach Ausführung von $P_i$ in $F_{i-1}$
+            \end{itemize}
+            \begin{description}
+             \item[Kosten:] $\operatorname{cost}(C) = $Summe der Einzelkosten
+             \item[Länge:] $\operatorname{l}(C) = $Anzahl der Nichtwurzelpfade
+            \end{description}
+            \Lemma Gegeben $m$ UNION-FIND-Operationen, wie am Anfang.
+            Dann existiert ein Wald $F$ und eine Folge $C$ von vergeallgemeinerten Kompressionen, so dass
+            \begin{enumerate}
+             \item $\operatorname{l}(C) \leq m$
+             \item Laufzeit der Operation ist $O(n + m + \operatorname{cost}(C))$
+             \item jede Knoten $v$ von $F$ hat einen Rang $\operatorname{rg}(v)$, so dass:
+                 \begin{itemize}
+                 \item alle Ränge sind $\leq \log n$
+                 \item Rang eines Elternknotens ist echt größer als Rang eines jeden Kindes
+                 \item es existieren $\leq \frac{n}{2^k}$ Knoten mit Rang $\geq k$
+                 \end{itemize}
+            \end{enumerate}
+            \Bew Führe nur die UNION-Operationen aus. Erhalte den Wald $F$ mit Rängen an den Knoten, die (iii) erfüllen ($\rightarrow$ letzte VL)\\
+            Konstruiere $C$, beginne mit $F$:
+            \begin{itemize}
+             \item Betrachte nächse $\operatorname{FIND}(S)$-Operation
+             \item Sei $P$ der Pfad von $s$ zum Kind des Ergebnisses von $\operatorname{FIND}(S)$ (zum entsprechenden Zeitpunkt)
+             \item Füge $P$ zu $C$ hinzu, wenn $P$ nicht leer
+             \item Führe verallgemeinerte Kompression $P$ aus.
+             \item Wiederhole mit nächsten $\operatorname{FIND}$ und dem neuen Wald.
+            \end{itemize}
+            Jetzt Folgen (i) und (ii) sofort
+      \end{itemize}
+     \item \textbf{Schritt 2:} Verstehe verallgemeinerte Kompression Devide-and-Conquer-Style
+         \paragraph*{Aufgabe} Gegeben $F, C$ wie im Lemma. Was ist $\operatorname{cost}(C)$?
+         \Defi Sei $F = (V,E)$ Wald. Sei $V = V_t \cup V_b$ disjunkte Zerlehung von $V$, so dass $V_t$ nach oben abgeschlossen ist ($v \in V_t \Rightarrow$ Elternknoten in $v \in V_t$). Dann ist: 
+         \[F_t = (V_t, E \cap V_t \times V_t) \qquad F_b = (V_b, E \cap V_b \times V_b)\]
+         Eine \emph{Zerlegung} von $F$.
+         \paragraph*{Hauptlemma} Sei $F,C$ wie in der Aufgabe und sei $F_t = (V_t, E_t)$ und $F_b = (V_b, E_b)$ Zerlegung von $F$. Dann existiert eine verallgemeinerte Kompressionsfolge $C_t$ für $F_t$ un $C_b$ für $F_b$
+         \begin{enumerate}
+          \item $\operatorname{l}(C_b) + \operatorname{l}(C_t) \leq \operatorname{l}(C)$
+          \item $\operatorname{cost}(C) \leq \operatorname{cost}(C_t) + \operatorname{cost}(C_b) + |V_b| + \operatorname{l}(C_t)$
+         \end{enumerate}
+         \Bew Betrachte ein $P \in C$. Füge $P \cap V_b$ zu $C_b$ hinzu und $P \cap V_t$ zu $C_t$. Dies zählt zu höchstens einen von $\operatorname{l}(C_t)$ und $\operatorname{l}(C_b)$. D. h. (i) gilt.
+         \begin{description}
+          \item[Kosten] Hänge Knoten aus $V_t$ unter Knoten aus $V_t \to \operatorname{cost}(C_t)$. Hänge Knoten aus $V_b$ unter Knoten aus $V_b \to \operatorname{cost}(C_b)$ 
+         \end{description}
+         Hänge Knoten aus $V_b$ unter Knoten aus $V_t$:
+         \begin{itemize}
+          \item beim esten Mal: $|V_b|$
+          \item jedes weitere Mal: $\operatorname{l}(C_t)$ \hfill $\square$
+         \end{itemize}
+     \item \textbf{Schritt 3:} Bootstrapping
+         \begin{description}
+          \item[Ziel] Finde gute Unterteilung für Hauptlemma $\Rightarrow$ Bringe Ränge ins Spiel.
+          \item[Beobachtung] $F$ Wald, $C$ Kompressionsfolge. Wenn alle Knoten in $F$ Rang $\leq r$ haben, so ist $\operatorname{cost}(C) \leq |v| \cdot r$
+          \item[Beweis] $\operatorname{cost}(C)$: Wie oft erhält Knoten in $F$ neue Elternknoten. Jeder neue Elternknoten hat höheren Rang als der alte \\
+         $\Rightarrow$ Jeder Knoten erhält höchstens $r$ neue Elternknoten
+         \end{description}
+         \begin{itemize}
+         \item Sei $F$ Wald mit Maxrang $r$. Setze $s := \log x$
+         \item Sei $V_{>S}$: Knoten in $F$ mit Rang $> S  \rightarrow F_{>S}$
+         \item Sei $V_{\leq S}$: Knoten in $F$ mit Rang $\leq S  \rightarrow F_{\leq S}$ 
+         \end{itemize}
+         Dann ist $|V_{>S}| \leq \frac{n}{2^S} = \frac{n}{r}$
+         \paragraph*{Hauptlemma (ii):} $\operatorname{cost}(C) \leq \operatorname{cost}(C_{\leq S}) + \operatorname{cost}(C_{> S}) + |V_{\leq S}| + \operatorname{l}(C_{> S})$
+         \begin{itemize}
+         \item $\operatorname{cost}(C_{>S}) \overset{\text{Beob.}}{\leq} |V_{>S}| \cdot r \leq \frac{n}{r} \cdot r = n$
+         \item $|V_{\leq S}| \leq n$
+         \item Hauptlemma (i): $\operatorname{l}(C_{> S}) \leq \operatorname{l}(C) - \operatorname{l}(C_{\leq S})$
+         \end{itemize}
+         Also:
+         \begin{align*}
+          \operatorname{cost}(C) &\leq \operatorname{cost}(C_{\leq b}) + 2n + \operatorname{l}(C) - \operatorname{l}(C_{\leq S}) \tag{$C_{>S}$ ist weg!}\\
+          \Rightarrow \operatorname{cost}(C) - \operatorname{l}(C) &\leq \operatorname{cost}(C_{\leq S} - \operatorname{l}(C_{\leq S}) + 2n)
+         \end{align*}
+         Jetzt ist $F_{\leq S}$ Wald mit Maxrang $S = \log r$.
+         \begin{itemize}
+          \item Setze $S' = \log S = \log \log r$
+          \item Unterteile $F_{\leq S}$ in $F_{>S'}$ und $F_{\leq S'}$.
+          \item Erhalte: $\operatorname{cost}(C_{\leq S}) - \operatorname{l}(C_{\leq S}) \leq \operatorname{cost}(C_{\leq S'} - \operatorname{l}(C_{\leq S'}) + 2n)$
+          \item Wiederhole mit $S'' := \log S' = \log \log \log r$, usw, bis $S'''...' \leq 2$ ist. 
+         \end{itemize}
+         Anzahl der Wiederholungen ist $\log^{*} r$\\
+         Rückwerts einsetzen:
+         \begin{align*}
+          \operatorname{cost}(C) - \operatorname{l}(C) &\leq \operatorname{cost}(C_{\leq S}) - \operatorname{C_{\leq S}} + 2n \\
+                                                       &\leq \operatorname{cost}(C_{\leq S'}) - \operatorname{l}(C_{\leq S'}) + 2n + 2n\\
+                                                       &\leq \operatorname{cost}(C_{\leq S''}) - \operatorname{l}{C_{\leq S''}} + 2n + 2n + 2n\\
+                                                       & \quad \vdots\\
+                                                       &\leq \underbrace{2n + 2n + ... + 2n}_{\log^{*} r} = 2n \log * r
+         \end{align*}
+         Wissen: $\operatorname{cost}(C) \leq l(C) + 2n \log^{*} r$, 
+         Fange von vorne an, aber setze $S := \log \log^{*} r$,
+         Unterteile $F$ in $F_{>S}$ ujnd $F_{\leq S}$.
+         Erhalten: 
+         \[|V_{>S}| \leq \frac{n}{\log^{*} r} \Rightarrow \operatorname{cost}(C_{>S}) \leq \operatorname{l}(C_{>S}) + 2n\]
+         Anwendung von Hauptlemma gibt:
+         \newcommand{\cost}{\operatorname{cost}}
+         \renewcommand{\l}{\operatorname{l}}
+         \[\cost(C)- 2 \l(C) \leq \cost(C_{\leq S}) - 2 \l(C_{\leq S}) + 3 n\]
+         Rekursion wie vorher liefert:
+         \[\cost(C) \leq 2 \l(C) + 3n \log^{**} r\]
+         
+\begin{itemize}
+ \item $\lfloor \log r \rfloor$: Wie oft muss man $\frac{r}{2}$ rechnen, damit Ergebnis $< 2$.
+ \item $\log^{*} r$: Wie oft muss man $\log r$ rechnen, damit Ergebnis $< 2$.
+ \item $\log^{**} r$: Wie oft muss man $\log^{*} r$ rechnen, damit Ergebnis $< 2$.
+ \item $\log^{***} r$: Wie oft muss man $\log^{**} r$ rechnen, damit Ergebnis $< 2$.
+ \item $\log^{*(j)} r$: Wie oft muss man $\log^{*(j-1)} r$ rechnen, damit Ergebnis $< 2$.
+\end{itemize}
+Wenn $\cost(C) \leq j \cdot \l(C) + (j+1)n \log^{*(j)} r$ ist, dass, dann $\cost(C) \leq (j+1) \cdot \l(C) + (j+2)n \log^{*(j+1)} r$\\
+    Wissen für $j \geq 0$:
+    \[\cost(C) \leq (j - 1) m + (j + 1) n \log^{*(j)} n\]
+    Welches $i$ sollen wir wählen? Setze die Summanden gleich:
+    \begin{align*}
+     (j - 1) m &= (j+1) m \log^{*(j)} n
+     \Rightarrow \log^{*(j)} n &= \frac{m}{n} \tag{Nimm an $m \geq n$, o. B. d. A.}
+    \end{align*}
+    Bestimme $\alpha(m,n) = \min\{ j \in \mathbb{N}\ |\ \log^{*(j)} n \leq \frac{m}{n}\}$ (inverse Ackermann-Funktion)\\
+    Setze $\alpha(m,n) \Rightarrow \cost(C) \leq m(\alpha(m,n) + 1) + m(\alpha(m,n) + 1) = O(m \alpha(m,n))$
+     \end{itemize}
+\Satz (Tarjan) Laufzeit von $m$ UNION-FIND-Operationen mit \textsc{Union-by-Rank} und Pfadkompression ist $\Theta(n + m \alpha(m,n))$
+\paragraph*{Bemerkung} 
+\begin{itemize}
+ \item $\alpha(m,n) \leq 5$ für jedes vernünftige $m, n$
+ \item Optional
+\end{itemize}
+\end{itemize}

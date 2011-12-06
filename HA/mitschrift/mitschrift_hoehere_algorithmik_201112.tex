@@ -101,6 +101,10 @@
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 \renewcommand{\algorithmiccomment}[1]{// #1}
 
+\makeatletter \newcommand{\greek}[1]{% 
+\expandafter\@greek\csname c@#1\endcsname } \newcommand{\@greek}[1]{% 
+$\ifcase#1\or\alpha\or\beta\or\gamma\or\delta\or\varepsilon \or\zeta\or\eta\or\theta\or\iota\or\kappa\or\lambda \or\mu\or\nu\or\xi\or o\or\pi\or\varrho\or\sigma \or\tau\or\upsilon\or\phi\or\chi\or\psi\or\omega \else\@ctrerr\fi$ } \makeatother
+
 \title{Mitschrift\\{\LARGE Höhere Algorithmik}}
 \author{gehalten von Prof. Dr. Wolfgang Mulzer \\ mitgeschrieben von Martin Lenders}
 \subject{Achtung: Dieses Dokument ist \emph{nur} eine Mitschrift der Vorlesung "Höhere Algorithmik" WiSe2011/12.
@@ -119,6 +123,8 @@
 \input{20111114}
 \input{20111118}
 \input{20111121}
+\input{20111125}
+\input{20111202}
 
 \section{Lineares Programmieren}
 \section{Hashing und Fingerprinting}
