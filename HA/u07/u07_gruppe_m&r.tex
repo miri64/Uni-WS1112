@@ -149,7 +149,7 @@ MAXFLAECHE(){
 }
 	\end{lstlisting}
 \item[Analyse:] Der Algorithmus betrachtet jedes Pixel einmal. Wenn das betrachtete Pixel schwarz ist, gibt es für schwarze Nachbarn nach links und oben je eine Find- und Union-Operation. Im Pseudocode stehen zwei Find-Operationen auf der Menge des betrachteten Pixels. Doch im ersten Fall ist der Repräsentant immer das betrachtete Pixel, da es noch nicht vereinigt wurde. Um im zweiten Fall kann man das Find dadurch wegoptimieren, da dies der Ergebnisrepräsentant der Union-Operation im ersten Fall ist. Oder wieder das betrachtete Pixel, wenn der erste Fall nicht eingetreten ist. Ebenso lasst sich das Find bei dem Vergleich der Größen wegoptimieren. Es gibt also pro zwei benachbarten schwarzen Pixeln eine Find- und eine Union-Operation. (Selbst das lässt sich noch optimieren, wenn man berücksichtigt, wenn der linke und der obere Nachbar bereits zusammen in einer Zusammenhangskomponente sind und somit das zweite Union gespart wird. Für die Laufzeitbetrachtung lassen wir das aber außer Acht).\\
-Es gibt $(n-1)^2$ viele Kanten in dem Graph, der die Nachbarschaftsbeziehung zweier Pixel repräsentiert. Da die Zusammenhangskomponenten Teilgraphen sind, bleiben es $O(n^2)$ viele Kanten. Man hat also $O(n^2)$ viele Find-Operationen und $O(n^2)$ viele Union-Operationen. Laut VL erhält man daher eine Laufzeit von $O(2 \cdot n^2 \cdot n^2 + 2 \cdot n^2 \cdot \alpha (n^2,n^2)) = O(n^4 + n^2 \cdot \alpha (n^2,n^2))$.
+Es gibt $(n-1)^2$ viele Kanten in dem Graph, der die Nachbarschaftsbeziehung zweier Pixel repräsentiert. Da die Zusammenhangskomponenten Teilgraphen sind, bleiben es $O(n^2)$ viele Kanten. Man hat also $O(n^2)$ viele Find-Operationen und $O(n^2)$ viele Union-Operationen. Laut VL erhält man daher eine Laufzeit von $O(2 \cdot n^2 \cdot n^2 + 2 \cdot n^2 \cdot \alpha (2 \cdot n^2,n^2)) = O(n^4 + n^2 \cdot \alpha (n^2,n^2))$.
 \end{description}
 \item Das Programm speichert eine globale Variable \texttt{max}, welche die Größe einer größten Zusammenhangskomponente speichert. Alternativ kann man auch den Repräsentanten einer größten Zusammenhangskompoinente speichern, der wie in Aufgabenteil a) die Größe speichert.\begin{lstlisting}
 int max = 0;
@@ -173,10 +173,12 @@ SCHWAERZE(x,y){
 	int size = size(find(B[x,y]));
 	if (max < size)
 		max = size;
-	return size;
+	return max;
 }
 \end{lstlisting}
-Wie auch in a) lassen sich hier die wiederholten \texttt{find(B[x,y])}-Operationen wegoptimieren, indem der Ergebnisrepräsentant der vorhergegangenen Union-Operation gespeichert wird. Daher hat die Funktion im Schlimmstfall $4$ Union- und Find-Operationen.
-\item
+Da wir die Union-Fund-Datenstruktur verwenden, lassen sich dessen Optimierungen verwenden. Für $m$ Aufrufe von schwärze erhalten wir eine Laufzeit von $O(4 \cdot m \cdot n^2 + 4 \cdot m \cdot \alpha (4 \cdot m, n^2)) = O(m \cdot n^2 + m \cdot \alpha (m, n^2))$. Laut VL ist dies optimal.
+\item Wie auch in a) lassen sich hier die wiederholten \texttt{find(B[x,y])}-Operationen wegoptimieren, indem der Ergebnisrepräsentant der vorhergegangenen Union-Operation gespeichert wird. Daher hat die Funktion im Schlimmstfall je $4$ Union- und Find-Operationen.\\
+Union hat eine Laufzeit von $O(1)$, da sie nur den kleineren Knoten an den größeren hängt. Dadurch sind die Bäume einigermaßen balanciert, sodass sie maximale Höhe $\log n$ haben. Ein Find-Aufruf hat daher Laufzeit $O(\log n)$.
+Für die gesamte Laufzeit eines einzelnen Aufrufs erhält man also im schlimmsten Fall $O(4 \cdot 1 + 4 \cdot \log n) = O(\log n)$.
 \end{enumerate}
 \end{document}
