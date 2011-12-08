@@ -176,9 +176,8 @@ SCHWAERZE(x,y){
 	return max;
 }
 \end{lstlisting}
-Da wir die Union-Fund-Datenstruktur verwenden, lassen sich dessen Optimierungen verwenden. Für $m$ Aufrufe von schwärze erhalten wir eine Laufzeit von $O(4 \cdot m \cdot n^2 + 4 \cdot m \cdot \alpha (4 \cdot m, n^2)) = O(m \cdot n^2 + m \cdot \alpha (m, n^2))$. Laut VL ist dies optimal.
-\item Wie auch in a) lassen sich hier die wiederholten \texttt{find(B[x,y])}-Operationen wegoptimieren, indem der Ergebnisrepräsentant der vorhergegangenen Union-Operation gespeichert wird. Daher hat die Funktion im Schlimmstfall je $4$ Union- und Find-Operationen.\\
-Union hat eine Laufzeit von $O(1)$, da sie nur den kleineren Knoten an den größeren hängt. Dadurch sind die Bäume einigermaßen balanciert, sodass sie maximale Höhe $\log n$ haben. Ein Find-Aufruf hat daher Laufzeit $O(\log n)$.
+Wie auch in a) lassen sich hier die wiederholten \texttt{find(B[x,y])}-Operationen wegoptimieren, indem der Ergebnisrepräsentant der vorhergegangenen Union-Operation gespeichert wird. Daher hat die Funktion im Schlimmstfall je $4$ Union- und Find-Operationen. Für $m$ Aufrufe von schwärze erhalten wir eine Laufzeit von $O(4 \cdot m \cdot n^2 + 4 \cdot m \cdot \alpha (4 \cdot m, n^2)) = O(m \cdot n^2 + m \cdot \alpha (m, n^2))$. Laut VL ist dies optimal.
+\item Union hat eine Laufzeit von $O(1)$, da sie nur den kleineren Knoten an den größeren hängt. Dadurch sind die Bäume einigermaßen balanciert, sodass sie maximale Höhe $\log n$ haben. Ein Find-Aufruf hat daher Laufzeit $O(\log n)$.
 Für die gesamte Laufzeit eines einzelnen Aufrufs erhält man also im schlimmsten Fall $O(4 \cdot 1 + 4 \cdot \log n) = O(\log n)$.
 \end{enumerate}
 \end{document}
