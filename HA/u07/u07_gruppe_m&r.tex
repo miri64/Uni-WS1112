@@ -126,32 +126,57 @@ Da die Zugriffsfolge periodisch gestaltet ist, kann man sie beiebig lang machen,
 
 \section{Bitmaps}
 Für diese Aufgabe wollen wir die Union-Find-Datenstruktur verwenden. Um diese jedoch verwenden zu können, benötigen wir eine Ordung der Elemente. Dadurch erhalten wir die Möglichkeit, Repräsentaten zu bestimmen. Für diese Aufgabe speichert ein Repräsentant ebenfalls die Größe seines Baumes. Dies wird bei Union entsprechend aktuell gehalten. Als Ordnung wählen wir die Pixelposition mit Priorität auf der y-Koordinate.
-Der Wert eines Punktes $P(x,y)$ ist $w_P=P_y \cdot n + P_x$. Damit ist in einer Zusammenhangskomponente der am weitesten links liegende von den am weitesten oben liegenden Pixel der Repräsentant. Unsere Indizes im Bild beginnen mit 1 und laufen bis n. \texttt{size} gibt die Größe einer Zusammenhangskomponente aus, indem der Wert des Repräsentanten ausgelesen wird.
+Der Wert eines Punktes $P(x,y)$ ist $w_P=P_y \cdot n + P_x$. Damit ist in einer Zusammenhangskomponente der am weitesten links liegende von den am weitesten oben liegenden Pixel der Repräsentant. Unsere Indizes im Bild beginnen mit 1 und laufen bis n. \texttt{size} gibt die Größe einer Zusammenhangskomponente aus, indem der Wert des Repräsentanten ausgelesen wird. Wir gehen davon aus, dass union nur Repräsentanten als Eingabe erhält und daher einen Vergleich auf Gleichheit durchführt, um eine Vereinigung einer Menge mit sich selbst zu verhindern.
 \begin{enumerate}
 \item \begin{description}
 	\item[Algorithmus:] MAXFLAECHE \begin{lstlisting}
 MAXFLAECHE(){
-	int max = maxInt;
+	int max = 0;
 	for int y = 1 to n
 		for int x = 1 to n
 			if (B[x,y] == schwarz){
 				if (x > 1)
 					if (B[x-1,y] == schwarz)
-						union(find(B[x,y]), find(B[x-1,y]))
+						union(find(B[x,y]), find(B[x-1,y]));
 				if (y > 1)
 					if (B[x,y-1] == schwarz)
-						union(find(B[x,y]), find(B[x,y-1]))
-				int size = size(find(B[x,y])
+						union(find(B[x,y]), find(B[x,y-1]));
+				int size = size(find(B[x,y]);
 				if (max < size)
-					max = size
+					max = size;
 			}
 	return max;
 }
 	\end{lstlisting}
-\item[Analyse:] Der Algorithmus betrachtet jedes Pixel einmal. Wenn das betrachtete Pixel schwarz ist, gibt es für schwarze Nachbarn nach links und oben je eine Find- und Union-Operation. Im Pseudocode stehen zwei Find-Operationen auf der Menge des betrachteten Pixels. Doch im ersten Fall ist der Repräsentant immer das betrachtete Pixel, da es noch nicht vereinigt wurde. Um im zweiten Fall kann man das Find dadurch wegoptimieren, da dies der Ergebnisrepräsentant der Union-Operation im ersten Fall ist. Oder wieder das betrachtete Pixel, wenn der erste Fall nicht eingetreten ist. Es gibt also pro zwei benachbarten schwarzen Pixeln eine Find- und eine Union-Operation. (Selbst das lässt sich noch optimieren, wenn man berücksichtigt, wenn der linke und der obere Nachbar bereits zusammen in einer Zusammenhangskomponente sind und somit das zweite Union gespart wird. Für die Laufzeitbetrachtung lassen wir das aber außer Acht).\\
+\item[Analyse:] Der Algorithmus betrachtet jedes Pixel einmal. Wenn das betrachtete Pixel schwarz ist, gibt es für schwarze Nachbarn nach links und oben je eine Find- und Union-Operation. Im Pseudocode stehen zwei Find-Operationen auf der Menge des betrachteten Pixels. Doch im ersten Fall ist der Repräsentant immer das betrachtete Pixel, da es noch nicht vereinigt wurde. Um im zweiten Fall kann man das Find dadurch wegoptimieren, da dies der Ergebnisrepräsentant der Union-Operation im ersten Fall ist. Oder wieder das betrachtete Pixel, wenn der erste Fall nicht eingetreten ist. Ebenso lasst sich das Find bei dem Vergleich der Größen wegoptimieren. Es gibt also pro zwei benachbarten schwarzen Pixeln eine Find- und eine Union-Operation. (Selbst das lässt sich noch optimieren, wenn man berücksichtigt, wenn der linke und der obere Nachbar bereits zusammen in einer Zusammenhangskomponente sind und somit das zweite Union gespart wird. Für die Laufzeitbetrachtung lassen wir das aber außer Acht).\\
 Es gibt $(n-1)^2$ viele Kanten in dem Graph, der die Nachbarschaftsbeziehung zweier Pixel repräsentiert. Da die Zusammenhangskomponenten Teilgraphen sind, bleiben es $O(n^2)$ viele Kanten. Man hat also $O(n^2)$ viele Find-Operationen und $O(n^2)$ viele Union-Operationen. Laut VL erhält man daher eine Laufzeit von $O(2 \cdot n^2 \cdot n^2 + 2 \cdot n^2 \cdot \alpha (n^2,n^2)) = O(n^4 + n^2 \cdot \alpha (n^2,n^2))$.
 \end{description}
-\item
+\item Das Programm speichert eine globale Variable \texttt{max}, welche die Größe einer größten Zusammenhangskomponente speichert. Alternativ kann man auch den Repräsentanten einer größten Zusammenhangskompoinente speichern, der wie in Aufgabenteil a) die Größe speichert.\begin{lstlisting}
+int max = 0;
+
+SCHWAERZE(x,y){
+	if (B[x,y] == schwarz)
+		return max;
+	B[x,y] = schwarz;
+	if (x > 1)
+		if (B[x-1,y] == schwarz)
+			union(find(B[x,y]), find(B[x-1,y]));
+	if (x < n)
+		if (B[x+1,y] == schwarz)
+			union(find(B[x,y]), find(B[x+1,y]));
+	if (y > 1)
+		if (B[x,y-1] == schwarz)
+			union(find(B[x,y]), find(B[x,y-1]));
+	if (y < n)
+		if (B[x,y+1] == schwarz)
+			union(find(B[x,y]), find(B[x,y+1]));
+	int size = size(find(B[x,y]));
+	if (max < size)
+		max = size;
+	return size;
+}
+\end{lstlisting}
+Wie auch in a) lassen sich hier die wiederholten \texttt{find(B[x,y])}-Operationen wegoptimieren, indem der Ergebnisrepräsentant der vorhergegangenen Union-Operation gespeichert wird. Daher hat die Funktion im Schlimmstfall $4$ Union- und Find-Operationen.
 \item
 \end{enumerate}
 \end{document}
