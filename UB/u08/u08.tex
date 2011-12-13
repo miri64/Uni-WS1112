@@ -75,13 +75,16 @@
 \newcommand{\DO}{\underline{\rm do}}
 \newcommand{\BEGIN}{\underline{\rm begin}}
 \newcommand{\END}{\underline{\rm end}}
+\newcommand{\synch}{\textbf{synch}}
+\newcommand{\e}{\varepsilon}
 \item   \begin{align*}
             \FIRST(S) = \FIRST(L)  &= \{\IF, \WHILE, \BEGIN, s\} \\
                         \FIRST(S') &= \{\ELSE, \varepsilon\} \\
                         \FIRST(L)  &= \{;, \varepsilon\} \\\hline
-            \FOLLOW(S) = \FOLLOW(S') &= \{\$, \ELSE\} \\
-            \FOLLOW(L) = \FOLLOW(L') &= \{\$, \END\}
+            \FOLLOW(S) = \FOLLOW(S') &= \{;, \END, \ELSE, \$\} \\
+            \FOLLOW(L) = \FOLLOW(L') &= \{\END\}
         \end{align*}
+        Parsetabelle:
         \begin{center}
             \begin{tabular}{c||c|c|c|c|c|c|c|c|c|c|c|}
                 & $\IF$                       & $\THEN$ & $\WHILE$                  & $\DO$ & $\BEGIN$                & ... 
@@ -90,7 +93,7 @@
                 \\\hline
             $S'$&                             &         &                           &       &                         & ...
                 \\\hline 
-            $L$ &                             &         &                           &       &                         & ...
+            $L$ & $L \to SL'$                 &         & $L \to SL'$               &       & $L \to SL'$             & ...
                 \\\hline
             $L'$&                             &         &                           &       &                         & ...
                 \\\hline
@@ -98,27 +101,121 @@
         \end{center}
         \begin{center}
             \begin{tabular}{c||c|c|c|c|c|c|c|c|c|c|c|}
-                & ... & $\END$            & $\ELSE$           & ;           & $s$       & $e$ & $\$$ \\\hline\hline
-            $S$ & ... &                   &             & $S \to s$ &     &      \\\hline
-            $S'$& ... & $S' \to \ELSE\ S$ &             &           &     &      \\\hline
-            $L$ & ... &                   &             &           &     &      \\\hline
-            $L'$& ... &                   & $L' \to ;L$ &           &     &      \\\hline
+                & ... & $\END$            & $\ELSE$           & ;            & $s$        & $e$ & $\$$         \\\hline\hline
+            $S$ & ... &                   &                   &              & $S \to s$  &     &              \\\hline
+            $S'$& ... & $S' \to \e$       & \begin{minipage}{1.8cm}
+                                             $S' \to \ELSE\ S$ \\
+                                             $S' \to \varepsilon$
+                                            \end{minipage}
+& $S' \to \e$  &            &     & $S' \to \e$  \\\hline
+            $L$ & ... &                   &                   &              & $L \to SL$ &     &              \\\hline
+            $L'$& ... & $L' \to \e$       & $L' \to ;L$       &              &            &     &              \\\hline
             \end{tabular}
         \end{center}
-
-\item   
+        Fehlerbehandlung:
+        \begin{enumerate}
+        \item   alle $\FOLLOW$-Mengen betrachten und $\synch$ für alle Elemente (falls noch nichts in der Tabellenzelle steht)
+        \item   Falls 2 Regeln in der Tabellenzelle stehen $\Rightarrow$ entfernen (Methode Brutale): $S' \to \varepsilon$
+        \end{enumerate}
+        Parsetabelle mit Fehlerbehandlung:
+        \begin{center}
+            \begin{tabular}{c||c|c|c|c|c|c|c|c|c|c|c|}
+                & $\IF$                       & $\THEN$ & $\WHILE$                  & $\DO$ & $\BEGIN$                & ... 
+                \\\hline\hline
+            $S$ & $S \to \IF\ e\ \THEN\ S S'$ &         & $S \to \WHILE\ e\ \DO\ S$ &       & $S \to \BEGIN\ L\ \END$ & ...
+                \\\hline
+            $S'$&                             &         &                           &       &                         & ...
+                \\\hline 
+            $L$ & $L \to SL'$                 &         & $L \to SL'$               &       & $L \to SL'$             & ...
+                \\\hline
+            $L'$&                             &         &                           &       &                         & ...
+                \\\hline
+            \end{tabular}
+        \end{center}
+        \begin{center}
+            \begin{tabular}{c||c|c|c|c|c|c|c|c|c|c|c|}
+                & ... & $\END$            & $\ELSE$           & ;            & $s$        & $e$ & $\$$         \\\hline\hline
+            $S$ & ... & $\synch$          & $\synch$          & $\synch$     & $S \to s$  &     & $\synch$     \\\hline
+            $S'$& ... & $S' \to \e$       & $S' \to \ELSE\ S$ & $S' \to \e$  &            &     & $S' \to \e$  \\\hline
+            $L$ & ... & $\synch$          &                   &              & $L \to SL$ &     &              \\\hline
+            $L'$& ... & $L' \to \e$       & $L' \to ;L$       &              &            &     &              \\\hline
+            \end{tabular}
+        \end{center}
+\item   $\IF\ e\ \THEN\ s;\ \IF\ e\ \THEN\ s\ \END$:
+        \begin{center}
+         \begin{tabular}{l|c|l}
+          Stack                  & Eingabe                                       & Ausgabe                     \\\hline
+          $S\$$                  & $\IF\ e\ \THEN\ s;\ \IF\ e\ \THEN\ s\ \END\$$ & $S \to \IF\ e\ \THEN\ S S'$ \\
+          $\IF\ e\ \THEN\ SS'\$$ &                                               &                             \\
+          $SS'\$$                & $s;\ \IF\ e\ \THEN\ s\ \END\$$                & $S \to s$                   \\
+          $SS'\$$                &                                               &                             \\
+          $S'\$$                 & $;\ \IF\ e\ \THEN\ s\ \END\$$                 & $S' \to \varepsilon$        \\
+          $\$$                   & $\$$                                          & Warnung                     \\
+          $\$$                   &                                               & Akzeptiert: $\IF\ e\ \THEN\ s$
+         \end{tabular}
+        \end{center}
+        $\WHILE\ e\ \DO\ \BEGIN\ s;\ \IF\ e\ \THEN\ s;\ \END$:
+        \begin{center}
+         \begin{tabular}{l|c|l}
+          Stack                          & Eingabe                                                 & Ausgabe\\\hline
+          $S\$$                          & $\WHILE\ e\ \DO\ \BEGIN\ s;\ \IF\ e\ \THEN\ s;\ \END\$$ & $S \to \WHILE\ e\ \DO\ S$\\
+          $\WHILE\ e\ \DO\ S\$$          &                                                         & $S \to \BEGIN\ L\ \END$\\
+          $\BEGIN\ L\ \END\$$            & $s;\ \IF\ e\ \THEN\ s\ \END\$$                          & $L \to SL'$\\
+          $SL'\$$                        &                                                         & $S \to s$\\
+          $sL'\ \END\$$                  & $;\ \IF\ e\ \THEN\ s\ \END\$$                           & $L' \to ;L$\\
+          $;L\ \END\$$                   &                                                         & $L \to SL'$\\
+          $SL'\ \END\$$                  &                                                         & $S \to \IF\ e\ \THEN\ SS'$\\
+          $\IF\ e\ \THEN\ SS'L'\ \END\$$ & $s;\ \END\$$                                            & $S \to s$ \\
+          $sS'L'\ \END\$$                &                                                         & \\
+          $L'\ \END\$$                   & $;\ \END\$$                                             & $L' \to ;L$ \\
+          $;L\ \END\$$                   &                                                         & $\synch$ \\
+          $\END\$$                       & $\END\$$                                                & Akzeptiert \\
+         \end{tabular}
+        \end{center}
 \end{enumerate}
 
 \section{}
 \begin{enumerate}
-\item   
-\item   
+\item   Nein sie ist eindeutig.
+\item   \hfill
+        \begin{center}
+         \begin{tabular}{l|r|l}
+          Stack             & Eingabe           & Aktion                                 \\\hline
+          $\$$              & \texttt{abbcde}\$ & \textbf{shift}                         \\
+          $\$\texttt{a}$    & \texttt{bbcde}\$  & \textbf{shift}                         \\
+          $\$\texttt{ab}$   & \texttt{bcde}\$   & \textbf{reduce} ($\mathtt{A \to b}$)   \\
+          $\$\texttt{aA}$   & \texttt{bcde}\$   & \textbf{shift}                         \\
+          $\$\texttt{aAb}$  & \texttt{cde}\$    & \textbf{shift}                         \\
+          $\$\texttt{aAbc}$ & \texttt{de}\$     & \textbf{reduce ($\mathtt{A \to Abc}$)} \\
+          $\$\texttt{aA}$   & \texttt{de}\$     & \textbf{shift}                         \\
+          $\$\texttt{aAd}$  & \texttt{e}\$      & \textbf{reduce ($\mathtt{B \to d}$)}   \\
+          $\$\texttt{aAB}$  & \texttt{e}\$      & \textbf{shift}                         \\
+          $\$\texttt{aAde}$ & \$                & \textbf{reduce ($\mathtt{S \to aABe}$)}\\
+          $\$\texttt{S}$    & \$                & \textbf{accept}                        \\
+         \end{tabular}
+        \end{center}
 \end{enumerate}
-
+\enlargethispage{2\baselineskip}
 \section{}
 \begin{enumerate}
-\item   
-\item   
+\item   $000111$: $S \to 01$ \\
+        $00S11$: $S \to 0S1$
+\item   \hfill
+        \begin{center}
+         \begin{tabular}{l|r|l}
+          Stack     & Eingabe  & Aktion                       \\\hline
+          $\$$      & 000111\$ & \textbf{shift}               \\
+          $\$0$     &  00111\$ & \textbf{shift}               \\
+          $\$00$    &   0111\$ & \textbf{shift}               \\
+          $\$000$   &    111\$ & \textbf{shift}               \\
+          $\$0001$  &     11\$ & \textbf{reduce} ($S \to 01$) \\
+          $\$00S$   &     11\$ & \textbf{shift}               \\
+          $\$00S1$  &      1\$ & \textbf{reduce} ($S \to 0S1$)\\
+          $\$0S$    &      1\$ & \textbf{shift}               \\
+          $\$0S1$   &       \$ & \textbf{reduce} ($S \to 0S1$)\\
+          $\$$      &       \$ & \textbf{accept}
+         \end{tabular}
+        \end{center}
 \end{enumerate}
 
 \end{document}
