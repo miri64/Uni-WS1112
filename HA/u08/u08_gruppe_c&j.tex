@@ -1,0 +1,132 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+\usepackage{algorithmic}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Christian Cikryt (Di. 14-16), Jakob Pfender (Mi. 14-16)}
+\title{H\"ohere Algorithmik - 8. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}:}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+    escapeinside={((*}{*))},
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Das Offline-Minimum-Problem}
+\begin{enumerate}
+	\item	\begin{math}
+			E_1 = 4\\
+			E_2 = 3\\
+			E_3 = 2\\
+			E_4 = 6\\
+			E_5 = 8\\
+			E_6 = 1
+		\end{math}
+	\item	\begin{itemize}
+			\item 	$m = 6$
+			\item	$i = 1$
+			\item	$K(j) = \{1,7\}$
+			\item	$j = 6 \neq m+1$
+			\item	$em[6] = 1$
+			\item	$l = 7$
+			\item	$K(7) = \{5\}$
+			\item	$K(7) = \{1,7,5\}$
+			\item	$K(6)$ existiert nicht mehr
+			\item	$i = 2$
+			\item	$K(j) = \{9,2,6\}$
+			\item	$j = 3 \neq m+1$
+			\item	$em[3] = 2$
+			\item	$l = 4$
+			\item	$K(4) = \{\}$
+			\item	$K(4) = \{9,2,6\}$
+			\item	$K(3)$ existiert nicht mehr
+			\item	$i = 3$
+			\item	$K(j) = \{3\}$
+			\item	$j = 2 \neq m+1$
+			\item	$em[2] = 3$
+			\item	$l = 4$
+			\item	$K(4) = \{9,2,6\}$
+			\item	$K(4) = \{9,2,6,3\}$
+			\item	$K(2)$ existiert nicht mehr
+			\item	$i = 4$
+			\item	$K(j) = \{4,8\}$
+			\item	$j = 1 \neq m+1$
+			\item	$em[1] = 4$
+			\item	$l = 4$
+			\item	$K(4) = \{9,2,6,3\}$
+			\item	$K(4) = \{9,2,6,3,4,8\}$
+			\item	$K(1)$ existiert nicht mehr
+			\item	$i = 5$
+			\item	$K(j) = \{1,7,5\}$
+			\item	$j = 7 = m+1$
+			\item	$i = 6$
+			\item	$K(j) = \{9,2,6,3,4,8\}$
+			\item	$j = 4 \neq m+1$
+			\item	$em[4] = 6$
+			\item	$l = 5$
+			\item	$K(5) = \{\}$
+			\item	$K(5) = \{9,2,6,3,4,8\}$
+			\item	$K(4)$ existiert nicht mehr
+			\item	$i = 7$
+			\item	$K(j) = \{1,7,5\}$
+			\item	$j = 7 = m+1$
+			\item	$i = 8$
+			\item	$K(j) = \{9,2,6,3,4,8\}$
+			\item	$j = 5 \neq m+1$
+			\item	$em[5] = 8$
+			\item	$l = 7$
+			\item	$K(7) = \{5\}$
+			\item	$K(7) = \{5,9,2,3,4,8\}$
+			\item	$K(5)$ existiert nicht mehr
+			\item	$i = 9$
+			\item	$K(j) = \{5,9,2,3,4,8\}$
+			\item	$j = 7 = m+1$
+		\end{itemize}
+\end{enumerate}
+\end{document}
