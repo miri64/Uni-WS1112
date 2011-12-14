@@ -86,7 +86,15 @@
 
 \section{Wahrscheinlichkeitsrechnung und Hashing}
 \begin{enumerate}
-\item   
+\item   Die Wahrscheinlichkeit, dass der $(k+1)$-te der insgesamt $n$ Teilnehmer sein eigenes Paket zieht ist
+        \[
+            \frac{1}{n-k} \prod\limits_{i=0}^{k-1} \frac{n-i-1}{n-i} = \frac{1-\frac{m}{n}}{n-m} = \frac{1}{n}
+        \]
+        Damit ist die erwartete Anzahl an Teilnehmern, die ihr eigenes Geschenk ziehen
+        \begin{align*}
+            E[X] &= \sum\limits_{i = 1}^{n} X_i p_i = \sum\limits_{i = 1}^{n} \frac{1}{n} = 1
+        \end{align*}
+        Mit Zufallsvariable $X = \{X_i = 1\ |\ i \in \{1, ..., n\}\}$ als Anzahl der gezogenen Pakete jedes Teilnehmers.
 \item   
 \end{enumerate}
 \end{document}
