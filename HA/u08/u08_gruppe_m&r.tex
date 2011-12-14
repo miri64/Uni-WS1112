@@ -101,25 +101,43 @@
 	&I_1 = \{4, 8\}\\
 	&I_2 = \{3\}\\
 	&I_3 =\{2, 6, 9\}\\
-	&I_4 = \emptyset \\
-	&I_5 = \emptyset \\
+	&I_4 = \{\} \\
+	&I_5 = \{\}\\
 	&I_6 = \{1, 7\}\\
 	&I_7 = \{5\}
 	\end{align*}
-	Wir wenden für den Algorithmus wieder eine Tabelle an, die die Iterationen der \texttt{for}-Schleife darstellt. Eine Zeile enthält den Zustand am Ende der Iteration.\\ \\
-	\begin{tabular}{ c || c | c | l | l | l | l | l | l | l || l }
+	Wir wenden für den Algorithmus wieder eine Tabelle an, die die Iterationen der \texttt{for}-Schleife darstellt. Eine Zeile enthält den Zustand am Ende der Iteration. Entgegen der Standardnotation wähle ich $\{\}$ als leere Menge und $\emptyset$ als nicht mehr existierende Menge.\\ \\
+	\begin{tabular}{ c || c | c | l | l | l | p{1.5cm} | p{1.2cm} | l | p{1.2cm} || l }
 	\texttt{i} & \texttt{j} & \texttt{l} & \textbf{$I_1$} & \textbf{$I_2$} & \textbf{$I_3$} & \textbf{$I_4$} & \textbf{$I_5$} & \textbf{$I_6$} & \textbf{$I_7$} & \texttt{em}\\
 	\hline
-	Start & - & - & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\emptyset$ & $\emptyset$ & $\{1, 7\}$ & $\{5\}$ & $[-, -, -, -, -, -]$ \\
+	Start & - & - & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\{\}$ & $\{\}$ & $\{1, 7\}$ & $\{5\}$ & $[-, -, -, -, -, -]$ \\
 	\hline
-	1 & 6 & 7 & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, -, -, -, -, 1]$ \\
+	1 & 6 & 7 & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\{\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, -, -, -, -, 1]$ \\
 	\hline
-	2 & 3 & 7 & $\{4, 8\}$ & $\{3\}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 5, 6, 7, 9\}$ & $[-, -, 2, -, -, 1]$ \\
+	2 & 3 & 4 & $\{4, 8\}$ & $\{3\}$ & $\emptyset$ & $\{2, 6, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, -, 2, -, -, 1]$ \\
 	\hline
-	3 & 2 & 7 & $\{4, 8\}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 3, 5, 6, 7, 9\}$ & $[-, 3, 2, -, -, 1]$ \\
-	\hline	4 & 1 & 7 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 3, 4, 5, 6, 7, 8, 9\}$ & $[4, 3, 2, -, -, 1]$ \\
+	3 & 2 & 4 & $\{4, 8\}$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 6, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, 3, 2, -, -, 1]$ \\
 	\hline
-	\end{tabular}
+	4 & 1 & 4 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, -, -, 1]$ \\
+	\hline
+	5 & 7 & - & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, -, -, 1]$ \\
+	\hline
+	6 & 4 & 5 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, 6, -, 1]$ \\
+	\hline
+	7 & 7 & - & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, 6, -, 1]$ \\
+	\hline
+	8 & 5 & 7 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 3\} \newline \{4, 5, 6\} \newline \{7, 8, 9\}$ & $[4, 3, 2, 6, 8, 1]$ \\
+	\hline
+	\end{tabular}\\ \\
+Für das gegebene Beispiel führt der Algorithmus zum korrekten Ergebnis, was jedoch noch kein Beweis dafür ist, dass der Algorithmus immer zum richtigen Ergebnis führt.
+Für den Gesamtbeweis, beweisen wir die einzelnen Eigenschaften separat.
+\begin{description}
+	\item[Terminierung:] Der Algorithmus terminiert nach $n$ Iterationen der Schleife, da die Zählvariable nicht verändert wird.
+	\item[Füllen von\texttt{em} mit validen Werten:] In jedem Schritt wird eine Spalte gefunden, die die Menge mit dem gesuchten Element enthält. Wenn dies die letzte Menge ist, kann man diese Menge ignorieren, da es auf dieser Menge kein \textbf{extract-min} gibt und daher auch keinen Index im Array. Im anderen Fall erhält man so den Index einer nichtleeren Menge. Dieser Index wird für das Füllen des Arrays verwendet. Die entpsrechende Menge wird der nächstmöglichen Menge vereinigt. So wird der Index aus der Indexmenge entfernt, sodass er nicht erneut verwendet werden kann. Damit ist sichergestellt, dass ein Eintrag im Array nicht überschrieben werden kann. Ebenso wird jeder Index einmal gefunden, da eine Menge immer mit der nächstmöglichen Menge vereinigt wird, und so zu dieser Menge eventuell noch nicht verwendete Werte hinzugefügt werden.
+	\item[Korrektheit der Mengen:] Jede Menge repräsentiert den Zustand der Menge, nach den Insert-Operationen, zwischen den extract-Operationen. Die Zählvariable repräsentiert dabei die i-te extract-Operation. Der Unterschied zu der echten Menge besteht jedoch darin, dass sie die gesuchten Werte weiterhin behalten, da diese eh nicht mehr gesucht werden. Das Vereinigen mit der nächstmöglichen Menge entspricht dem Zustandsübergang der Menge während einer extract-Operation. Damit sind die Mengen immer im richtigen Zustand, wenn sie in einer Iteration betrachtet werden.
+\end{description}
+Damit sind alle relevanten Eigenschaften des Algorithmus bewiesen worden und der Algorithmus als Ganzes ist korrekt.
+
 \item   
 \end{enumerate}
 
