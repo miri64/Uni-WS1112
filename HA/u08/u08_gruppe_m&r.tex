@@ -157,7 +157,46 @@ Damit sind alle relevanten Eigenschaften des Algorithmus bewiesen worden und der
                                                                       &= 2n
         \end{align*}
         Der Durchschnitt und die amortisierten Kosten sind damit also $\frac{2n}{n} = 2 = O(1)$.
-\item   
+\item   Wir erstellen einen ADT \texttt{DynArray}, der zur Verwaltung eines solchen dynamisch wachsenden Arrays.
+        \texttt{DynArray} besitzt zwei Operationen: 
+        \texttt{get(i)} zum Lesen eines Wertes an der Stelle $i \geq 0$ und \texttt{set(i,v)} zum Setzen eines Wertes $v$ an der Stelle $i \geq 0$. 
+        Wir gehen davon aus, dass das Array indexweise von 0 ab gefüllt wird, bzw. von hinten indexweise geleert wird (was dem Verhalten z. B. in einem Stack entspräche).
+        Das Array hat zunächst eine beliebige feste Größe und alle Zellen sind leer.
+        Wird für \texttt{set(i,v)} ein ein $i$, das größer gleich der aktuellen Größe des Arrays ist, gewählt, wird die Größe des Arrays verdoppelt, indem ein neues Array entsprechender Größe erstellt wird und die Daten kopiert werden. 
+        Wird \texttt{set(i,v)} durch $v = \mathtt{None}$ mit Index $i = \frac{n}{2}$ geleert, wird die Größe wieder halbiert, indem ein neues Array entsprechender Größe erstellt wird und die Daten kopiert werden.
+        Verweist \texttt{get(i)} auf einen Wert größer gleich der aktuelle Größe des Arrays, wird ein Fehler geworfen.
+        \begin{lstlisting}[language=Python,numbers=none]
+class DynArray:
+    a = array[N]
+    
+    def get(i):
+        if i >= len(a):
+            raise Fehler!
+        return a[i]
+    
+    def set(i,v):
+        if i >= len(a):
+            b = array[len(a)*2]
+            for a[j] in a:
+                b[j] = a[j]
+            a = b
+        else if i < len(a)/2 and a[len(a)/2+1:] is empty:
+            b = array[len(a)/2]
+            for a[j] in a:
+                b[j] = a[j]
+            a = b
+        a[i] = v
+        \end{lstlisting}
+        Zur Berechnung der amortisierten Laufzeit verwenden wir die Buchhalter-Methode und setzen das Guthaben für die \texttt{set}-Operation auf 3.
+        Die \texttt{get}-Operation ist für diese Analyse auch nicht von Interesse.
+        Fügen wir zunächst $N-1$ Elemente in das Array ein, so erhalten wir ein Kontoguthaben von $2(N-1)$, da wir für jedes Einfügen 3 einzahlen und 1 für das Einfügen selbst wieder entnehmen. Das Verdoppeln  kostet uns dann $N-1$, da wir $N-1$ Elemente umschreiben, es kommt also beim nächsten Einfügen zu Kosten von $N$ (Verdoppeln + normales Einfügen), wir zahlen aber auch hier für die Operation 3 auf das Konto ein. Der Kontostand ist dann
+        \[2(N-1) + 3 - N = N + 1.\]
+        Füllen wir das Vergrößerte Array, zahlen wir $3(N-2)$ auf das Konto ein, entnehmen $N-2$ für das Einfügen und haben somit einen Kontostand von
+        \[N + 1 + 2(N-2) = 3(N-1).\]
+        Fügen wir nun wieder ein neues Element hinzu Stabiliert sich der Kontostand:
+        \[3(N-1) + 3 - 2N = N + 1\]
+        Wir brauchen für das Einfügen von $N$ Elementen also amortisiert immer $O(N)$ Zeit, was für jede Einzeloperation $O(1)$ Zeit bedeutet.
+        Für das Halbieren kann genauso verfahren werden.
 \end{enumerate}
 
 \section{Wahrscheinlichkeitsrechnung und Hashing}
