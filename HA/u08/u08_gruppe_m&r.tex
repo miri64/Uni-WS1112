@@ -60,8 +60,65 @@
 
 \section{Das Offline-Minimum-Problem}
 \begin{enumerate}
-\item   
-\item   
+\item  Löse die Aufabe mit folgender Tabelle. In den Zeilen sind die Operationen ausgeführt und ihre Auswirkung auf die Menge. Die gewünschte Ausgabe erhält man, wenn man die letzte Spalte von oben nach unten betrachtet.\\ \\
+	\begin{tabular}{ c | l | c }
+	\textbf{Operation} & \textbf{T} & \textbf{Ausgabe} \\
+	\hline
+	4 & 4 & \\
+	\hline
+	8 & 4, 8 & \\
+	\hline
+	E & 8 & 4 \\
+	\hline
+	3 & 3, 8 & \\
+	\hline
+	E & 8 & 3 \\
+	\hline
+	9 & 8, 9 & \\
+	\hline
+	2 & 2, 8, 9 & \\
+	\hline
+	6 & 2, 6, 8, 9 & \\
+	\hline
+	E & 6, 8, 9 & 2 \\
+	\hline
+	E & 8, 9 & 6 \\
+	\hline
+	E & 9 & 8 \\
+	\hline
+	1 & 1, 9 & \\
+	\hline
+	7 & 1, 7, 9 & \\
+	\hline
+	E & 7, 9 & 1 \\
+	\hline
+	5 & 5, 7, 9 & \\
+	\hline
+	\end{tabular}\\ \\
+	Als Ergebnis erhält man also die Folge 4 3 2 6 8 1.
+\item   Nach der gegebenen Aufteilungsregel erhalten wir folgenden Mengen.\begin{align*}
+	&I_1 = \{4, 8\}\\
+	&I_2 = \{3\}\\
+	&I_3 =\{2, 6, 9\}\\
+	&I_4 = \emptyset \\
+	&I_5 = \emptyset \\
+	&I_6 = \{1, 7\}\\
+	&I_7 = \{5\}
+	\end{align*}
+	Wir wenden für den Algorithmus wieder eine Tabelle an, die die Iterationen der \texttt{for}-Schleife darstellt. Eine Zeile enthält den Zustand am Ende der Iteration.\\ \\
+	\begin{tabular}{ c || c | c | l | l | l | l | l | l | l || l }
+	\texttt{i} & \texttt{j} & \texttt{l} & \textbf{$I_1$} & \textbf{$I_2$} & \textbf{$I_3$} & \textbf{$I_4$} & \textbf{$I_5$} & \textbf{$I_6$} & \textbf{$I_7$} & \texttt{em}\\
+	\hline
+	Start & - & - & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\emptyset$ & $\emptyset$ & $\{1, 7\}$ & $\{5\}$ & $[-, -, -, -, -, -]$ \\
+	\hline
+	1 & 6 & 7 & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, -, -, -, -, 1]$ \\
+	\hline
+	2 & 3 & 7 & $\{4, 8\}$ & $\{3\}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 5, 6, 7, 9\}$ & $[-, -, 2, -, -, 1]$ \\
+	\hline
+	3 & 2 & 7 & $\{4, 8\}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 3, 5, 6, 7, 9\}$ & $[-, 3, 2, -, -, 1]$ \\
+	\hline	4 & 1 & 7 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 3, 4, 5, 6, 7, 8, 9\}$ & $[4, 3, 2, -, -, 1]$ \\
+	\hline
+	\end{tabular}
 \item   
 \end{enumerate}
 
