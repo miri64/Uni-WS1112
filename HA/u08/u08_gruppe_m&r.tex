@@ -10,6 +10,7 @@
 \usepackage{multicol}
 \usepackage{pst-tree}
 \usepackage{algorithmic}
+\usepackage{cancel}
 
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
@@ -143,7 +144,20 @@
 
 \section{Wahrscheinlichkeitsrechnung und Hashing}
 \begin{enumerate}
-\item   
-\item   
+\item   Die Wahrscheinlichkeit, dass der $(k+1)$-te der insgesamt $n$ Teilnehmer sein eigenes Paket zieht ist
+        \[
+            \frac{1}{n-k} \prod\limits_{i=0}^{k-1} \frac{n-i-1}{n-i} = \frac{1-\frac{m}{n}}{n-m} = \frac{1}{n}
+        \]
+        Damit ist die erwartete Anzahl an Teilnehmern, die ihr eigenes Geschenk ziehen
+        \begin{align*}
+            E[X] &= \sum\limits_{i = 1}^{n} X_i p_i = \sum\limits_{i = 1}^{n} \frac{1}{n} = 1
+        \end{align*}
+        Mit Zufallsvariable $X = \{X_i = 1\ |\ i \in \{1, ..., n\}\}$ als Anzahl der gezogenen Pakete jedes Teilnehmers.
+\item   Wir wollen die Schlüsselmenge $K$ auf $N$ Einträge verteilen, wobei $|K| \leq (n-1)N + 1 > N$. 
+        Nach dem \emph{Verschärften Schubfachprinzip} gibt es also mindestens einen Eintrag, in den $|S| > \frac{|K| - 1}{N}$ Schlüssel aus der Menge $S$ gehasht werden.
+        \begin{align*}
+            \frac{|K| - 1}{N} &\geq \frac{(n-1)N+1-1}{N} = \frac{(n-1)\cancel{N}}{\cancel{N}} \\
+        \end{align*}
+        Es also mindestens einen Eintrag, in den $|S| > (n-1) \Leftrightarrow |S| \geq n$ Schlüssel gehasht werden. Für die worst-case-Laufzeit bedeutet das, dass alle Schlüssel in diesem Eintrag durchsucht werden müssen, was sie auf $O(|S|)$ festlegt.
 \end{enumerate}
 \end{document}
