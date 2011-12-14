@@ -128,5 +128,18 @@
 			\item	$K(j) = \{5,9,2,3,4,8\}$
 			\item	$j = 7 = m+1$
 		\end{itemize}
+		Der Algorithmus arbeitet korrekt, weil er die Elemente
+		in aufsteigender Reihenfolge durchläuft und für jedes
+		Element, das sich in einer Menge $K(j)$ befindet, die
+		nicht die $m+1$-te Menge ist, genau eine
+		\verb!extract-min!-Operation aus der Menge der
+		Operationen entfernt und danach die Menge $K(j)$ mit der
+		darauffolgenden Menge $K(l)$ vereinigt. Somit folgt auf
+		jede Menge außer der $m+1$-ten immer ein
+		\verb!extract-min!-Aufruf, so dass für jeden
+		\verb!extract-min!-Aufruf immer das kleinste Element,
+		das sich zu diesem Zeitpunkt in der Menge befindet,
+		entfernt wird.
+	\item
 \end{enumerate}
 \end{document}
