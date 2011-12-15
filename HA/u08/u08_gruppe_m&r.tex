@@ -1,0 +1,225 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+\usepackage{algorithmic}
+\usepackage{cancel}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Martin Lenders (Mi. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
+\title{H\"ohere Algorithmik - 8. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}:}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+    escapeinside={((*}{*))},
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Das Offline-Minimum-Problem}
+\begin{enumerate}
+\item  Löse die Aufabe mit folgender Tabelle. In den Zeilen sind die Operationen ausgeführt und ihre Auswirkung auf die Menge. Die gewünschte Ausgabe erhält man, wenn man die letzte Spalte von oben nach unten betrachtet.\\ \\
+	\begin{tabular}{ c | l | c }
+	\textbf{Operation} & \textbf{T} & \textbf{Ausgabe} \\
+	\hline
+	4 & 4 & \\
+	\hline
+	8 & 4, 8 & \\
+	\hline
+	E & 8 & 4 \\
+	\hline
+	3 & 3, 8 & \\
+	\hline
+	E & 8 & 3 \\
+	\hline
+	9 & 8, 9 & \\
+	\hline
+	2 & 2, 8, 9 & \\
+	\hline
+	6 & 2, 6, 8, 9 & \\
+	\hline
+	E & 6, 8, 9 & 2 \\
+	\hline
+	E & 8, 9 & 6 \\
+	\hline
+	E & 9 & 8 \\
+	\hline
+	1 & 1, 9 & \\
+	\hline
+	7 & 1, 7, 9 & \\
+	\hline
+	E & 7, 9 & 1 \\
+	\hline
+	5 & 5, 7, 9 & \\
+	\hline
+	\end{tabular}\\ \\
+	Als Ergebnis erhält man also die Folge 4 3 2 6 8 1.
+\item   Nach der gegebenen Aufteilungsregel erhalten wir folgenden Mengen.\begin{align*}
+	&I_1 = \{4, 8\}\\
+	&I_2 = \{3\}\\
+	&I_3 =\{2, 6, 9\}\\
+	&I_4 = \{\} \\
+	&I_5 = \{\}\\
+	&I_6 = \{1, 7\}\\
+	&I_7 = \{5\}
+	\end{align*}
+	Wir wenden für den Algorithmus wieder eine Tabelle an, die die Iterationen der \texttt{for}-Schleife darstellt. Eine Zeile enthält den Zustand am Ende der Iteration. Entgegen der Standardnotation wähle ich $\{\}$ als leere Menge und $\emptyset$ als nicht mehr existierende Menge.\\ \\
+	\begin{tabular}{ c || c | c | l | l | l | p{1.5cm} | p{1.2cm} | l | p{1.2cm} || l }
+	\texttt{i} & \texttt{j} & \texttt{l} & \textbf{$I_1$} & \textbf{$I_2$} & \textbf{$I_3$} & \textbf{$I_4$} & \textbf{$I_5$} & \textbf{$I_6$} & \textbf{$I_7$} & \texttt{em}\\
+	\hline
+	Start & - & - & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\{\}$ & $\{\}$ & $\{1, 7\}$ & $\{5\}$ & $[-, -, -, -, -, -]$ \\
+	\hline
+	1 & 6 & 7 & $\{4, 8\}$ & $\{3\}$ & $\{2, 6, 9\}$ & $\{\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, -, -, -, -, 1]$ \\
+	\hline
+	2 & 3 & 4 & $\{4, 8\}$ & $\{3\}$ & $\emptyset$ & $\{2, 6, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, -, 2, -, -, 1]$ \\
+	\hline
+	3 & 2 & 4 & $\{4, 8\}$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 6, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[-, 3, 2, -, -, 1]$ \\
+	\hline
+	4 & 1 & 4 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, -, -, 1]$ \\
+	\hline
+	5 & 7 & - & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\{\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, -, -, 1]$ \\
+	\hline
+	6 & 4 & 5 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, 6, -, 1]$ \\
+	\hline
+	7 & 7 & - & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{2, 3, 4\} \newline\{6, 8, 9\}$ & $\emptyset$ & $\{1, 5, 7\}$ & $[4, 3, 2, 6, -, 1]$ \\
+	\hline
+	8 & 5 & 7 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 3\} \newline \{4, 5, 6\} \newline \{7, 8, 9\}$ & $[4, 3, 2, 6, 8, 1]$ \\
+	\hline
+	\end{tabular}\\ \\
+Für das gegebene Beispiel führt der Algorithmus zum korrekten Ergebnis, was jedoch noch kein Beweis dafür ist, dass der Algorithmus immer zum richtigen Ergebnis führt.
+Für den Gesamtbeweis, beweisen wir die einzelnen Eigenschaften separat.
+\begin{description}
+	\item[Terminierung:] Der Algorithmus terminiert nach $n$ Iterationen der Schleife, da die Zählvariable nicht verändert wird.
+	\item[Füllen von\texttt{em} mit validen Werten:] In jedem Schritt wird eine Spalte gefunden, die die Menge mit dem gesuchten Element enthält. Wenn dies die letzte Menge ist, kann man diese Menge ignorieren, da es auf dieser Menge kein \textbf{extract-min} gibt und daher auch keinen Index im Array. Im anderen Fall erhält man so den Index einer nichtleeren Menge. Dieser Index wird für das Füllen des Arrays verwendet. Die entpsrechende Menge wird der nächstmöglichen Menge vereinigt. So wird der Index aus der Indexmenge entfernt, sodass er nicht erneut verwendet werden kann. Damit ist sichergestellt, dass ein Eintrag im Array nicht überschrieben werden kann. Ebenso wird jeder Index einmal gefunden, da eine Menge immer mit der nächstmöglichen Menge vereinigt wird, und so zu dieser Menge eventuell noch nicht verwendete Werte hinzugefügt werden.
+	\item[Korrektheit der Mengen:] Jede Menge repräsentiert den Zustand der Menge, nach den Insert-Operationen, zwischen den extract-Operationen. Die Zählvariable repräsentiert dabei die i-te extract-Operation. Der Unterschied zu der echten Menge besteht jedoch darin, dass sie die gesuchten Werte weiterhin behalten, da diese eh nicht mehr gesucht werden. Das Vereinigen mit der nächstmöglichen Menge entspricht dem Zustandsübergang der Menge während einer extract-Operation. Damit sind die Mengen immer im richtigen Zustand, wenn sie in einer Iteration betrachtet werden.
+\end{description}
+Damit sind alle relevanten Eigenschaften des Algorithmus bewiesen worden und der Algorithmus als Ganzes ist korrekt.
+
+\item   \begin{description}
+Wir setzen voraus, dass die Mengen bereits vorhanden sind und beziehen die Laufzeit zum Erstellen der Mengen nicht in unsere Laufzeitbetrachtung mitein.
+	\item[Union:] Verwende \textbf{Union} bei der Vereinigung der Mengen \texttt{K(J)} und \texttt{K(l)}.
+	\item[Find:] Verwende \textbf{Find} zum Finden der Menge, die \texttt{i} enthält, und der Menge, die \texttt{l} enthält.
+	\item[Laufzeit:] Der Algorithmus hat $m$ \textbf{Union}-Operationen und jeweils $n$ \textbf{Find}-Operationen für das Finden von $j$ und $l$. Dies führt zu einer Laufzeit von $O(n+(2n+m)*\alpha(2m+n, n))$.
+	\end{description}
+\end{enumerate}
+
+\section{Amortisierte Analyse}
+\begin{enumerate}
+\item   Betrachten wir den Verlauf des Zählwerkes, stellen wir fest, dass die 1er-Stelle sich bei jedem Zählschritt sich 
+        ändert, die 2er-Stelle bei jedem zweiten, die 4er-Stelle bei jedem vierten etc. 
+        \paragraph*{Beweis} Bezeichnen wir die Schritte der Inkrementierung jeweils mit der Zahl im Ergebnis (Schritt 1: $0 \to 1$, Schritt 2: $1 \to 10$, Schritt 3: $10 \to 11$, ...), so ist die Trivialität der Behauptung ersichtlich, da ein Umschalten jedesmal stattfindet, wenn das Ergebnis jeweils durch die Wertigkeit der Stelle teilbar ist. Damit ist auch der Schritt durch die Wertigkeit der Stelle teilbar \hfill $\square$
+        
+        Für $\left|\{0,1\}\right|^{k-1} \leq n < \left|\{0,1\}\right|^{k}$ ($n$ habe also $k \geq 1$ Stellen) ergibt sich als Gesamtstromkosten also
+        \[\sum\limits_{i=0}^{k} \left\lfloor\frac{n}{2^i}\right\rfloor\]
+        Die amortisierten Kosten pro Zählvorgang ergibt sich aus dem Durchschnitt für jede Einzeloperation unter Betrachtung der Gesamtkosten.
+        \begin{align*}
+         \sum\limits_{i=0}^{k} \left\lfloor\frac{n}{2^i}\right\rfloor &\leq \sum\limits_{i=0}^{k} \frac{n}{2^i} \\
+                                                                      &\leq \sum\limits_{i=0}^{\infty} \frac{n}{2^i} \\
+                                                                      &= n \cdot \sum\limits_{i=0}^{\infty} \frac{1}{2^i} \\
+                                                                      &= 2n
+        \end{align*}
+        Der Durchschnitt und die amortisierten Kosten sind damit also $\frac{2n}{n} = 2 = O(1)$.
+\item   Wir erstellen einen ADT \texttt{DynArray}, der zur Verwaltung eines solchen dynamisch wachsenden Arrays.
+        \texttt{DynArray} besitzt zwei Operationen: 
+        \texttt{get(i)} zum Lesen eines Wertes an der Stelle $i \geq 0$ und \texttt{set(i,v)} zum Setzen eines Wertes $v$ an der Stelle $i \geq 0$. 
+        Wir gehen davon aus, dass das Array indexweise von 0 ab gefüllt wird, bzw. von hinten indexweise geleert wird (was dem Verhalten z. B. in einem Stack entspräche).
+        Das Array hat zunächst eine beliebige feste Größe und alle Zellen sind leer.
+        Wird für \texttt{set(i,v)} ein ein $i$, das größer gleich der aktuellen Größe des Arrays ist, gewählt, wird die Größe des Arrays verdoppelt, indem ein neues Array entsprechender Größe erstellt wird und die Daten kopiert werden. 
+        Wird \texttt{set(i,v)} durch $v = \mathtt{None}$ mit Index $i = \frac{n}{2}$ geleert, wird die Größe wieder halbiert, indem ein neues Array entsprechender Größe erstellt wird und die Daten kopiert werden.
+        Verweist \texttt{get(i)} auf einen Wert größer gleich der aktuelle Größe des Arrays, wird ein Fehler geworfen.
+        \begin{lstlisting}[language=Python,numbers=none]
+class DynArray:
+    a = array[N]
+    
+    def get(i):
+        if i >= len(a):
+            raise Fehler!
+        return a[i]
+    
+    def set(i,v):
+        if i >= len(a):
+            b = array[len(a)*2]
+            for a[j] in a:
+                b[j] = a[j]
+            a = b
+        else if i < len(a)/2 and a[len(a)/2+1:] is empty:
+            b = array[len(a)/2]
+            for a[j] in a:
+                b[j] = a[j]
+            a = b
+        a[i] = v
+        \end{lstlisting}
+        Zur Berechnung der amortisierten Laufzeit verwenden wir die Buchhalter-Methode und setzen das Guthaben für die \texttt{set}-Operation auf 3.
+        Die \texttt{get}-Operation ist für diese Analyse auch nicht von Interesse.
+        Fügen wir zunächst $N-1$ Elemente in das Array ein, so erhalten wir ein Kontoguthaben von $2(N-1)$, da wir für jedes Einfügen 3 einzahlen und 1 für das Einfügen selbst wieder entnehmen. Das Verdoppeln  kostet uns dann $N-1$, da wir $N-1$ Elemente umschreiben, es kommt also beim nächsten Einfügen zu Kosten von $N$ (Verdoppeln + normales Einfügen), wir zahlen aber auch hier für die Operation 3 auf das Konto ein. Der Kontostand ist dann
+        \[2(N-1) + 3 - N = N + 1.\]
+        Füllen wir das Vergrößerte Array, zahlen wir $3(N-2)$ auf das Konto ein, entnehmen $N-2$ für das Einfügen und haben somit einen Kontostand von
+        \[N + 1 + 2(N-2) = 3(N-1).\]
+        Fügen wir nun wieder ein neues Element hinzu Stabiliert sich der Kontostand:
+        \[3(N-1) + 3 - 2N = N + 1\]
+        Wir brauchen für das Einfügen von $N$ Elementen also amortisiert immer $O(N)$ Zeit, was für jede Einzeloperation $O(1)$ Zeit bedeutet.
+        Für das Halbieren kann genauso verfahren werden.
+\end{enumerate}
+
+\section{Wahrscheinlichkeitsrechnung und Hashing}
+\begin{enumerate}
+\item   Die Wahrscheinlichkeit, dass der $(k+1)$-te der insgesamt $n$ Teilnehmer sein eigenes Paket zieht ist
+        \[
+            \frac{1}{n-k} \prod\limits_{i=0}^{k-1} \frac{n-i-1}{n-i} = \frac{1-\frac{m}{n}}{n-m} = \frac{1}{n}
+        \]
+        Damit ist die erwartete Anzahl an Teilnehmern, die ihr eigenes Geschenk ziehen
+        \begin{align*}
+            E[X] &= \sum\limits_{i = 1}^{n} X_i p_i = \sum\limits_{i = 1}^{n} \frac{1}{n} = 1
+        \end{align*}
+        Mit Zufallsvariable $X = \{X_i = 1\ |\ i \in \{1, ..., n\}\}$ als Anzahl der gezogenen Pakete jedes Teilnehmers.
+\item   Wir wollen die Schlüsselmenge $K$ auf $N$ Einträge verteilen, wobei $|K| \leq (n-1)N + 1 > N$. 
+        Nach dem \emph{Verschärften Schubfachprinzip} gibt es also mindestens einen Eintrag, in den $|S| > \frac{|K| - 1}{N}$ Schlüssel aus der Menge $S$ gehasht werden.
+        \begin{align*}
+            \frac{|K| - 1}{N} &\geq \frac{(n-1)N+1-1}{N} = \frac{(n-1)\cancel{N}}{\cancel{N}} \\
+        \end{align*}
+        Es also mindestens einen Eintrag, in den $|S| > (n-1) \Leftrightarrow |S| \geq n$ Schlüssel gehasht werden. Für die worst-case-Laufzeit bedeutet das, dass alle Schlüssel in diesem Eintrag durchsucht werden müssen, was sie auf $O(|S|)$ festlegt.
+\end{enumerate}
+\end{document}

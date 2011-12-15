@@ -1,0 +1,183 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+\usepackage{algorithmic}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Martin Lenders (Mi. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
+\title{H\"ohere Algorithmik - 7. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}:}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+    escapeinside={((*}{*))},
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Caching}
+\begin{enumerate}
+\item Wir erweitern unsere Dartellung einer Zugriffsfolge um reine Zugriffe des Caches auf den Hauptspeicher. Ein Cache-Miss ist dann in der Zugriffsfolge dadurch erkennbar, dass ein Hauptspeicherzugriff auf ein Element erfolgt, direkt nachdem ein Cache-Zugriff auf dieses Element erfolgte. Hauptspeicherzugriffe werden fett dargestellt.\\
+Beispiel für einen Cache mit Größe $3$: $1234\textbf{4}$\\
+Ein Hauptspeicherzugriff auf ein Element muss spätestens direkt nach einem Cache-Miss auf dieses Element erfolgen, d.h. in einer nicht reduzierten Zugriffsfolge können Cache-Misses nur dann vermieden werden, wenn der Hauptspeicherzugriff vor dem Cache-Zugriff stattfindet. Hauptspeicherzugriffe können nur dann verringert werden, wenn zweimal hintereinander auf das gleiche Element im Hauptspeicher zugegriffen wird. Daher muss in einer Zugriffsfolge auf ein Element mindestens zweimal zugegriffen werden, damit sich die Anzahl überhaupt verringern kann.\\
+\textbf{Beweis:} Es gibt o.B.d.A. eine reduzierte Zugriffsfolge $1\textbf{1} \ldots m\textbf{m} \ldots 1\textbf{1}$, die in eine nicht reduzierte Zugriffsfolge geändert werden kann, die weniger Hauptspeicherzugriffe hat. Damit der zweite Zugriff auf $1$ zu einem Cache-Miss führt, muss es einen Hauptspeicherzugriff $\textbf{m}$ geben, der $1$ aus dem Cache entfernt. Damit man den zweiten Hauptspeicherzugriff auf $1$ eliminieren kann, muss dieser direkt hinter dem ersten Hauptspeicherzugriff erfolgen.\\
+$\Rightarrow 1\textbf{11} \ldots m\textbf{m} \ldots 1$. Dies ist jedoch nur möglich, wenn die $1$ bis zum zweiten Cache-Zugriff auf die $1$ im Cache bleibt. Wenn dies der Fall ist, hat der Hauptspeicherzugriff auf $m$ nicht die $1$ aus dem Cache entfernt, was dazu führt, dass in der ursprünglichen Zugriffsfolge der zweite Hauptspeicherzugriff auf $1$ überflüssig war. Widerspruch zur Annahme der Reduziertheit. Wenn jedoch der Hauptspeicherzugriff von $m$ vor den ersten Hauptspeicherzugriff von $1$ gezogen wird, kann es sein, dass die $1$ im Cache bleibt. Dies bedeutet aber auch, dass $m$ ebenfalls im Cache verbleibt, wodurch der Hauptspeicherzugriff auf $m$ in der ersten Zugriffsfolge ebenfalls überflüssig war. Erneuter Widerspruch zur Annahme der Reduziertheit.
+
+\item Sei beispielhaft $k = 3$ und unsere Zugriffsfolge $123412341234$. Mit LRU erhalten wir folgende Cachezustände:\begin{align*} \begin{tabular}{| l | c | c | c | r |}
+	\hline
+	 & 1 & 2 & 3 & \\
+	\hline
+	4 & 1 & 2 & 3 & Miss\\
+	\hline
+	1 & 4 & 2 & 3 & Miss\\
+	\hline
+	2 & 4 & 1 & 3 & Miss\\
+	\hline
+	3 & 4 & 1 & 2 & Miss\\
+	\hline
+	4 & 3 & 1 & 2 & Miss\\
+	\hline
+	1 & 3 & 4 & 2 & Miss\\
+	\hline
+	2 & 3 & 4 & 1 & Miss\\
+	\hline
+	3 & 2 & 4 & 1 & Miss\\
+	\hline
+	4 & 2 & 3 & 1 & Miss\\
+	\hline
+\end{tabular} \end{align*} Mit Furthest-in-the-Future erhält man die folgende Zustandsfolge:
+:\begin{align*} \begin{tabular}{| l | c | c | c | r |}
+	\hline
+	 & 1 & 2 & 3 & \\
+	\hline
+	4 & 1 & 2 & 3 & Miss\\
+	\hline
+	1 & 1 & 2 & 4 & Hit\\
+	\hline
+	2 & 1 & 2 & 4 & Hit\\
+	\hline
+	3 & 1 & 2 & 4 & Miss\\
+	\hline
+	4 & 1 & 3 & 4 & Hit\\
+	\hline
+	1 & 1 & 3 & 4 & Hit\\
+	\hline
+	2 & 1 & 3 & 4 & Miss\\
+	\hline
+	3 & 2 & 3 & 4 & Hit\\
+	\hline
+	4 & 2 & 3 & 4 & Hit\\
+	\hline
+\end{tabular} \end{align*}
+Mit LRU treten in jedem Schritt ein Cache-Miss auf, während bei FF nur jeder dritte Zugriff ein Cache-Miss verursacht. Allgemein lassen sich folgende Bedingungen ableiten: Damit Cache-Misses auftreten können, werden mindestens $k+1$ Zugriffe benötigt und das Alphabet muss ebenfalls mindestens $k+1$ Elemente enthalten. Damit LRU mindestens $k$ mal so viele Cache-Misses erzeugen kann wie FF, muss die Zugriffsfolge mindestens $2k$ lang sein. Mit den ersten $k$ Zugriffen wird der Cache gefüllt und es treten keine Cache-Misses auf, die in die Berechnung eingehen. Die zweiten $k$ werden benötigt, damit für ein Cache-Miss in FF $k$ Cache-Misses in LRU auftreten können.\\
+Analog zu dem obigen Beispiiel kann man für eine beliebige Cachegröße $k$ eine Zugriffsfolge der Art erstellen, dass sie zyklisch auf die Elemente $1$ bis $k+1$ zugreift. LRU hat dann in jedem Schritt einen Cache-Miss, da im vorhergehenden Schritt genau das nun benötigte Element entfernt wurde. FF hat nur in jedem $k-ten$ Schritt einen Cache-Miss. Dies liegt daran, dass die Zugriffsfolge im Prinzip alle Cache-Element nacheinander durchfragt, dann ein neues Element anfordert und wieder von vorne anfängt.\\
+Da die Zugriffsfolge periodisch gestaltet ist, kann man sie beiebig lang machen, während das Verhältnis der Cache-Misses zwischen LRU und FF immer gleich $k$ ist. 
+
+\end{enumerate}
+
+\section{Union-Find}
+\begin{enumerate}
+\item 
+\item 
+\end{enumerate}
+
+\section{Bitmaps}
+Für diese Aufgabe wollen wir die Union-Find-Datenstruktur verwenden. Um diese jedoch verwenden zu können, benötigen wir eine Ordung der Elemente. Dadurch erhalten wir die Möglichkeit, Repräsentaten zu bestimmen. Für diese Aufgabe speichert ein Repräsentant ebenfalls die Größe seines Baumes. Dies wird bei Union entsprechend aktuell gehalten. Als Ordnung wählen wir die Pixelposition mit Priorität auf der y-Koordinate.
+Der Wert eines Punktes $P(x,y)$ ist $w_P=P_y \cdot n + P_x$. Damit ist in einer Zusammenhangskomponente der am weitesten links liegende von den am weitesten oben liegenden Pixel der Repräsentant. Unsere Indizes im Bild beginnen mit 1 und laufen bis n. \texttt{size} gibt die Größe einer Zusammenhangskomponente aus, indem der Wert des Repräsentanten ausgelesen wird. Wir gehen davon aus, dass union nur Repräsentanten als Eingabe erhält und daher einen Vergleich auf Gleichheit durchführt, um eine Vereinigung einer Menge mit sich selbst zu verhindern.
+\begin{enumerate}
+\item \begin{description}
+	\item[Algorithmus:] MAXFLAECHE \begin{lstlisting}
+MAXFLAECHE(){
+	int max = 0;
+	for int y = 1 to n
+		for int x = 1 to n
+			if (B[x,y] == schwarz){
+				if (x > 1)
+					if (B[x-1,y] == schwarz)
+						union(find(B[x,y]), find(B[x-1,y]));
+				if (y > 1)
+					if (B[x,y-1] == schwarz)
+						union(find(B[x,y]), find(B[x,y-1]));
+				int size = size(find(B[x,y]);
+				if (max < size)
+					max = size;
+			}
+	return max;
+}
+	\end{lstlisting}
+\item[Analyse:] Der Algorithmus betrachtet jedes Pixel einmal. Wenn das betrachtete Pixel schwarz ist, gibt es für schwarze Nachbarn nach links und oben je eine Find- und Union-Operation. Im Pseudocode stehen zwei Find-Operationen auf der Menge des betrachteten Pixels. Doch im ersten Fall ist der Repräsentant immer das betrachtete Pixel, da es noch nicht vereinigt wurde. Um im zweiten Fall kann man das Find dadurch wegoptimieren, da dies der Ergebnisrepräsentant der Union-Operation im ersten Fall ist. Oder wieder das betrachtete Pixel, wenn der erste Fall nicht eingetreten ist. Ebenso lasst sich das Find bei dem Vergleich der Größen wegoptimieren. Es gibt also pro zwei benachbarten schwarzen Pixeln eine Find- und eine Union-Operation. (Selbst das lässt sich noch optimieren, wenn man berücksichtigt, wenn der linke und der obere Nachbar bereits zusammen in einer Zusammenhangskomponente sind und somit das zweite Union gespart wird. Für die Laufzeitbetrachtung lassen wir das aber außer Acht).\\
+Es gibt $(n-1)^2$ viele Kanten in dem Graph, der die Nachbarschaftsbeziehung zweier Pixel repräsentiert. Da die Zusammenhangskomponenten Teilgraphen sind, bleiben es $O(n^2)$ viele Kanten. Man hat also $O(n^2)$ viele Find-Operationen und $O(n^2)$ viele Union-Operationen. Laut VL erhält man daher eine Laufzeit von $O(2 \cdot n^2 \cdot n^2 + 2 \cdot n^2 \cdot \alpha (2 \cdot n^2,n^2)) = O(n^4 + n^2 \cdot \alpha (n^2,n^2))$.
+\end{description}
+\item Das Programm speichert eine globale Variable \texttt{max}, welche die Größe einer größten Zusammenhangskomponente speichert. Alternativ kann man auch den Repräsentanten einer größten Zusammenhangskompoinente speichern, der wie in Aufgabenteil a) die Größe speichert.\begin{lstlisting}
+int max = 0;
+
+SCHWAERZE(x,y){
+	if (B[x,y] == schwarz)
+		return max;
+	B[x,y] = schwarz;
+	if (x > 1)
+		if (B[x-1,y] == schwarz)
+			union(find(B[x,y]), find(B[x-1,y]));
+	if (x < n)
+		if (B[x+1,y] == schwarz)
+			union(find(B[x,y]), find(B[x+1,y]));
+	if (y > 1)
+		if (B[x,y-1] == schwarz)
+			union(find(B[x,y]), find(B[x,y-1]));
+	if (y < n)
+		if (B[x,y+1] == schwarz)
+			union(find(B[x,y]), find(B[x,y+1]));
+	int size = size(find(B[x,y]));
+	if (max < size)
+		max = size;
+	return max;
+}
+\end{lstlisting}
+Wie auch in a) lassen sich hier die wiederholten \texttt{find(B[x,y])}-Operationen wegoptimieren, indem der Ergebnisrepräsentant der vorhergegangenen Union-Operation gespeichert wird. Daher hat die Funktion im Schlimmstfall je $4$ Union- und Find-Operationen. Für $m$ Aufrufe von schwärze erhalten wir eine Laufzeit von $O(4 \cdot m \cdot n^2 + 4 \cdot m \cdot \alpha (4 \cdot m, n^2)) = O(m \cdot n^2 + m \cdot \alpha (m, n^2))$. Laut VL ist dies optimal.
+\item Union hat eine Laufzeit von $O(1)$, da sie nur den kleineren Knoten an den größeren hängt. Dadurch sind die Bäume einigermaßen balanciert, sodass sie maximale Höhe $\log n$ haben. Ein Find-Aufruf hat daher Laufzeit $O(\log n)$.
+Für die gesamte Laufzeit eines einzelnen Aufrufs erhält man also im schlimmsten Fall $O(4 \cdot 1 + 4 \cdot \log n) = O(\log n)$.
+\end{enumerate}
+\end{document}
