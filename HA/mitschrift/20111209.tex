@@ -1,0 +1,108 @@
+\begin{itemize}
+ \item $\alpha(m,n)$ taucht öftes auf: $n$ Strecken, wieviele Schnittpunkte sieht man von unten $O(n \alpha(m,n))$
+ \item Bester MST-Algorithmus: $O(\underbrace{m}_{\text{\# Kosten}}, \alpha(m,\underbrace{n}_{\text{\# Knoten}}))$ Zeit
+\end{itemize}
+
+\Defi Sei $D$ Datenstruktur mit Operationen $\operatorname{Op}_1, ..., \operatorname{Op}_k$.
+         wenn für \emph{jede} genügend lange Folge $X$ von Operationen gilt: 
+         \begin{itemize}
+         \item Laufzeit von $X$ ist $a_1 \cdot t_1 + ... + a_k t_k$, wobei $o_1 = \text{\# der Operation $\operatorname{Op}_i$ in $X$}$
+         \end{itemize}
+         Dann sagen wir: Die \emph{amortisierte Laufzeit} für Op$_i$ ist $t_i$
+
+Bei UNION-FIND: Amortisierte  Laufzeit für UNION und FIND ist $O(\alpha(m,n))$. Genauer (kann man zeigen):
+\begin{itemize}
+ \item die amortisierte Laufzeit für UNION ist $O(1)$
+ \item die amortisierte Laufzeit fpr FIND ist $O(\alpha(m,n))$
+\end{itemize}
+
+\section{Hashing}
+Wörterbuchproblem:
+\begin{description}
+ \item $K$: Schlüsselmenge
+ \item $V$: Wertemenge
+\end{description}
+Speichere Menge von Einträgen $(k,v) \in K \times V$. Operation:
+\begin{description}
+ \item $\operatorname{put}(k,v)$ Setze Eintrag für $k$ auf $v$
+ \item $\operatorname{delete}(k)$ Lösche Eintrag für $k$
+ \item $\operatorname{get}(k)$ Suche Eintrag für $k$
+\end{description}
+
+\subsection{Hashing mit Verkettung}
+\begin{itemize}
+\item Hashtabelle $T$: Array der Länge $m$.
+\item Hashfunktion $h{:} K \to \{0, ..., m-1\}$
+\item Speichere Eintrage für $k$ an der Stelle $h(k)$ in $T$
+\item \textbf{Kollision:} Schlüssel $k \neq l \in K$ mit $h(k) = h(l)$. In der Regel unvermeidbar
+\item \textbf{Kollisionsbehandlung:} Verkettung. Speichere alle Einträge, die auf die selbe Stelle hashen in einer verketteten Liste
+\end{itemize}
+Laufzeit?
+\begin{itemize}
+ \item Hängt von $h$ ab
+ \item Theorie: $h$ zufällige Funktion $\rightarrow$ gute Laufzeit
+ \item Aber: Wie wähle ich $h$ zufällig und speichere es?\\
+     \begin{itemize}
+      \item Lösung 1: heuristische Hashfunktion
+      \item Lösung 2: universelles Hashing
+     \end{itemize}
+\end{itemize}
+
+\subsection[Universelles Hashing]{Universelles Hashing (Carter-Wegman)}
+\Defi Sei $H$ eine Menge von Funktionen $h{:} K \to \{0,...,m-1\}$. $H$ heißt \emph{universell}, wenn 
+\[\forall k, l \in K, k \neq l{:} \operatorname{Pr}_{h \in H}\left[h(k) = h(l)\right] \leq \frac{1}{m}\]
+\Satz Sei $H$ universell, $h \in H$ zufällig. Sei $T$ Hashtabelle, in der $n$ Schlüssel gespeichert sind. Sei $k \in K$ fest. Dann ist die erwartete Anzahl an Schlüsseln $\neq k$ bei $T[h(k)] \leq \frac{n}{m}$
+\Bew Sei $S$ Menge der Schlüssel in $T$.
+    \begin{description}
+     \item $Y_k$: Anzahe der  Schlüssel in $ \setminus \{k\}$, die auf $h(k)$ gehasht werden.
+    \end{description}
+    Suchen $E[Y_k]$
+    \begin{itemize}
+     \item Definiere für $l \in S \setminus \{k\}$
+             \[X_{k,l} = \begin{cases}
+                          1, & \text{falls $h(k) = h(l)$} \\
+                          0, & \text{sonst}
+                         \end{cases}\]
+     \item Dann ist $Y_k = \sum\limits_{l \in S \setminus \{k\}} X_{k,l}$
+     \item Also:
+         \begin{align*}
+          E[Y_k] &= \sum\limits_{l \in S \setminus \{k\}} E[X_{k,l}] \\
+                 &= \sum\limits_{l \in S \setminus \{k\}} \operatorname{Pr}[h(k) = h(l)] \\
+                 &\overset{\text{(Definition von $H$)}}{\leq} \sum\limits_{l \in S \setminus \{k\}} \frac{1}{m} \leq \frac{n}{m}
+         \end{align*}\hfill$\square$
+    \end{itemize}
+Bei universellem Hashing ist die erwartete Laufzeit pro Opeation $O\left(1+\underset{\text{Belegungsfaktor}}{\frac{n}{m}}\right)$.\\
+Gibt es gute universelle Familien?
+\begin{itemize}
+ \item Ja. Sei $K = \underbrace{\{0, ..., p-1\}}_{\mathbb{Z}_p}$, $p$ Primzahl
+ \item Für $a,b \in \{0, ..., p-1\}, a \neq 0$.
+ \item Definiere $h_{a,b}(k) = ((\overbrace{a \cdot k + b}^{\text{Gerade}}) \mod p) \mod m$
+ \item Setze $H := \{h_{a,b}\ |\ a,b \in \{0, ..., p-1\}, a \neq 0\}\}$
+\end{itemize}
+\Satz $H$ ist universell
+\Bew Fixiere $k, l \in K, k \in l$. Was ist $\operatorname{Pr}[h(k) = h(l)]$?
+\begin{itemize}
+ \item Klar: $a \cdot k + l \neq a \cdot l + n \mod p$ gibt es keine Kollision:
+     \begin{itemize}
+     \item Fixiere $r,s \in \{0, ..., p-1\}, r \neq s$
+     \item Behauptung: Es exisitiert genau ein $a, b$. so dass 
+         \[a \cdot k + b = r \pmod{p} \qquad a \cdot l + b = s \pmod{p}.\]
+         \Bew
+             \begin{align*}
+              a k + b &= r \pmod{p}\\
+              a l + b &= s \pmod{p}\\\hline
+              a (k - l) &= r - s \pmod{p} \\
+\Leftrightarrow      a  &= (r-s)(k-l)^{-1} \pmod{p} 
+             \end{align*}
+             Kann $b$ auch ausrechnen $\Rightarrow$ $a, b$ eindeutig.
+     \item Kollisionen passieren nur $\mod m$:
+             \begin{itemize}
+             \item Nimm $r, s \in \{0, ..., p-1\}, r \neq s$. Wie viele solcher $r, s$ gibt es mit $r = s \pmod{m}$
+             \item $\underbrace{P}_{\text{Möglichkeiten für $r$}} (\underbrace{\left\lceil\frac{p}{m}\right\rceil - 1}_{\text{Möglichkeiten für $s$}}) \leq \frac{p(p-1)}{m} = \frac{|H|}{m}$
+             \item Anzahl der Hashfunktionen, für die $h(k) = h(l) \leq \frac{|H|}{m}$ \\
+                 $\Rightarrow$ Wahrscheinlichkeit für Kollision $\leq \frac{1}{m}$
+             \end{itemize}
+     \end{itemize}
+\end{itemize}
+
+

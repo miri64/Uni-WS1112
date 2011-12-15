@@ -1,0 +1,101 @@
+\section{Bottom-Up-Syntaxanalyse}
+\subsection{Einführung}
+Naives Voegehen am Beispiel einfacher artihmetischer Ausdrücke
+\begin{align*}
+ E &\to E+T\ |\ T \tag{1. / 2.} \\
+ T &\to T*F\ |\ F \tag{3. / 4.}\\
+ F &\to (E)\ |\ i \tag{5. / 6.}
+\end{align*}
+\[                        \underline{i} * i 
+\underset{6}{\rightarrow} \underline{F} * i 
+\underset{4}{\rightarrow} T * \underline{i}
+\underset{6}{\rightarrow} \underline{T * F}
+\underset{3}{\rightarrow} \underline{T}
+\underset{2}{\rightarrow} E
+\]
+in umgekehrter Reihenfolge ergibt sich eine Rechtsherleitung des analysierten Wortes. \\
+alternativ:
+\[                        \underline{T} * i
+\underset{2}{\rightarrow} \underline{E} * i
+\underset{6}{\rightarrow} E * \underline{F}
+\underset{4}{\rightarrow} E * \underline{T}
+\underset{2}{\rightarrow} E * E \tag{Sackgasse!}
+\]
+\paragraph*{Informelle Definition:} Ein \emph{Handle} in einer umgekehrten Rechtsherleitung ist der Teilstring $\beta$ der aktuellen Rechtssatzform, der als nächstes mit der Regel $A \to \beta$ auf $A$ zu reduzieren ist.
+\paragraph*{Formale Definition:} Sei $S \underset{rm}{\xrightarrow{*}} \alpha Aw \underset{rm}{\rightarrow} \alpha \beta w$ eine Rechtsherleitung. Die Produktion $A \to \beta$ zusammen mit ihrem Vorkommen nach $\alpha$ heißt \emph{Handle} von $\alpha \beta w$
+\Lemma Wenn $G$ eindeutig ist, dann gibt es zu jeder Rechtssatzform genau einen Handle.
+\paragraph*{Konvention:} Wenn es zu $\beta$ nur eine rechte Regelseite der Form $\beta$ gibt und $\beta$ nur einmal in $\alpha \beta w$ vorkommt, dann spricht man: "`$\beta$ ist Handle von $\alpha \beta w$."'
+
+\subsection{Bottom-Up-Syntaxanalyse durch Handle-Produktionen}
+Sei $G$ eine kontextfreie Grammatik und $w \in \mathcal{L}(G)$. Sei $S = \gamma_0 \to \gamma_1 \to ... \gamma_n = w$ eine Rechtsherleitung von $w$.
+\begin{enumerate}
+ \item Beginne mit $i = n$
+ \item \emph{Lokalisiere den Handle} in $\gamma_i$ und ersetze ihn durch das entsprechende Nichtterminal, um $\gamma_{i-1}$ zu erhalten.
+ \item Wiederhole 2. bis man auf $\gamma_0 = S$ stößt.
+\end{enumerate}
+\paragraph*{Problem:} Wie lokalisiert man den Handle? (später)\\
+
+\subsection{Stack-Implementierung der Bottom-Up-Analyse (Shift-Reduce-Parser)}
+\begin{itemize}
+ \item Verwende einen Stack, der Symbole $\mathcal{N} \cup \mathcal{T}$ enthält sowie \$ am Grund
+ \item Eingabe $w \in \mathcal{T}^*$, mit $w\$$ auf Input (hier von links nach rechts)
+ \item Schreibe top von Stack jeweils nach rechts.
+ \item Anfangszustand: Stack: $\$$; Input: $w\$$
+\end{itemize}
+
+\paragraph*{Verfahren:}
+\begin{itemize}
+ \item Schreibe (shift) so lange Symbole vom Input auf den Stack, bis der Handle auf der Kellerspitze erscheint.
+ \item Reduziere (reduce) am Handle auf der Kellerspitze
+ \item Wiederhole diesen Prozess, bis entweder $\$S$ auf dem Keller erscheint mit Input $= \$$m dann akzeptiere $w$; oder ein Fehler auftritt, der gemeldet wird.
+\end{itemize}
+
+\begin{center}
+ \begin{tabular}{|c|c|c|c|}
+  Stack   & Input   & Aktion & Ausgabe     \\\hline
+  $\$$    & $i*i\$$ & shift  &             \\
+  $\$i$   & $*i\$$  & reduce & $F \to i$   \\
+  $\$F$   & $*i\$$  & reduce & $T \to F$   \\
+  $\$T$   & $*i\$$  & shift  &             \\
+  $\$T*$  & $i\$$   & shift  &             \\
+  $\$T*i$ & $\$$    & reduce & $F \to i$   \\
+  $\$T*F$ & $\$$    & reduce & $T \to T*F$ \\
+  $\$T$   & $\$$    & reduce & $E \to T$   \\
+  $\$E$   & $\$$    & accept &
+ \end{tabular}
+\end{center}
+Parsebaum:
+\begin{center}
+\pstree{\Tr{$E$}}{
+    \pstree{\Tr{$T$}}{
+        \pstree{\Tr{$T$}}{
+            \pstree{\Tr{$F$}}{
+                \Tr{$i$}
+            }
+        }
+        \Tr{*}
+        \pstree{\Tr{$F$}}{
+            \Tr{$i$}
+        }
+    }
+}
+\end{center}
+Nichtdeterministisch
+\paragraph*{Konflikte:}
+\begin{itemize}
+ \item \emph{shift-reduce}-Konflikte
+ \item \emph{reduce-reduce}-Konflikte
+\end{itemize}
+
+\subsection{Hierarchie innerhalb der Klasse der kontextfreien Sprachen}
+\begin{description}
+ \item[DPDA] Deterministischer Kellerautomat
+ \item[NPDA] Nicht-deterministischer Kellerautomat
+\end{description}
+\[\mathcal{L}(\text{LL(1)}) \subsetneq \mathcal{L}(\text{DPDA}) \subsetneq \mathcal{L}(\text{DPDA}) = \text{alle kontextfreien Sprachen}\]
+\[\text{LL(1)} \subseteq \text{LL($k$)}, \mathcal{L}(\text{LL(1)}) \subsetneq \mathcal{L}(\text{LL(2)}) ... \subsetneq \mathcal{L}(\text{LL($k$)}) \subsetneq \mathcal{L}(\text{DPDA})\]
+\Defi Grammatik heißt \emph{LR(1)-Grammatik}, genau dann wenn es einen deterministischen Kellerautomaten gibt, der mit Lookahead $k$ eine Rechtsherleitung der eingabe in umgekehrter Reihenfolge liefert.
+\Satz LR(1) ist mächtiger als $\textrm{LL} = \bigcup\limits_{k \in \mathbb{N}} \textrm{LL}(k)$
+
+
+

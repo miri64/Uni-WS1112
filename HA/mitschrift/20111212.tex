@@ -1,0 +1,68 @@
+\subsection{Perfektes Hashing}
+Situation: $S \subseteq K, |S| = n$ fest gegeben. Wollen gute \emph{worst-case} Laufzeit.
+\begin{description}
+ \item[Idee 1:] Finde Hashfunktion $h{:} K \to \{0, ..., m-1\}$, so dass $h$ \emph{keine} Kollision auf $S$ hat. Geht immer, wenn $m \geq n$ ist.
+ \begin{description}
+  \item[Problem:] $h$ muss einfach zu berechnen sein, und einfach darstellbar.
+  \item[Lösungsidee:] Wähle $h$ aus universeller Familie, so dass $h$ auf $S$ keine Kollision hat.
+ \end{description}
+ \emph{Wann geht das?} Wahrscheinlich, wenn $m$ groß genug ist. \\
+ \emph{Wie groß muss $m$ sein, damit zufälliges universelles $h{:}\ K \to \{0,...,m-1\}$ auf $S$ ($|S| = n$) keine Kollision hat?}
+ \begin{description}
+  \item[Lemma 1:] Sei $S \subseteq K$, $|S| = n$ fest $H$ universelle Familie von Hashfunktionen. Dann
+      \[E_{h \in H}[\#\text{Kollisionen auf $S$}] \leq \binom{n}{2} \cdot \frac{1}{m}\]
+  \item[Beweis:] Sei $Y = \#\text{Kollisionen}$. Sei 
+      \[k \neq l \in S{:}\ X_{k,l} = \begin{cases}1, & \text{wenn $h(k) = h(l)$}\\ 0, & \text{sonst}\end{cases}\]
+      \begin{align*}
+      E[Y]   &= \sum\limits_{k \neq l \in S} E[X_{kl}] \\
+             &= \sum\limits_{k \neq l \in S} \operatorname{Pr}[h(k) = h(l)] \\
+             &\leq \sum\limits_{k \neq l \in S} \frac{1}{m} = \binom{n}{2} \cdot \frac{1}{m}.  
+      \end{align*} \hfill $\square$
+  \item[Problem 1:] Brauchen $m = n(n-1) = \Theta(n^2)$ Plätze in der Hashtabelle, dann $E[\#\text{Kollision}] \leq \frac{1}{2}$. Das ist schlecht.
+  \item[Problem 2:] Wie finden wir ein gutes $h \in H$ effizient?
+ \end{description}
+ \begin{description}
+  \item[Problem 1:] Wie bei Hashing mit Verkettung: 2-stufige Hashtabelle
+  \item[1. Stufe:] $T_1$ mit $n$ Positionen ($m_1 = n$).
+      \begin{itemize}
+       \item Wähle $h{:}\ K \to \{0, ..., n - 1\} \in H$ universell.
+       \item Setze $S_i = \{k \in S\ |\ h(k) = i\}$
+       \item Lege für Position $i$ eine Hashtabelle der Größe $|S_i|^2$ an.
+       \item Wähle $h_i{:}\ K \to \{0, ..., |S_i|^2 - 1\}$ universell
+      \end{itemize}
+      Was ist der Platzbedarf?
+      \begin{description}
+       \item[Lemma:] $E_{h \in H}[\text{Platzbedarf}] = O(n)$
+       \item[Beweis:] \begin{align*}
+                       \text{Platzbedarf} &= \overset{\text{für $T_n$}}{n} + \sum\limits_{i = 0}^{n-1} |S_i|^2 \\
+                            &= n + \sum\limits_{i = 0}^{n - 1} \left(\sum\limits_{k \in S_i} 1\right) \cdot \left(\sum\limits_{l \in S_i} 1\right) \\
+                            &= n + \sum\limits_{i = 0}^{n - 1} \left(\sum\limits_{k \in S_i} 1 + 2 \cdot \sum\limits_{k \neq l \in S_i} 1\right)\\
+                            &= n + \sum\limits_{i = 0}^{n - 1} |S_i| + \sum\limits_{i = 0}^{n - 1} \sum\limits_{k \neq l \in S_i} 2\\
+                            &= n + n + \sum_{k \neq l \in S} 2 X_{k,l}, \text{wobei $X_{k,l} = \begin{cases}1, &\text{wenn $h(k) = h(l)$}\\ 0, & \text{sonst}\end{cases}$}
+                      \end{align*}
+                      \begin{align*}
+                       E[\text{Platzbedarf}] &= 2n + 2 \sum\limits_{k \neq l \in S} E[X_{k,l}] \\
+                               &\leq 2n + 2 \sum_{k \neq l \in S} \frac{1}{n}
+                               &= 2n + 2 \cdot \frac{n(n-1)}{2} \cdot \frac{1}{n}
+                               &= 3n - 1 = O(n)
+                      \end{align*} \hfill $\square$
+      \end{description}
+  \item[Problem 2:] [100 Basketballspieler. Durchschnittsgröße 2 Meter, \\$\leq 50$ Basketballspieler haben Größe $\geq 4$m.]
+ \end{description}
+Markov-Ungleichung: $X \geq 0, t \geq 0$
+\begin{itemize}
+ \item Es gibt: $Pr[X \geq t] \leq \frac{E[X]}{t}$.
+\end{itemize}
+In unserer Anwendung:
+\begin{align*}
+\operatorname{Pr}_{h \in H}[\#\text{Kollision}] &\geq \frac{E[\#\text{Kollision}]}{1} \\
+                                               &= \frac{1}{2}
+\end{align*}
+
+\begin{align*}
+\operatorname{Pr}_{h \in H}[\text{Platzbedarf $\geq 6n$}] &\leq \frac{E[\text{Platzbedarf}]}{6n} \\
+                                               &= \frac{3n}{6n} = \frac{1}{2}
+\end{align*}
+\item[Satz:] Können in $O(n)$ \emph{erwartete} Vorverarbeitungszeit eine Datenstruktur für $S$ bauen, die $O(n)$ Platz benötigt und $O(1)$ worst-case Lookups unterstützt
+\item[Beweis:] Wähle $h \in H$, bis zufällig, bis Eigenschaften erfüllt. Erfolgswahrscheinlichkeit hat jeweils $\geq \frac{1}{2} \Rightarrow 2$ Versuche jeweils im Erwartungswert.
+\end{description}
