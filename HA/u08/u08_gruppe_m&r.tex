@@ -61,7 +61,8 @@
 
 \section{Das Offline-Minimum-Problem}
 \begin{enumerate}
-\item  Löse die Aufabe mit folgender Tabelle. In den Zeilen sind die Operationen ausgeführt und ihre Auswirkung auf die Menge. Die gewünschte Ausgabe erhält man, wenn man die letzte Spalte von oben nach unten betrachtet.\\ \\
+\item  Löse die Aufabe mit folgender Tabelle. In den Zeilen sind die Operationen ausgeführt und ihre Auswirkung auf die Menge. Die gewünschte Ausgabe erhält man, wenn man die letzte Spalte von oben nach unten betrachtet.
+    \begin{center}
 	\begin{tabular}{ c | l | c }
 	\textbf{Operation} & \textbf{T} & \textbf{Ausgabe} \\
 	\hline
@@ -95,7 +96,8 @@
 	\hline
 	5 & 5, 7, 9 & \\
 	\hline
-	\end{tabular}\\ \\
+	\end{tabular}
+	\end{center}
 	Als Ergebnis erhält man also die Folge 4 3 2 6 8 1.
 \item   Nach der gegebenen Aufteilungsregel erhalten wir folgenden Mengen.\begin{align*}
 	&I_1 = \{4, 8\}\\
@@ -106,7 +108,9 @@
 	&I_6 = \{1, 7\}\\
 	&I_7 = \{5\}
 	\end{align*}
-	Wir wenden für den Algorithmus wieder eine Tabelle an, die die Iterationen der \texttt{for}-Schleife darstellt. Eine Zeile enthält den Zustand am Ende der Iteration. Entgegen der Standardnotation wähle ich $\{\}$ als leere Menge und $\emptyset$ als nicht mehr existierende Menge.\\ \\
+	Wir wenden für den Algorithmus wieder eine Tabelle (s. Tabelle \ref{tab_2b}) an, die die Iterationen der \texttt{for}-Schleife darstellt. Eine Zeile enthält den Zustand am Ende der Iteration. Entgegen der Standardnotation wähle ich $\{\}$ als leere Menge und $\emptyset$ als nicht mehr existierende Menge.
+	\begin{table}[t]
+	\centering
 	\begin{tabular}{ c || c | c | l | l | l | p{1.5cm} | p{1.2cm} | l | p{1.2cm} || l }
 	\texttt{i} & \texttt{j} & \texttt{l} & \textbf{$I_1$} & \textbf{$I_2$} & \textbf{$I_3$} & \textbf{$I_4$} & \textbf{$I_5$} & \textbf{$I_6$} & \textbf{$I_7$} & \texttt{em}\\
 	\hline
@@ -128,7 +132,9 @@
 	\hline
 	8 & 5 & 7 & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{1, 2, 3\} \newline \{4, 5, 6\} \newline \{7, 8, 9\}$ & $[4, 3, 2, 6, 8, 1]$ \\
 	\hline
-	\end{tabular}\\ \\
+	\end{tabular}
+	\caption{}\label{tab_2b}
+	\end{table}
 Für das gegebene Beispiel führt der Algorithmus zum korrekten Ergebnis, was jedoch noch kein Beweis dafür ist, dass der Algorithmus immer zum richtigen Ergebnis führt.
 Für den Gesamtbeweis, beweisen wir die einzelnen Eigenschaften separat.
 \begin{description}
@@ -138,8 +144,9 @@ Für den Gesamtbeweis, beweisen wir die einzelnen Eigenschaften separat.
 \end{description}
 Damit sind alle relevanten Eigenschaften des Algorithmus bewiesen worden und der Algorithmus als Ganzes ist korrekt.
 
-\item   \begin{description}
-Wir setzen voraus, dass die Mengen bereits vorhanden sind und beziehen die Laufzeit zum Erstellen der Mengen nicht in unsere Laufzeitbetrachtung mitein.
+\item 
+Wir setzen voraus, dass die Mengen bereits vorhanden sind und beziehen die Laufzeit zum Erstellen der Mengen nicht in unsere Laufzeitbetrachtung mitein.  
+    \begin{description}
 	\item[Union:] Verwende \textbf{Union} bei der Vereinigung der Mengen \texttt{K(J)} und \texttt{K(l)}.
 	\item[Find:] Verwende \textbf{Find} zum Finden der Menge, die \texttt{i} enthält, und der Menge, die \texttt{l} enthält.
 	\item[Laufzeit:] Der Algorithmus hat $m$ \textbf{Union}-Operationen und jeweils $n$ \textbf{Find}-Operationen für das Finden von $j$ und $l$. Dies führt zu einer Laufzeit von $O(n+(2n+m)*\alpha(2m+n, n))$.
