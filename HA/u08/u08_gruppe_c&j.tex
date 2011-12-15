@@ -162,7 +162,8 @@ Das Verdoppeln ist nötig, um die Elemente unterzubekommen. Theoretisch könnte 
 Wie im Folgenden analysiert wird, kosten die Einfüge- und Löschoperationen amortisiert konstante Zeit. Anmerkung: Natürlich lässt sich immer eine Folge von Lösch- und Einfügeoperationen finden, die Laufzeit linear werden lässt (in unserem Fall abwechselndes Einfügen
 und Löschen bei halbvollem/vollem Array).
 Sowohl das Vergrößern als auch das Halbieren hat kosten $O(n)$, da ein neues Array der Länge $O(n)$ angelegt werden muss und umkopiert werden muss. Alle davon unbetroffenen Einfüge- und Löschoperationen brauchen konstante Zeit.
-Betrachten wir zunächst eine Folge von Einfügeoperationen: 
+Betrachten wir zunächst eine Folge von Einfügeoperationen: Sei $m$ die momentane Größe des Arrays. Um nun $m$ Elemente einzufügen, muss das Array einmal verdoppelt werden (Kosten $2*m$) somit entstehen insgesamt Kosten $3*m = O(m)$ Kosten.
+Die amortisieten Kosten für eine Einfügeoperation sind somit $3*m / m = 3 = O(1)$. Analog gilt dies auch für die Löschoperationen.
 
 
 \end{enumerate}
