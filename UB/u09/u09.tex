@@ -1,0 +1,377 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 9}
+\author{Christian Cikryt (4285814; Tutorium: Mo. 16-18 Uhr)\\
+  Robert Fels (4210496; Tutorium: Mi. 8-10 Uhr)\\
+  Martin Lenders (4206090; Tutorium: Mi. 10-12 Uhr)
+  }
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Christian Cikrit, Robert Fels, Martin Lenders}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\makeatletter
+\newcommand{\Rm}[1]{\textrm{\expandafter\@slowromancap\romannumeral #1@}}
+\makeatother
+\newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
+\newcommand{\add}[1]{\{\texttt{s += #1})\}}
+\newcommand{\FIRST}{\operatorname{FIRST}}
+\newcommand{\FOLLOW}{\operatorname{FOLLOW}}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+\begin{enumerate}
+\item   \begin{align*}
+            I_0 &= \text{Closure}(\{S' \to .S\}) = \{S' \to .S, S' \to .SS+, S \to .SS*, S \to .a\}\\
+            I_1 &= \text{Goto}(I_0) = \text{Closure}(\{S \to S., S \to S.S+, S \to S.S*\}) \\
+                &= \{S \to S., S \to S.S+, S \to S.S*, S' \to .SS+, S \to .SS*, S \to .a\}
+        \end{align*}
+\item   \hfill
+        \begin{center}
+            \begin{psmatrix}
+                \begin{minipage}{2cm}
+                    \begin{tabular}{|l|}
+                        \hline
+                        $S \to .S$   \\\hline
+                        $S \to .SS+$ \\
+                        $S \to .SS*$ \\
+                        $S \to .a$   \\\hline
+                    \end{tabular}
+                \end{minipage} &
+                \begin{minipage}{2cm}
+                    \begin{tabular}{|l|}
+                        \hline
+                        $S \to S.$   \\
+                        $S \to S.S+$ \\
+                        $S \to S.S*$ \\\hline
+                        $S \to .SS+$ \\
+                        $S \to .SS*$ \\
+                        $S \to .a$   \\\hline
+                    \end{tabular}
+                \end{minipage} &
+                \begin{minipage}{2cm}
+                    \begin{tabular}{|l|}
+                        \hline
+                        $S \to SS.+$ \\
+                        $S \to SS.*$ \\
+                        $S \to S.S+$ \\
+                        $S \to S.SÜ$ \\\hline
+                        $S \to .SS*$ \\
+                        $S \to .SS*$ \\
+                        $S \to .a$   \\\hline
+                    \end{tabular}
+                \end{minipage} &
+                \begin{minipage}{2cm}
+                    \begin{tabular}{|l|}
+                        \hline
+                        $S \to SS+.$ \\\hline
+                    \end{tabular}
+                \end{minipage} \\
+                &
+                \begin{minipage}{1.8cm}
+                    \begin{tabular}{|l|}
+                        \hline
+                        $S \to a.$ \\\hline
+                    \end{tabular}
+                \end{minipage} &
+                \textbf{accept} &
+                
+                \begin{minipage}{2cm}
+                    \begin{tabular}{|l|}
+                        \hline
+                        $S \to SS*.$ \\\hline
+                    \end{tabular}
+                \end{minipage} \\
+            \end{psmatrix}
+            \nput{135}{1,1}{$I_0$}
+            \nput{135}{1,2}{$I_1$}
+            \nput{135}{2,2}{$I_2$}
+            \nput{135}{1,3}{$I_3$}
+            \nput{135}{1,4}{$I_4$}
+            \nput{135}{2,4}{$I_5$}
+            
+            \ncline[offset=0.5]{->}{1,1}{1,2}\naput{$S$}
+            \ncline[offset=0.5]{->}{1,2}{1,3}\naput{$S$}
+            \ncline{->}{1,2}{2,2}\naput{$a$}
+            \ncangle[angleA=0,angleB=180,armB=1,offsetA=-1]{->}{1,2}{2,3}\nbput{$S$}
+            \ncangle[angleA=180,angleB=180,offsetB=-0.8]{->}{1,3}{1,3}\nbput{$S$}
+            \ncangle[angleA=-90,angleB=-90,offsetA=0.8]{->}{1,3}{2,2}\naput{$a$}
+            \ncangle[angleA=0,angleB=90,offsetA=-0.8]{->}{1,3}{2,4}\naput{$*$}
+            \ncline{->}{1,3}{1,4}\naput{+}
+        \end{center}
+\item   $\text{FOLLOW}(S) = \{+, *, a, \$\}$
+        \begin{center}
+            \begin{tabular}{c|c|c|c|c||c}
+                & $+$  & $*$  & $a$  & $\$$  & $S$  \\\hline\hline
+            0   &      &      & s2   &       & 1    \\\hline
+            1   &      &      & s2   & acc   & 3    \\\hline
+            2   & r3   & r3   & r3   & r3    &      \\\hline
+            3   & s4   & s5   & s2   &       & 3    \\\hline
+            4   & r1   & r1   & r1   & r1    &      \\\hline
+            5   & r2   & r2   & r2   & r2    &      
+            \end{tabular}
+        \end{center}
+\item   Ja, da es keine Konflikte in der Tabelle gibt.\pagebreak
+\item   \hfill
+        \begin{center}
+            \begin{tabular}{l|l|r|c|l}
+                Stack & Symbol  & Eingabe   & Aktion & Ausgabe     \\\hline\hline
+                0     & $\$$    & $aa*a+\$$ & shift  &             \\\hline
+                02    & $\$a$   & $a*a+\$$  & reduce & $S \to a$   \\\hline
+                01    & $\$S$   & $a*a+\$$  & shift  &             \\\hline
+                012   & $\$Sa$  & $*a+\$$   & reduce & $S \to a$   \\\hline
+                013   & $\$SS$  & $*a+\$$   & shift  &             \\\hline
+                0135  & $\$SS*$ & $a+\$$    & reduce & $S \to SS*$ \\\hline
+                01    & $\$S$   & $a+\$$    & shift  &             \\\hline
+                012   & $\$Sa$  & $+\$$     & reduce & $S \to a$   \\\hline
+                013   & $\$SS$  & $+\$$     & shift  &             \\\hline
+                0134  & $\$SS+$ & $\$$      & reduce & $S \to SS+$ \\\hline
+                01    & $\$S$   & $\$$      & accept &             
+            \end{tabular}
+        \end{center}
+\end{enumerate}
+
+\section{}
+\begin{center}
+    $0^*1 \qquad 0^*S1$
+\end{center}
+
+\section{}
+\begin{center}
+    \begin{psmatrix}[rowsep=0.8cm]
+        & \textbf{accept} & \\
+        \begin{minipage}{2cm}
+            \ 
+        \end{minipage} &
+        \begin{minipage}{2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to S.+$ \\\hline
+            \end{tabular}
+        \end{minipage} &
+        \begin{minipage}{2.2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to AaAb.$ \\\hline
+            \end{tabular}
+        \end{minipage}\\
+        &
+        \begin{minipage}{2.2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to A.aAb$ \\\hline
+            \end{tabular}
+        \end{minipage} &
+        \begin{minipage}{2.2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to Aa.Ab$ \\\hline
+                $A \to .$     \\\hline
+            \end{tabular}
+        \end{minipage}\\
+        &
+        \begin{minipage}{2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to B.bBa$ \\\hline
+            \end{tabular}
+        \end{minipage} &
+        \begin{minipage}{2.2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to AaA.b$ \\\hline
+            \end{tabular}
+        \end{minipage}\\
+        &&
+        \begin{minipage}{2.2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to Bb.Ba$ \\\hline
+                $B \to .$     \\\hline
+            \end{tabular}
+        \end{minipage}\\
+        \begin{minipage}{2cm}
+            \ 
+        \end{minipage} &&
+        \begin{minipage}{2.2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to BbB.a$ \\\hline
+            \end{tabular}
+        \end{minipage}
+    \end{psmatrix}
+    \ncline[linestyle=none]{2,1}{6,1}\ncput{
+        \rnode{I_0}{
+            \begin{minipage}{2.1cm}
+                \begin{tabular}{|l|}
+                    \hline
+                    $S' \to .S$ \\\hline
+                    $S \to .AaAb$ \\
+                    $S \to .BbBa$ \\
+                    $A \to .$ \\
+                    $B \to .$ \\\hline
+                \end{tabular}
+            \end{minipage}
+        }
+    }
+    
+    \nput{135}{I_0}{$I_0$}
+    \nput{135}{2,2}{$I_1$}
+    \nput{135}{2,3}{$I_8$}
+    \nput{135}{3,2}{$I_2$}
+    \nput{135}{3,3}{$I_4$}
+    \nput{135}{4,2}{$I_3$}
+    \nput{135}{4,3}{$I_6$}
+    \nput{135}{5,3}{$I_5$}
+    \nput{135}{6,3}{$I_7$}
+    
+    \ncangle[angleA=90,angleB=180,armB=1]{->}{I_0}{2,2}\naput{$S$}
+    \ncangle[angleB=180,offsetA=0.6]{->}{I_0}{3,2}\naput{$A$}
+    \ncline[offsetA=0.02]{->}{I_0}{4,2}\nbput{$B$}
+    \ncline[offsetA=0.02]{->}{2,2}{1,2}\naput{$\$$}
+    \ncline{->}{3,3}{4,3}\naput{$A$}
+    \ncline{->}{3,2}{3,3}\naput{$a$}
+    \ncangle{->}{4,3}{2,3}\nbput{$b$}
+    \ncangle[angleA=-90,angleB=180]{->}{4,2}{5,3}\naput{$b$}
+    \ncline[angleA=-90,angleB=90]{->}{5,3}{6,3}\naput{$B$}
+\end{center}
+\begin{align*}
+    \text{FOLLOW}(B) &= \{a,b\} \\
+    \text{FOLLOW}(A) &= \{a,b\} \\
+    \text{FOLLOW}(S) &= \{\$\}
+\end{align*}
+\begin{center}
+    \begin{tabular}{c|c|c|c||c|c|c}
+        & $a$   & $b$   & $\$$ & $S$ & $A$ & $B$ \\\hline\hline
+    0   & r3,r4 & r3,r4 &      & 1   & 2   & 3   \\\hline
+    1   &       &       & acc  &     &     &     \\\hline
+    2   & s4    &       &      &     &     &     \\\hline
+    3   &       & s5    &      &     &     &     \\\hline
+    4   &       &       &      &     & 6   &     \\\hline
+    5   &       &       &      &     &     & 7   \\\hline
+    6   &       & s8    &      &     &     &     \\\hline
+    6   & s1    &       &      &     &     &     \\\hline
+    7   &       &       & r1   &     &     &     \\\hline
+    8   &       &       & r2   &     &     &     \\
+    \end{tabular}
+\end{center}
+
+\section{}
+Linksrekursion vorhanden $\Rightarrow$ keine LL(1)
+\begin{center}
+    \begin{psmatrix}[rowsep=0.8cm]
+        & \begin{minipage}{2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $A \to a.$ \\\hline
+            \end{tabular}
+        \end{minipage} & \\
+        \begin{minipage}{2.2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S' \to .S$ \\
+                $S \to .SA$ \\
+                $S \to .A$ \\
+                $A \to .a$ \\\hline
+            \end{tabular}
+        \end{minipage} &
+        \begin{minipage}{2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S' \to S.$ \\
+                $S \to S.A$ \\\hline
+                $A \to .a$ \\\hline
+            \end{tabular}
+        \end{minipage} &
+        \textbf{accept} \\
+        \begin{minipage}{2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to A.$ \\\hline
+            \end{tabular} 
+        \end{minipage} &
+        \begin{minipage}{2cm}
+            \begin{tabular}{|l|}
+                \hline
+                $S \to SA.$ \\\hline
+            \end{tabular}
+        \end{minipage} &
+    \end{psmatrix}
+    
+    \nput{135}{2,1}{$I_0$}
+    \nput{135}{3,1}{$I_4$}
+    \nput{135}{1,2}{$I_1$}
+    \nput{135}{2,2}{$I_2$}
+    \nput{135}{3,2}{$I_3$}
+    
+    \ncangle[angleA=90,angleB=180]{->}{2,1}{1,2}\naput{$a$}
+    \ncline{->}{2,1}{2,2}\naput{$a$}
+    \ncline{->}{2,1}{3,1}\naput{$A$}
+    \ncline{->}{2,2}{3,2}\naput{$A$}
+    \ncline{->}{2,2}{1,2}\nbput{$a$}
+    \ncline{->}{2,2}{2,3}\naput{$\$$}
+\end{center}
+\begin{align*}
+    \text{FOLLOW}(S) &= \{a,\$\} \\
+    \text{FOLLOW}(A) &= \{a,\$\}
+\end{align*}
+\begin{center}
+    \begin{tabular}{c|c|c|c||c|c|c}
+        & $a$   & $b$   & $S$ & $A$ \\\hline\hline
+    0   & s1    &       & 2   & 4   \\\hline
+    1   & r3    & r3    &     &     \\\hline
+    2   & s1    & acc   &     & 3   \\\hline
+    3   & r1    & r1    &     &     \\\hline
+    4   & r2    & r2    &     &     \\\hline
+    5   &       &       &     &     \\
+    \end{tabular}
+\end{center}
+keine Überschneidungen $\Rightarrow$ SLR(1)-Grammatik
+\end{document}
