@@ -120,8 +120,19 @@ Da die Zugriffsfolge periodisch gestaltet ist, kann man sie beiebig lang machen,
 
 \section{Union-Find}
 \begin{enumerate}
-\item 
-\item 
+\item Wir führen für die Laufzeitberechnung eine amortisierte Analyse mit der Account-Methode durch. \textbf{Union} und \textbf{Find} erhalten jeweils die Kosten 3.
+        Wir betrachten \textbf{\textbf{Union}} und \textbf{\textbf{Find}} jeweils getrennt voneinander:
+        \begin{description}
+        \item[Union] Für \textbf{Union} wird lediglich die Wurzel des kleineren Baumes an die Wurzel des größeren Baumes gehangen (\textbf{Union}-by-Rank), was lediglich 1 Zeiteinheit Kosten verursacht. Es bleiben also +2 zur Verfügung, die der Wurzel des kleineren Baumes gutgeschrieben werden. Da unser Wald nur aus einelementigen Mengen bestand, erhalten so alle Knoten -- bis auf die Wurzeln -- unseres resultierenden Waldes ein Guthaben von +2. Dies lässt sich induktiv über die Anzahl der \textbf{Union}-Operationen beweisen:
+            \begin{description}
+            \item[Induktionsbehauptung:] Jeder Knoten außer den Wurzeln hat ein Guthaben von +2
+            \item[Induktionsanfang:] Der Wald besteht nur aus Wurzeln und da noch keine Operationen ausgeführt wurden, besteht auch kein Guthaben \hfill$\square$
+            \item[Induktionsschritt:] Wird die Wurzel $r_1$ eines Baumes an die Wurzel $r_2$ eines anderen Baumes gehangen, erhält $r_1$ ein Guthaben von +2. Nach der Induktionsvorrausetzung haben alle verbleibenden Kinder von $r_1$ und $r_2$ bereits ein Guthaben von +2. \hfill$\square$
+            \end{description}
+        \item[Find] Die Traversierung bei der Erstellung des Pfades kostet 1 für jeden Knoten. Danach werden alle Knoten des Pfades an die Wurzel gehangen. Dies Kostet ebenfalls 1 pro Knoten des Pfades. Die Knoten des Pfades, die bei der Pfadkomprimierung an die Wurzel gehangen wurden, haben also nun Kosten 0. Die Verbleibenden Kosten sind 1
+        \end{description}
+        Wir können nur $k \leq n$ \textbf{Union}-Operationen haben, es verbleiben also $m-k$ \textbf{Find}-Operationen. Da beide Operationen amotisierte Laufzeiten von $O(1)$ haben ist somit die Gesamtlaufzeit $O(n+m)$
+\item Um eine Menge mit mindestens $\log n$ Elementen zu erstellen, müssen $\log n$ \textbf{Union}-Operationen durchgeführt werden. So erhalten alle Knoten wieder ihr Guthaben und \textbf{Find} führt bei komplexeren Bäumen, als Bäumen der Höhe 2, zu nicht zu negativem Guthaben. Für Bäume der Höhe 2 (die auch durch Pfadkompression entstehen), ist \textbf{Find} konstant, da keine Pfadkompression durchgeführt werden muss. Damit ist die Laufzeit wieder (amotisiert) $O(1)$ für jede \textbf{Find}-Operation. Wir haben minimal $m-(\log n)$ \textbf{Find}, somit ist die Laufzeit in $O(n + m)$.
 \end{enumerate}
 
 \section{Bitmaps}
