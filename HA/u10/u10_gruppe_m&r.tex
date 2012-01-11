@@ -70,9 +70,18 @@
 
 \section{Page-Rank}
 \begin{enumerate}
+\item   \[
+            A' = \begin{pmatrix}
+                0 & 1 & 0 & 0 \\
+                0 & 0 & \frac{1}{2} & \frac{1}{2} \\
+                1 & 0 & 0 & 0 \\
+                0 & 0 & 1 & 0
+            \end{pmatrix}
+        \]
 \item   
-\item   
-\item   
+\item   Wir haben den Algorithmus in Python implementiert:
+        \lstinputlisting[lastline=35,language=Python]{src/pagerank.py}
+        Für das Beispiel (Eingabe: \lstinline[language=Python]!pagerank(Graph(vertices=['a','b','c','d'],edges=[('a','b'),('b','c'),('b','d'),('c','a'),('d','c')]))!) weicht die Matix mit einem Fehler kleiner als $0{,}001$ (mit der im Tutorium vorgeschlagenen Maximumsnorm als Fehlermaß) nach \underline{\underline{12}} Iterationen ab.
 \end{enumerate}
 
 \section{Prioritätswarteschlangen}
