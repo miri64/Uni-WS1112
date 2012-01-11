@@ -63,7 +63,11 @@
 \begin{enumerate}
 \item   Die in der Formel gegebene Binomialverteilung die Wahrscheilichkeit für einen Bernoulli-Prozess $r$ Erfolge (Anzahl der Schlüssel an einem Platz) für $n$ Versuche (Anzahle der Plätze in der Hashtabelle) zu erzielen und drückt damit die Kollisionswahrscheinlichkeit aus.
 \item   
-\item   
+\item   \begin{align*}
+            \text{Pr}[Q_0 = r] &= \left(\frac{1}{n}\right)^r \left(1 - \frac{1}{n}\right)^{n-r} \binom{n}{r}
+                               \leq \left(\frac{1}{\cancel{n}}\right)^r \left(1 - \frac{1}{n}\right)^{n-r} \left(\frac{\cancel{n}e}{r}\right)^r \\
+                               &= \frac{e^r}{r^r} \underbrace{\left(1 - \frac{1}{n}\right)^{n-r}}_{\leq 1} \leq \frac{e^r}{r^r}
+        \end{align*}
 \item   
 \item   
 \end{enumerate}
