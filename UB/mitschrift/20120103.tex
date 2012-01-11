@@ -1,0 +1,53 @@
+\subsection{Item-Mengen}
+\paragraph*{Problem:} Erkennen den Handle auf der Kellerspitze!
+Bottom-Up-Syntaxanalyse, LR-Parser
+\paragraph*{Heute:} Wesentliche Grundlage fpr deterministisch einfache LR-Parser (simple LR-Parser). In der Praxis verwendet man Parsergeneratoren
+\paragraph*{Erste Idee:} Verwende einen endl. Automaten (hier: LR(0)-Automat) zur Steuerung des Analyseprozesses.
+\paragraph*{Zustandsmenge} des LR(0)-Automaten: Erweiterung der kontextfreien Grammatik $G$ um neues Startsymbol $S'$ und zusätzlichen Produktionen.
+\begin{description}
+ \item[Item:] $S' \to .S$
+ \Defi Jede Produktion von $G'$, in die auf der rechten Regelseite ein Punkt eingefügt wurde, heißt \emph{Item}.
+ \Bsp Zu einer Produktion der Form $A \to XYZ$ gehören vier Items:
+     \[ A \to .XYZ, A \to X.YZ, A \to XY.Z\ \text{und}\ A \to XYZ. \]
+\end{description}
+Wir Konstruieren geeignete Item-Mengen als Zustände des LR(0)-Automaten. Wir benötigen zwei Funktionen: Closure und Goto.
+\Defi (Closure) Sei $I$ eine Menge von Items. Closure($I$) verhält man unter erschöpfender Anwendung folgender Regeln.
+\begin{enumerate}
+ \item $I \subseteq \text{Closure}(I)$,
+ \item Wenn $A \to \alpha.B\beta \in \text{Closure}(I)$ und $B \to \gamma \in P$, dann füge $B \to .\gamma$ zu $\text{Closure}(I)$ hinzu.
+\end{enumerate}
+\Bsp
+\begin{align*}
+ E' & \to E \\
+ E  & \to E + T\ |\ T \\
+ T  & \to T * F\ |\ F \\
+ F  & \to ( E )\ |\ i
+\end{align*}
+$\text{Closure}(\{E' \to .E\}) = \{E' \to .E, E \to .E+T, E \to .T, T \to .T \times F, T \to .F, F \to .(E), F \to i\}$ ist der Anfangszustand des LR(0)-Automaten fpr unsere Beispielgrammatik.
+\Defi (Goto) $\text{Goto}(I,X) := \text{Closure}(\{A \to \alpha X.\beta\ |\ A \to \alpha .X\beta \in I\})$
+\Defi Zustandsmenge $\mathcal{C}$ (\emph{harmonische Sammlung von Item-Mengen}) des LR(0)-Automaten konstruiert man unter erschöpfender Anwendung folgender Regeln.
+\begin{enumerate}
+ \item $I_0 := \text{Closure}(\{S' \to .S\}) \in \mathcal{C}$
+ \item Füge fpr jedes Symbos $X \in \mathcal{N} \cup \mathcal{T}$ der Grammatik $G$ und jedem $I$ aus $\mathcal{C}$ die Item-Menge $\text{Goto}(I,X)$ zu $\mathcal{C}$ hinzu, falls diese ungleich $\emptyset$ ist.
+\end{enumerate}
+\begin{center}
+[Beispiel eines LR(0)-Automaten]
+\end{center}
+Lösung der shift/reduce-Konflikte durch shift, falls es einen entsprechend markierten Übergang gibt, reduce sonst.
+\Bsp $i*i\$$
+\begin{center}
+    \begin{tabular}{c|c|c|c|c}
+        Stack (Zustände) & Symbole (redundant) & Eingabe & Aktion & Ausgabe \\\hline
+        0 & $\$$ & $i*i\$$ & shift & \\
+        05 & $\$i$ & $*i\$$ & reduce & $F \to i$ \\
+        03 & $\$F$ & $*i\$$ & reduce & $T \to F$ \\
+        02 & $\$T$ & $*i\$$ & shift & \\
+        027 & $\$T*$ & $i\$$ & shift & \\
+        0275 & $\$T*i$ & $\$$ & reduce & $F \to i$ \\
+        027\underline{10} & $\$T*F$ & $\$$ & reduce & $T \to T * F$ \\
+        02 & $\$T$ & $\$$ & reduce & $E \to T$ \\
+        01 & $\$E$ & $\$$ & accept
+    \end{tabular}
+\end{center}
+
+

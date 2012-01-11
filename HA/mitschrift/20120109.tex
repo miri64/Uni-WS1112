@@ -1,0 +1,84 @@
+\Lemma Sei $T_0 =$ \#Bäume vor delete\_min. Dann ist die Laufzeit von delete\_min $O(\log n + T_0+ \text{\#gelöschte Knoten})$
+\Bew
+\begin{enumerate}
+ \item Laufzeit: $O(T_0)$
+ \item Laufzeit: $O(\log n)$ wegen Invariante
+ \item Laufzeit: $O(\log n + T_0)$\\
+         Warum: Laufzeit $O(\log n + \#\text{links})$\\
+         $\#\text{links}$ $\leq$ \#links $= O(\log n) + T_0$ denn jeder link zerstört einen Baum
+ \item Laufzeit: $O(\text{\#gelöschte Knoten} + \log n)$\hfill$\square$
+\end{enumerate}
+\paragraph{Analyse:}
+\begin{description}
+ \item[zu zeigen: ] Jede Folge von $i$ inserts, $d$ decrease\_keys und $e$ delete\_mins hat Laufzeit $O(i + d + e \log n)$, mit $n = \max \#\text{Elemente in der Datenstruktur}$
+ \item[Idee: ] Wenn delete\_min lange dauert, muss es vorher viele inserts und decrease\_keys gegeben haben.\\
+         $\Rightarrow$ können Knoten umverteilen
+ \item Wie formalisiert man das?
+     \renewcommand{\theenumi}{\alph{enumi}}
+     \begin{enumerate}
+      \item Potentialmethode (s. Übung)
+      \item Buchhaltermethode.
+     \end{enumerate}
+     \begin{itemize}
+      \item 3 Konten:
+         \begin{description}
+          \item Knotenkonto: enhält 1 \euro\ pro Knoten
+          \item Baumkonto: enhält 2 \euro\ pro Baum
+          \item Einzelkinder-Konto: enthält 4 \euro\ pro Knoten mit nur 1 Kind.
+         \end{description}
+      \item Am Anfang sind alle Konten leer
+      \item Wir zeigen:
+          \begin{itemize}
+          \item Bezahlen wir $O(1) \euro$ pro insert/decrease\_key und $O(\log n) \euro$ pro delete\_min
+          \end{itemize}
+      \item so können wir sicherstellen, dass
+      \renewcommand{\theenumi}{\roman{enumi}}
+     \begin{enumerate}
+      \item die Konteninvariante immer gilt.
+      \item die tatsächlichen Kosten können bezahlt werden.
+     \end{enumerate}
+     \begin{description}
+     \item insert: tatsächliche Kosten $O(1)$
+         \begin{itemize}
+          \item Müssen 1 \euro\ ins Knotenkonto und 2 \euro\ ins Baumkonto zahlen
+         \end{itemize}
+         zu zahlende Kosten: $O(1) \euro$
+     \item decrease\_key: tatsächliche Kosten $O(1)$
+         \begin{itemize}
+          \item Müssen $\leq 2 \euro$ ins Baumkonto und $\leq 4 \euro$ ins Einzelkinderkonto einzahlen
+         \end{itemize}
+         zu zahlende Kosten: $O(1) \euro$
+     \item delete\_min: tatsächliche Kosten: $O(\log n + T_0 + \mathcal{D})$ mit $\mathcal{D} = $\#gelöschte Knoten\\
+         Buchhaltung:
+         \begin{itemize}
+         \item Hebe $T_0 \euro$ von Baumkonto ab\\
+             $\Rightarrow$ tatsächliche Kosten
+         \item Überweise \#links \euro\ auf das Knotenkonto (vom Baumkonto + ggf $O(\log n)$ zusätliche \euro)\\
+             $\Rightarrow \leq T_0 \euro$ im Baumkonto
+         \item Zahle 2 \euro\ pro Baum nach Konsulidierung auf Baumkonto ein \\
+             $\Rightarrow O(\log n) \euro$
+         \item Hebe $\mathcal \euro$ im Knotenkonto ab\\
+             $\Rightarrow$ tatsächliche Kosten
+         \item Bei Erdbeben: Überweise $2n[i] \euro$ von Einzelkinderkonto auf Baumkonto
+         \end{itemize}
+         zu Zahlen $O(\log n) \euro$
+     \end{description}
+     \item noch zu zeigen Konteninvariante bleibt erhalten
+         \begin{itemize}
+          \item Knotenkonto $\checkmark$
+          \item Baumkonto $\checkmark$
+          \item Einzelkinderkonto:
+              \Beh Wenn $n[i+1] > \frac{3}{4} n[i]$, so hat $n[i+1]$ mindestens $\frac{n[i]}{2}$ Knoten mit 1 Kind
+              \Bew \begin{align*}
+                    n[i+1] &= \underbrace{n_1}_{\text{Knoten mit 1 Kind}} + \underbrace{n_2}_{\text{Knoten mit 2 Kindern}} \\
+                    n[i] &= n_1 + n_2 \\
+                    \text{wissen } n[i+1] &\geq \frac{3}{4} n[i] \\
+                    \Rightarrow n_1 + n_2 &\geq \frac{3}{4} (n_1 + 2 n_2) \\
+                    \Rightarrow n_1 + n_2 &\geq \frac{3}{4} n_1 + \frac{3}{4} n_2 \Leftrightarrow n_1 \geq 2n_2 \\
+                    \Rightarrow 2n_1 = n_1 + n_2 \geq n_1 + 2 n_2 = n[i]
+                   \end{align*}\hfill$\square$
+
+          \end{itemize}
+
+     \end{itemize}
+\end{description}

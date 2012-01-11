@@ -1,0 +1,70 @@
+\section{Zusammenfassung}
+Aufbau eines SLR-Parsers (simple LR(1)-Parser)
+\paragraph*{Struktur}
+\begin{center}
+    \begin{psmatrix}
+        & Eingabe: \begin{tabular}{|c|c|c|c|c|c|}\hline $a_1$ & ... & \rnode{a_i}{$a_i$} & ... & $a_n$ & \$ \\\hline\end{tabular} $w \in G$ & \\
+        Stack \begin{tabular}{|c|}$S_n$ \\\hline $\vdots$ \\\hline $S_1$ \\\hline 0 \\\hline\end{tabular} & \framebox{Parse-Programm}
+        & \begin{minipage}{5cm}Folge von Produktionen, umgekehrte Rechtsherleitung\end{minipage} \\
+        & \begin{tabular}{c|c|c|}\cline{2-3} 0 & \multirow{3}{*}{\rnode{ACTION}{\Large ACTION}} & \multirow{3}{*}{\rnode{GOTO}{\Large GOTO}} \\
+                                           $\vdots$ & & \\
+                                           $k$ & & \\\cline{2-3}
+       \end{tabular}
+
+    \end{psmatrix}
+    \psset{arrows=->}
+    \ncline{2,2}{a_i}\ncline{2,2}{2,1}\ncline{2,2}{2,3}\naput{Ausgabe}
+    \ncline{2,2}{ACTION}\ncline{2,2}{GOTO}
+\end{center}
+Elemente auf dem Stack sind Nummern der Itemmenge aus der kanonischen LR(0)-Item-Sammlung. Zu jeder Item-Menge gehört genau ein Grammatiksymbol.\\
+Die Steuerung erfolgt über eine Parse-Tabelle, deren Zeilen mit Zustandsnummern eines LR(0)-Automaten markiert sind. Der ACTION-Teil hat Spalten mit Terminalsymbolen und $\$$ und der GOTO-Teil hat Spalten mit Nichtterminalsymbolen. Die Einträge der Parse-Tabelle werden wie folgt bestimmt
+\begin{enumerate}
+ \item ACTION$[i,a]$ erhält "`shift $I_j$"' (kurz s$j$), wenn $[A \to \alpha.a\beta] \in I_i$ und GOTO$(I_i,a) = I_j$.
+ \item ACTION$[i,a]$ erhält "`reduce $A \to \alpha$"' (kurz r$j$), wenn $[A \to \alpha.] \in I_i, A \neq S'$ und $a \in \text{FOLLOW}(A)$. Beachte: $j$ ist die Nummer der Produktion $A \to \alpha.$
+ \item ACTION$[i,\$]$ erhält "`accept"' (kurz acc), wenn $[S' \to S.] \in I_i$.
+ \item GOTO$[i,A]$ erhält den Eintrag $j$, wenn GOTO$(I_i, A) = I_j$
+ \item Leere Felder werden als Fehler interpretiert.
+\end{enumerate}
+\begin{itemize}
+ \item Mehrfacheinträge im ACTION-Teil, die durch Regeln 1. und 2. entstehen können, signalisieren, dass die Grammatik \emph{nicht} SLR(1) ist
+\end{itemize}
+\paragraph*{Parse-Tabelle für einfache Ausdrücke}
+\begin{align*}
+ 1. E &\to E + T & \text{FOLLOW}(E) &= \{+,),\$\} \\
+ 2. E &\to T     & \text{FOLLOW}(T) &= \{+,*,),\$\} \\
+ 3. T &\to T * F & \text{FOLLOW}(F) &= \{+,*,),\$\} \\
+ 4. T &\to F   \\
+ 5. F &\to (E) \\
+ 6. F &\to i
+\end{align*}
+\begin{center}
+    \begin{tabular}{c|c|c|c|c|c|c||c|c|c|}
+            & $i$ & $+$ & $*$ & $($ & $)$  & $\$$ & $E$ & $T$ & $F$ \\\hline\hline
+        0   & s5  &     &     & s4  &      &      & 1   & 2   & 3   \\\hline
+        1   &     & s6  &     &     &      & acc  &     &     &     \\\hline
+        2   &     & r2  & s7  &     & r2   & r2   &     &     &     \\\hline
+        3   &     & r4  & r4  &     & r4   & r4   &     &     &     \\\hline
+        4   & s5  &     & s4  &     &      &      & 8   & 2   & 3   \\\hline
+        5   &     & r6  & r6  &     & r6   & r6   &     &     &     \\\hline
+        6   & s5  &     & s4  &     &      &      &     & 9   & 3   \\\hline
+        7   & s5  &     & s4  &     &      &      &     &     & 10  \\\hline
+        8   &     & s6  &     &     & s11  &      &     &     &     \\\hline
+        9   &     & r1  & s7  &     & r1   & r1   &     &     &     \\\hline
+        10  &     & r3  & r3  &     & r3   & r3   &     &     &     \\\hline
+        11  &     & r5  & r5  &     & r5   & r5   &     &     &     \\\hline
+    \end{tabular}
+\end{center}
+
+\paragraph*{Konfiguration des LR-Parsers}
+Der Anfangszustand ist $(0, a_1...a_n\$)$. Der jeweilige Folgezustand zu$(s_0...s_m, a_ia_{i+1}...a_n\$)$  berechnet sich wie folgt:
+\begin{enumerate}
+ \item Wenn ACTION$[s_m,a_i] = \text{s}j$, dann setze Folgezustand auf $(s_0...s_mj, a_{i+1}...a_n\$)$. Beachte: $a_i$ gehört zu $I_j$
+ \item Denn ACTION$[s_m,a_i] = \text{r}j$ und die $j$-te Produktion die Form $A \to X_1 ... X_k$ und GOTO$[s_m, A] = t$ ist, dann setze Folgezustand auf $(s_0...s_{m-k}t, a_i...a_n\$)$.
+ \item Wenn ACTION$[s_m,\$] = \text{acc}$, dann signalisiere erfolgreiches Parsen.
+ \item Wenn ACTION$[s_m,a_i]$ leer ist, dann rufe Fehlerbehandlung auf.
+\end{enumerate}
+
+\paragraph*{Brauchbarer Präfix}
+Im Keller steht immer eine Präfix einer Rechtssatzform. Die Konfiguration enthält immer eine Rechtssatzform (unter Konkatination).
+\Defi (Brauchbarer Präfix) Ein Präfix einer Rechtssatzform erstreckt sich nicht über den Handle hinaus.
+\Lemma SLR-Parser erkennen brauchbare Präfixe.

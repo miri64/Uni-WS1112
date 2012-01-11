@@ -1,0 +1,158 @@
+\section{Internet-Algorithmen}
+\subsection{Page-Rank}
+benannt nach Larry \textsc{Page} (aktueller CEO von Google)
+\paragraph*{Suchmaschinen-Problem}
+\begin{description}
+\item[Gegeben:] Suchanfrage $s$ von Benutzer $n$
+\item[Gesucht:] Was Benutzer $n$ finden möchte.
+\end{description}
+Was ist das?
+\paragraph*{Erste Ansätze}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\arabic{enumi}}
+\begin{enumerate}
+ \item Yahoo: Manueller Katalog
+ \item AltaVista: Textbasierte Suchmaschine
+     \begin{itemize}
+     \item automatisches Katalogisieren des ganzen Webs (Bots)
+     \item Speichern eines großen Index
+     \item Bei Suchanfrage $s$: durchsuche Index nach $s$, fiefere die Sites mit $s$ zurück
+     \end{itemize}
+\end{enumerate}
+\paragraph*{Problem:} Wie bewertet man die gefundenen Seiten bei einer breiten Suchanfrage?
+\paragraph*{Idee} (Kleinberg, Page) aus Bibliographieanalyse:
+Verwende Linkstruktur des www, um Seiten zu bewerten (nutze das Wissen der Benutzer)
+\paragraph*{Page-Rank}
+\begin{center}
+ \begin{psmatrix}[mnode=circle]
+  GB & & L \\
+     & ZS \\
+  \  & \ & \ 
+ \end{psmatrix}
+ \ncline{1,1}{1,3}\ncline{1,1}{2,2}\ncline{2,2}{3,3}\ncline{3,1}{3,2}
+ \ncline{2,2}{3,2}\ncline{3,1}{2,2}\ncline{1,3}{3,3}
+\end{center}
+Der Page-Rank einer Webseite ist die Wahrscheinlichkeit, dass ein zufälliger Surfer bei ihr vorbeikommt.
+\paragraph*{Wie formalisieren?}
+www: gerichteter Graph
+\[G = (V, E) \qquad |V| = N\]
+\begin{center}
+ \begin{psmatrix}[mnode=circle]
+   & \ \\
+   \ & \ & \ \\
+   \ & \ 
+ \end{psmatrix}
+ \psset{arrows=->}
+ \ncline{1,2}{2,3}\ncline{1,2}{2,2}
+ \ncline{2,1}{2,2}\ncline{2,2}{2,3}
+ \ncline{3,1}{2,1}\ncline{2,2}{3,1}\ncline{2,2}{3,2}
+\end{center}
+Berechne in jedem Schritt eine Wahrscheinlichkeitsverteilung auf den Knoten $\Pi_i{:} V \to [0,1]$, $\sum\limits_{v \in V} \Pi_i(v) = 1$.
+\begin{itemize}
+ \item Am Anfang: $\forall v \in V{:}\ \Pi_0(v) = \frac{1}{N}$
+ \item $\Pi_{i+1}(v) = \sum\limits_{w \in V} \frac{1}{\operatorname{outdeg}(w)} \cdot \Pi_i(w) \cdot A_{wv}$, wobei
+         $A_{wv} = \begin{cases} 1, & \text{falls $(w,v) \in E$} \\ 0, & \text{sonst} \end{cases}$
+\end{itemize}
+Schreibe Gleichungen kompakt als Matrix:
+\[\underbrace{\Pi_{i+1}}_{\text{Zeilenvektor}} = \Pi_i \cdot A'\]
+wobei
+\[A' = N \times N\text{-Matrix mit } A'_{wv} = \begin{cases} 
+                                                    \frac{1}{\operatorname{outdeg}(w)}, & \text{falls $(w,v) \in E$} \\
+                                                    0, \text{sonst}
+                                               \end{cases}
+\]
+\begin{center}
+ \begin{psmatrix}[mnode=circle]
+  $a$ & $b$ \\
+  $d$ & $c$
+ \end{psmatrix}
+ \psset{arrows=->}
+ \ncline{1,1}{1,2}\ncline[offset=2px]{1,1}{2,2}
+ \ncline{1,2}{2,2}
+ \ncline{2,1}{1,1}
+ \ncline{2,2}{2,1}\ncline[offset=2px]{2,2}{1,1}
+\end{center}
+
+\[
+A' = \begin{pmatrix}
+ 0 & \frac{1}{2} & \frac{1}{2} & 0 \\
+ 0 & 0 & 1 & 0 \\
+ \frac{1}{2} & 0 & 0 & \frac{1}{2} \\
+ 1 & 0 & 0 & 0
+\end{pmatrix}
+\]
+$A'$ heißt modifizierte Adjazenzmatrix
+\begin{align*}
+ \Pi_{i+1} &= \Pi_i A' \\
+ \Pi_i &= \underbrace{\begin{pmatrix}\frac{1}{4} & \frac{1}{4} & \frac{1}{4} & \frac{1}{4}\end{pmatrix}}_{\Pi_0} \cdot
+ \begin{pmatrix}
+ 0 & \frac{1}{2} & \frac{1}{2} & 0 \\
+ 0 & 0 & 1 & 0 \\
+ \frac{1}{2} & 0 & 0 & \frac{1}{2} \\
+ 1 & 0 & 0 & 0
+\end{pmatrix}
+ &= \begin{pmatrix}\frac{3}{8} & \frac{1}{8} & \frac{3}{8} & \frac{1}{8}\end{pmatrix}
+\end{align*}
+Hoffnung: Nach genügend vielen Schritten ändert sich $\Pi$, nicht mehr (Konvergenz, Fixpunktiteration)
+\Defi Ein Wahrscheinlichkeitsvektor $\Pi^*$ heißt \emph{stationäre Verteilung} für $A'$, wenn gilt
+    \[\Pi^* = \Pi^* \cdot A'\]
+    $\Pi^*$ ist ein Linkseigenvektor zum Eigenwert 1.
+\paragraph*{Probleme}
+\begin{enumerate}
+ \item Konvergiert $\Pi_i$? Im Allgemeinen: Nein
+ \begin{center}
+  \begin{psmatrix}[mnode=circle]
+   \color{red}$\frac{1}{3}$ & \color{red}$\frac{1}{3}$ & \color{red}$\frac{1}{3}$
+  \end{psmatrix}
+  \psset{arrows=->}
+  \ncline[offset=2px]{1,1}{1,2}\ncline[offset=2px]{1,2}{1,3}
+  \ncline[offset=2px]{1,2}{1,1}\ncline[offset=2px]{1,3}{1,2}
+ \end{center}
+ \begin{center}
+  \begin{psmatrix}[mnode=circle]
+   \color{red}$\frac{1}{6}$ & \color{red}$\frac{2}{3}$ & \color{red}$\frac{1}{6}$
+  \end{psmatrix}
+  \psset{arrows=->}
+  \ncline[offset=2px]{1,1}{1,2}\ncline[offset=2px]{1,2}{1,3}
+  \ncline[offset=2px]{1,2}{1,1}\ncline[offset=2px]{1,3}{1,2}
+ \end{center}
+ Das System oszilliert
+ \item Existiert $\Pi^*$?
+ \begin{center}
+  \begin{psmatrix}[mnode=circle]
+   \color{red}$\frac{1}{2}$ & \color{red}$\frac{1}{2}$
+  \end{psmatrix}
+  \psset{arrows=->}
+  \ncline{1,1}{1,2}
+ \end{center}
+ \begin{center}
+  \begin{psmatrix}[mnode=circle]
+   \color{red}$0$ & \color{red}$\frac{1}{2}$
+  \end{psmatrix}
+  \psset{arrows=->}
+  \ncline{1,1}{1,2}
+ \end{center}
+ \begin{center}
+  \begin{psmatrix}[mnode=circle]
+   \color{red}$0$ & \color{red}$0$
+  \end{psmatrix}
+  \psset{arrows=->}
+  \ncline{1,1}{1,2}
+ \end{center}
+\end{enumerate}
+\paragraph*{Neustart/Dämpfung}
+In jedem Schritt fängt ein bestimmter Anteil der Surfer auf eine zufälligen Seite neu an.\\
+Schreibe:
+\[ A'' := (1 - d) A' + \frac{d}{N} 
+            \begin{pmatrix}
+                1 & 1 & \cdots & 1 \\
+                1 & 1 & \cdots & 1 \\
+                \vdots & \vdots & \ddots & \vdots \\
+                1 & 1 & \cdots & 1
+            \end{pmatrix}\]
+            $d \approx 0{,}15$ Dämpfungsfaktor
+\begin{center}
+\framebox{Füge Schleifen zu $G$ hinzu. \circlenode{i}{\ }\nccurve[ncurv=4,angleA=70,angleB=110]{->}{i}{i}}
+\end{center}
+Modifikation verhinder Oszillation und sagt für Existenz von $\Pi^*$.
+\Satz (Perron-Frobenius): Es existiert genau eine stationäre Verteilung $\Pi^*$ für $A''$. Die Iteration $\Pi_{i+1} = \Pi_{i} \cdot A''$ konvergiert gegen $\Pi^*$. $\Pi^*$ ist der Pagerank-Score-Vektor des www.

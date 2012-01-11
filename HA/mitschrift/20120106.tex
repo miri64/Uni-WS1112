@@ -1,0 +1,425 @@
+\subsection{Prioritätswarteschlangen}
+\begin{description}
+ \item[Gegeben:] Elemente $X$, Prioritäten/Schlüssel $K$ (total geordnet)
+ \item[Ziel:] Speichere Teilmenge $S \subseteq X \times K$
+ \item[Operationen:] \hfill
+    \begin{center}
+        \begin{tabular}{rp{0.8\linewidth}}
+            insert($x,k$): & Füge $x$ mit Priorität $k$ zu zu $S$ hinzu. \\
+            delete\_min(): & liefere Element mit kleinster Priorität, entferne aus $S$ \\
+            decrease\_key($x,k$): & erniedrige den Schlüssel von $x$ zu $k$
+        \end{tabular}
+    \end{center}
+\end{description}
+Klassische Anwendung: Dijkstras ALgorithmus
+\begin{description}
+ \item[Gegeben:]
+     \begin{itemize}
+      \item Graph $G = (V,E)$, gerichtet, gewichtet
+      \item Gewichtsfunktion: weight: $E \to \mathbb{R}^+_0$
+      \item Startknoten $s \in V$
+     \end{itemize}
+ \item[Gesucht:] kürzeste Wege von $s$ zu allen anderen Knoten (Shortest Path Tree)
+\end{description}
+\begin{algorithmic}
+\FOR{$v \in V$}
+    \STATE $v.d \gets \infty$; $v.\pi \gets \perp$
+    \STATE $Q.\text{insert}(v,v.d)$
+\ENDFOR
+\STATE $s.d \gets 0$; $Q.\text{decrease\_key}(s,0)$
+\WHILE{$Q \neq \emptyset$}
+    \STATE $v \gets Q.\text{delete\_min}()$
+    \FOR{$e = (v, w) \in E$}
+        \IF{$v.d + e.\text{weight} < w.d$}
+            \STATE $w.d \gets v.d + e.\text{width}$
+            \STATE $w.\pi \gets v$
+            \STATE $Q.\text{decrease\_key}(w,w.d)$
+        \ENDIF
+    \ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\paragraph*{Laufzeit:} Hängt von $Q$ ab.
+\begin{itemize}
+ \item $|V|$ inserts und delete\_mins
+ \item $\leq |E| + 1$ decrease\_key 
+\end{itemize}
+Klassische Implementierung: Binärheap
+\begin{itemize}
+\item   Laufzeit: $O(\log n)$ pro Operation\\
+        $\Rightarrow$ Dijkstra läuft in $O(|V|  \log |V| + |E| \log |V|)$ Zeit.
+\end{itemize}
+Frage: Geht es besser? Können wir eine bessere Implementierung von $Q$ finden?
+\begin{itemize}
+ \item $|V| \log |V|$ lässt sich wahrscheinlich nicht verbessern
+ \item Gibt es Prioritätswarteschlange mit $O(1)$ decrease\_key
+ \item 1987: Fredman-Tarjan: Ja: \\
+     \textbf{Fibonacci-Heaps}
+         \begin{itemize}
+          \item $O(\log n)$ insert \& delete\_min
+          \item $O(1)$ decrease\_key
+         \end{itemize}
+        (amortisierte Laufzeit)
+ \item seitdem: viele Varianten und Alternativen:
+     \begin{itemize}
+     \item entspannte Heaps
+     \item linksgerichtete Heaps
+     \item dünne Heaps
+     \item dicke Heaps
+     \item $\vdots$
+     \item Erdbeben-Heaps (\emph{Quake Heaps})
+     \end{itemize}
+\end{itemize}
+\subsection{Quake-Heaps}
+T.M. Chan, 2009
+\begin{itemize}
+ \item delete\_min in $O(\log n)$ amortisiert
+ \item insert \& decrease\_key in $O(1)$ amortisierte
+\end{itemize}
+$\Rightarrow$ Dijkstra in $O(|V| \log |V| + |E|)$
+\begin{itemize}
+ \item Ein Quake-Heap speichert die Elemente in Turnierbäumen
+ \item Turierbaum: Wurzelbaum
+ \begin{itemize}
+ \item Speichert Elemente in den Blättern
+ \item Alle Blätter haben die gleiche Tiefe (= Länge des Pfades zur Wurzel)
+ \item Innere Knoten haben 1 oder 2 Kinder
+ \item Innerer Knoten speichert das Minimum seiner Kinder
+ \item Jedes Blatt speichert einen Zeiger auf den höchsten Knoten, der den gleichen Schlüssel enthält 
+ \end{itemize}
+ \begin{center}
+ \psset{levelsep=0.7cm,treesep=0.5cm,nodesep=2pt}
+  \pstree{\Tr{0}}{
+      \pstree{\Tr{4}}{\pstree{\Tr{4}}{\pstree{\Tr{4}}{\Tr{4}}}}
+      \pstree{\Tr{0}}{
+          \pstree{\Tr{2}}{
+              \pstree{\Tr{2}}{
+                  \Tr{2}\Tr{3}
+              }
+          }
+          \pstree{\Tr{0}}{
+              \pstree{\Tr{0}}{
+                  \Tr{1}\Tr{0}
+              }
+              \pstree{\Tr{7}}{
+                  \Tr{7}
+              }
+          }
+      }
+  }
+ \end{center}
+ \item Operationen auf Turnierbäume:
+ \begin{enumerate}
+  \item link($T_1, T_2$): $T_1, T_2$: Turnierbäume gleicher Höhe \\
+      $\Rightarrow$ Turnierbaum mit Höhe + 1
+      \begin{center}     
+ \psset{levelsep=0.7cm,treesep=0.5cm,nodesep=2pt} 
+       \begin{minipage}{3cm}
+        \centering
+        \pstree{\Tr{5}}{
+          \pstree{\Tr{10}}{
+              \Tr{10}
+          }
+          \pstree{\Tr{5}}{
+              \Tr{5}\Tr{8}
+          }
+      }
+       \end{minipage}
+       \hspace{0.5em}
+       \begin{minipage}{3cm}
+        \centering
+        \pstree{\Tr{2}}{
+          \pstree{\Tr{2}}{
+              \Tr{2}\Tr{7}
+          }
+          \pstree{\Tr{4}}{
+              \Tr{9}\Tr{4}
+          }
+      }
+       \end{minipage}
+       \hspace{0.2cm}
+       $\Rightarrow$
+       \hspace{0.2cm}
+       \begin{minipage}{6cm}
+        \centering
+        \pstree{\Tr{2}}{
+            \pstree{\Tr{5}}{
+          \pstree{\Tr{10}}{
+              \Tr{10}
+          }
+          \pstree{\Tr{5}}{
+              \Tr{5}\Tr{8}
+          }
+      }
+        \pstree{\Tr{2}}{
+          \pstree{\Tr{2}}{
+              \Tr{2}\Tr{7}
+          }
+          \pstree{\Tr{4}}{
+              \Tr{9}\Tr{4}
+          }
+      }
+        }
+       \end{minipage}
+      \end{center}
+      Lege neue Wurzel an, speichere in der alten Wurzeln in der neuen Wurzel. $O(1)$ Zeit.
+  \item cut($v$): $v$ Knoten, der einen anderen Schlüssel enthält als sein Elternknoten\\
+      $\Rightarrow$ zwei Turnierbäume, einen mit Wurzel $v$
+      \begin{center}     
+ \psset{levelsep=0.7cm,treesep=0.5cm,nodesep=2pt} 
+       \begin{minipage}{6cm}
+        \centering
+        \pstree{\Tr{2}}{
+            \pstree{\Tcircle[linecolor=red]{5}\nput{160}{\pssucc}{\color{red}$v$}}{
+          \pstree{\Tr{10}}{
+              \Tr{10}
+          }
+          \pstree{\Tr{5}}{
+              \Tr{5}\Tr{8}
+          }
+      }
+        \pstree{\Tr{2}}{
+          \pstree{\Tr{2}}{
+              \Tr{2}\Tr{7}
+          }
+          \pstree{\Tr{4}}{
+              \Tr{9}\Tr{4}
+          }
+      }
+        }
+       \end{minipage}
+       \hspace{0.2cm}
+       $\Rightarrow$
+       \hspace{0.2cm}
+       \begin{minipage}{3cm}
+        \centering
+        \pstree{\Tr{5}}{
+          \pstree{\Tr{10}}{
+              \Tr{10}
+          }
+          \pstree{\Tr{5}}{
+              \Tr{5}\Tr{8}
+          }
+      }
+       \end{minipage}
+       \hspace{0.5em}
+       \begin{minipage}{3cm}
+        \centering
+        \pstree{\Tr{2}}{
+          \pstree{\Tr{2}}{
+              \Tr{2}\Tr{7}
+          }
+          \pstree{\Tr{4}}{
+              \Tr{9}\Tr{4}
+          }
+      }
+       \end{minipage}
+      \end{center}
+      cut löscht Kante von $v$ zu Elternknoten. $O(1)$ Zeit.
+ \end{enumerate}
+\end{itemize}
+
+Quake-Heaps speichern
+\begin{itemize}
+ \item eine Liste von Turnierbäumen
+ \item noch mehr (später)
+ \item insert($x,k$)
+    \begin{itemize}
+    \item Lege neuen Turnierbaum für $(x,k)$ an, füge ihn zur Liste hinzu. \\
+    insert($x, 15$)
+    \end{itemize}
+    $O(1)$-Zeit
+ \item decrease\_key($y,k$): Annahme: Haben/Bekommen. Zeiger auf das Blatt, das $y$ speichert.
+     \begin{itemize}
+     \item decrease\_key($y,-1$)
+     \item finde höchsten Knoten $v$, der Schlüssel von $y$ enthält
+     \item Führe cut($v$) aus, falls $v$ nicht Wurzel
+     \item Erniedrige Schlüssel von $y$ auf $k$
+     \end{itemize}
+     $O(1)$ Implementierung
+ \item delete\_min(): Zusätzliche Information (können beide in insert/decrease\_key in $O(1)$ aktualisiert werden):
+     \begin{itemize}
+      \item Array $T[i]$: Liste aller Bäume mit Höhe $i$
+      \item Array $n[i]$: \# Knoten mit Höhe $i$
+      \item Invariante: $\forall i \geq 0{:}\ n[i-1] \leq \frac{3}{4} n[i]$
+      \item \textbf{Fakt:} Invariante $\Rightarrow$ Jeder Knoten hat Höhe $O(\log n)$
+      \item \textbf{Fakt:} insert und decrease\_key erhalten die Invariante.
+     \end{itemize}
+     \textbf{delete\_min}
+     \begin{enumerate}
+      \item Gehe alle Wurzeln durch, finde das Element $x$ mit minimalen Schlüssel
+      \item Lösche den Pfad, der $x$ enthält. Lege ggf. neue Bäume an
+      \begin{center}
+     \psset{levelsep=0.7cm,treesep=0.5cm,nodesep=2pt}
+      \begin{minipage}{6cm}
+        \centering
+        \pstree{\Tr{0}}{
+            \pstree{\Tr{4}}{
+                \pstree{\Tr{4}}{
+                    \pstree{\Tr{4}}{
+                        \Tr{4}
+                    }
+                }
+                
+            }
+            \pstree{\Tr{0}}{
+                \pstree{\Tr{2}}{
+                    \pstree{\Tr{2}}{
+                        \Tr{2}
+                        \Tr{3}
+                    }
+                }
+                \pstree{\Tr{0}}{
+                    \pstree{\Tr{0}}{
+                        \Tr{1}
+                        \Tr{0}
+                    }
+                    \pstree{\Tr{7}}{
+                        \Tr{7}
+                    }
+                }
+            }
+        }
+        \Tr{14}
+        \pstree{\Tr{5}}{
+            \Tr{8}
+            \Tr{5}
+        }
+        \Tr{15}
+       \end{minipage}
+       \hspace{0.2cm}
+       $\Rightarrow$
+       \hspace{0.2cm}
+       \begin{minipage}{6cm}
+        \centering
+        \pstree{\Tr{4}}{
+            \pstree{\Tr{4}}{
+                \pstree{\Tr{4}}{
+                    \Tr{4}
+                }
+            }
+            
+        }
+        \pstree{\Tr{2}}{
+            \pstree{\Tr{2}}{
+                \Tr{2}
+                \Tr{3}
+            }
+        }
+        \pstree{\Tr{0}}{
+            \pstree{\Tr{0}}{
+                \Tr{1}
+                \Tr{0}
+            }
+            \pstree{\Tr{7}}{
+                \Tr{7}
+            }
+        }
+        \Tr{14}
+        \pstree{\Tr{5}}{
+            \Tr{8}
+            \Tr{5}
+        }
+        \Tr{15}
+       \end{minipage}
+     \end{center}
+      \item Konsolidierung
+          \begin{algorithmic}
+           \FOR{$i := 0..O(\log n)$}
+               \WHILE{$|T[i]| \geq 2$}
+                   \STATE Lösche 2 Bäume $T_1,T_2$ aus $T[i]$
+                   \STATE $T^* \gets \text{link}(T_1, T_2)$
+                   \STATE $T[i+1] \gets T[i+1] ++ T^*$
+               \ENDWHILE
+           \ENDFOR
+          \end{algorithmic}
+          \begin{description}
+           \psset{levelsep=0.7cm,treesep=0.5cm,nodesep=2pt}
+           \item $T[0]:$ 
+               \begin{equation*}
+                \cancel{1} \cancel{14} 
+                15
+               \end{equation*}
+           \item $T[1]:$ 
+               \begin{equation*}
+                \cancel{\pstree{\Tr{7}}{\Tr{7}}} 
+                \cancel{\pstree{\Tr{5}}{\Tr{8}\Tr{5}}} 
+                \cancel{\pstree{\Tr{1}}{\Tr{1} \Tr{14}}}
+                {\color{red}\psset{linecolor=red} \pstree{\Tr{1}}{\Tr{1} \Tr{14}}}
+               \end{equation*}
+           \item $T[2]:$ 
+               \begin{equation*}
+                \cancel{\pstree{\Tr{2}}{\pstree{\Tr{2}}{\Tr{2}\Tr{4}}}}
+                {\color{orange}\psset{linecolor=orange} \pstree{\Tr{5}}{\pstree{\Tr{7}}{\Tr{7}}\pstree{\Tr{5}}{\Tr{6}\Tr{5}}}}
+               \end{equation*}
+           \item $T[3]:$
+               \begin{equation*}
+                \cancel{\pstree{\Tr{4}}{\pstree{\Tr{4}}{\pstree{\Tr{4}}{\Tr{4}}}}} 
+                {\color{green}\psset{linecolor=green} 
+                    \pstree{\Tr{2}}{
+                        \pstree{\Tr{4}}{
+                            \pstree{\Tr{4}}{
+                                \pstree{\Tr{4}}{
+                                    \Tr{4}
+                                }
+                            }
+                        }
+                        \pstree{\Tr{2}}{
+                            \pstree{\Tr{2}}{
+                                \pstree{\Tr{2}}{
+                                    \Tr{2}\Tr{3}
+                                }
+                            }
+                            \pstree{\Tr{5}}{
+                                \pstree{\Tr{7}}{
+                                    \Tr{7}
+                                }
+                                \pstree{\Tr{5}}{
+                                    \Tr{6}
+                                    \Tr{5}
+                                }
+                            }
+                        }
+                    }
+                }
+               \end{equation*}
+               \hrulefill
+           \item Ergebnis:
+               \begin{equation*}
+                   15
+                   \pstree{\Tr{1}}{\Tr{1} \Tr{14}}
+                    \pstree{\Tr{2}}{
+                        \pstree{\Tr{4}}{
+                            \pstree{\Tr{4}}{
+                                \pstree{\Tr{4}}{
+                                    \Tr{4}
+                                }
+                            }
+                        }
+                        \pstree{\Tr{2}}{
+                            \pstree{\Tr{2}}{
+                                \pstree{\Tr{2}}{
+                                    \Tr{2}\Tr{3}
+                                }
+                            }\pstree{\Tr{5}}{
+                                \pstree{\Tr{7}}{
+                                    \Tr{7}
+                                }
+                                \pstree{\Tr{5}}{
+                                    \Tr{6}
+                                    \Tr{5}
+                                }
+                            }
+                        }
+                    }
+               \end{equation*}
+          \end{description}
+      \item Erdbeben: Falls Ebene $i$ existiert mit $n[i+1] > \frac{3}{4} n[i]$: 
+          \begin{itemize}
+          \item Sei $i$ niedrigste solcher Ebenen
+          \item Lösche alle Knoten mit Höhe $> i$
+          \end{itemize}
+          $\rightarrow$ Erzeugt ggf. neue Bäume
+     \end{enumerate}
+\end{itemize}
+
+

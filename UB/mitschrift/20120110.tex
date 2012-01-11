@@ -1,0 +1,128 @@
+\chapter{Syntaxgerichtete Übersetzung}
+Kern des Übersetzerbaus
+\paragraph*{Grammatik:} Struktur des Quellprogramms steuert die Übersetzung.
+\paragraph*{2 Ausprägungen:}
+\begin{itemize}
+ \item Allgemeine Methode: Syntaxgerichtete Definition (SDD)
+ \item Spezielle Methode: Übersetzungsschema
+\end{itemize}
+
+\section{Syntaxgerichtete Definition}
+\Defi Eine \emph{syntaxgerichtete Definition} ist eine kontextfreie Grammatik zusammen mit Attributen und semantischen Regeln. Jedem Symbol der Grammatik sind endlich viele Attribute zugeordnet. Jeder Produktion sind endlich viele semantische Regeln zugeordnet, wobei eine semantische Regel zu einer Produktion $A \to X_1 ... X_n$ eine Berechnungsvorschrift für \emph{ein} Atrribut von $A, X_1, ...$ oder $X_n$ darstellt. Typischer Weise schreiben wir semantische Regeln in der Implementierungssprache.
+\paragraph*{Hier liegt die Kreativität des Übersetzerbauers}
+\paragraph*{Wiederholung:}
+In der Regel liefert die lexikalische Analyse Attributwerte (lexval) für die Terminalsymbole!
+\begin{center}
+    \begin{tabular}{l|l}
+        Produktion             & semantische Regeln      \\\hline
+        $L \to E\verb!\n!$     & $L.v = E.v$             \\\hline
+        $E \to E_1 \texttt{+} T$&$E.v = E_1.v + T.v$     \\\hline
+        $E \to T$              & $E.v = T.v$             \\\hline
+        $T \to T_1 \texttt{*} F$&$T.v = T_1.v \cdot F.v$ \\\hline
+        $T \to F$              & $T.v = F.v$             \\\hline
+        $F \to (E)$            & $F.v = E.v$             \\\hline
+        $F \to d$              & $F.v = d.\text{lexval}$
+    \end{tabular}
+\end{center}
+\Bsp Für \emph{dekorierten Parsebaum}: \verb!3 * 5 + 4\n!
+\begin{center}
+\pstree{\Tr{$L$}\nput{10}{\pssucc}{\color{blue}$.v = 19$}}{
+    \pstree{\Tr{$E$}\nput{170}{\pssucc}{\color{blue}$.v = 19$}}{
+        \pstree{\Tr{$E$}\nput{170}{\pssucc}{\color{blue}$.v = 15$}}{
+            \pstree{\Tr{$T$}\nput{170}{\pssucc}{\color{blue}$.v = 15$}}{
+                \pstree{\Tr{$T$}\nput{170}{\pssucc}{\color{blue}$.v = 3$}}{
+                    \pstree{\Tr{$F$}\nput{170}{\pssucc}{\color{blue}$.v = 3$}}{
+                        \Tr{$d$}\nput{170}{\pssucc}{\color{blue}$.\text{lexval} = 3$}
+                    }
+                }
+                \Tr{\texttt{*}}
+                \pstree{\Tr{$F$}\nput{80}{\pssucc}{\color{blue}$.v = 5$}}{
+                    \Tr{$d$}\nput{10}{\pssucc}{\color{blue}$.\text{lexval} = 5$}
+                }
+            }
+        }
+        \Tr{\texttt{+}}
+        \pstree{\Tr{$T$}\nput{10}{\pssucc}{\color{blue}$.v = 4$}}{
+            \pstree{\Tr{$F$}\nput{10}{\pssucc}{\color{blue}$.v = 4$}}{
+                \Tr{$d$}\nput{10}{\pssucc}{\color{blue}$.\text{lexval} = 4$}
+            }
+        }
+    }
+    \Tr{\texttt{\textbackslash n}}
+} 
+\end{center}
+Einbau in LR-Parser \emph{trivial.}
+
+\subsection{Attribute}
+Wir unterscheide zwei Sorten von Attributen: \emph{Synthetisierte} und \emph{ererbte}
+\begin{itemize}
+ \item Ein Attribut $a$ zu einem Nichtterminal $A$ heißt synthetisiert, wenn die zugehörige semantische Regel zu einer $A$-Produktion gehört.
+ \item Ein Attribut $b$ zu einem Nichtterminal $B$ heißt ererbt, wenn die semantische Regel zur Berechnung von $B.b$ einer Produktion zugeordnet ist, in der $B$ auf der rechten Regelseite vorkommt.
+\end{itemize}
+\Defi Eine SDD heißt $S$-Attributierung, genau dann wenn jedes Attribut synthetisiert ist.
+\paragraph*{Erweiterung:} Gewünschte Nebenwirkungen (\emph{side effects}):
+\begin{center}
+    \begin{tabular}{l|p{4cm}}
+        Produktion             & semantische Regeln      \\\hline
+        $L \to E\verb!\n!$     & $L.v = E.v$\texttt{;} \newline \color{red}\verb!print(!$L.v$\verb!);!             \\\hline
+        $E \to E_1 \texttt{+} T$&$E.v = E_1.v + T.v$     \\\hline
+        $E \to T$              & $E.v = T.v$             \\\hline
+        $T \to T_1 \texttt{*} F$&$T.v = T_1.v \cdot F.v$ \\\hline
+        $T \to F$              & $T.v = F.v$             \\\hline
+        $F \to (E)$            & $F.v = E.v$             \\\hline
+        $F \to d$              & $F.v = d.\text{lexval}$
+    \end{tabular}
+\end{center}
+{\large Achtung: Reihenfolge!!}
+\par Im Allgemeinen ist eine Attibutierung \emph{nicht} immer möglich, da Zyklen vorkommen können.
+\begin{center}
+    \begin{tabular}{l|p{3cm}}
+        Prod. & sem. Regeln \\\hline
+        $A \to B$ & $A.s = B.i$ \newline $B.i = A.s + 1$
+    \end{tabular}
+    \hspace*{3cm}
+    \pstree{\Tr{A}\nput{10}{\pssucc}{\color{blue}.\rnode{s}{$s$}}}{\Tr{B}\nput{10}{\pssucc}{\color{blue}.\rnode{i}{$i$}}}
+    \nccurve[linecolor=blue,angleA=180,angleB=180]{->}{s}{i}
+    \nccurve[linecolor=blue,angleA=0,angleB=0]{->}{i}{s}
+\end{center}
+Nicht immer ist $S$-Attributierung möglich!
+\par Betrachte kontextfreie Grammatik nach Eliminierung der Linksrekursion.
+\begin{center}
+    \begin{tabular}{l|p{3cm}}
+        $T \to FT'$ & $T'.i = F.v$ \newline $T.v = T'.s$ \\
+        $T' \to \texttt{*}FT'_1$ & $T'_1.i = T'.i \cdot F.v$ \newline $T'.s = T'_1.s$\\
+        $T' \to \varepsilon$ & $T'.s = T'.i$\\
+        $F \to d$ & $F.v = d.l$
+    \end{tabular}
+\end{center}
+\verb!3*5!
+\begin{center}
+\psset{treesep=2cm}
+\pstree{\Tr{$T$}\nput{10}{\pssucc}{\color{blue}$.v$}}{
+    \pstree{\Tr{$E$}\nput{170}{\pssucc}{\color{blue}$.\rnode{v1}{v = 3}$}}{
+        \Tr{$d$}\nput{170}{\pssucc}{\color{blue}$.l = 3$}
+    }
+    \pstree{\Tr{$T'$}\nput{10}{\pssucc}{\color{blue}$.\rnode{i1}{i = 3}$}\nput{45}{\pssucc}{\color{blue}$.\rnode{s1}{s = 15}$}}{
+        \Tr{\texttt{*}}
+        \pstree{\Tr{$F$}\nput{10}{\pssucc}{\color{blue}$.v = 5$}}{
+            \Tr{$d$}\nput{10}{\pssucc}{\color{blue}$.l = 5$}
+        }
+        \pstree{\Tr{$T$}\nput{10}{\pssucc}{\color{blue}$.i = 15$}\nput{45}{\pssucc}{\color{blue}$.\rnode{s2}{s = 15}$}}{
+            \Tr{$\varepsilon$}
+        }
+    }
+}
+\ncarc[linecolor=blue]{->}{v1}{i1}
+\ncarc[linecolor=blue]{->}{s2}{s1}
+\end{center}
+Beim Teilbaum $T(\texttt{*},F,T)$ ist das ererbte Attibut $i$(nherited) notwendig.
+\Defi Gegebein sei eine SDD und ein zugehöriger Parsebaum $P$.
+\begin{enumerate}
+ \item Zu jedem Knoten von $P$ und Symbol $X$ und jedem Attribut $a$ von $X$ erhält der \emph{Abhängigkeitsgraph} $\mathcal{A}_P$ einen Knoten mit der Marke $a$.
+ \item Wenn eine semantische Regel zu Berechnung von $X.a$ den Wert $Y.b$ benötig, füge eine Kante $Y.b$ nach $X.a$ in $\mathcal{A}_P$ ein.
+\end{enumerate}
+Auswertungsreihenfolge kann durch \emph{topologische Sortierung} festgelegt werden.
+\Defi Sei $N_1...N_k$ eine Aufzählung der Knoten in einem Abhängigkeitsgraphen $\mathcal{A}_P$. $N_1...N_k$ heißt \emph{topologische Sortierung}, genau dann wenn für jede Kante von $N_i$ nach $N_j$ gilt: $i < j$
+\Lemma Jede topologische Sortierung bedingt eine Auswertungsstrategie.
+\Satz Wenn die zugehörige SDD zyklenfrei ist, so erhält man eine topologische Sortierung wie folgt:
+\Bew Starte mit beliebigem Knoten. Gehe jeweils zu einem seiner Vorgänger, bis es keinen Vorgänger mehr gibt. Setze diesen Knoten als $N_1$, entferne $N_1$ aus dem Graphen und fahre fort.
