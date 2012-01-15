@@ -1,0 +1,120 @@
+\section{Graphenalgorithmen}
+\begin{description}
+\item[Gegeben:] Graph $G = (V,E)$, Zusatzinformationen
+\item[Ziel:] Berechne etwas Interessantes über $G$
+\item[Beispiele:]
+    \begin{itemize}
+    \item Durchsuchen von Graphen: BFS, DFS
+    \item kürzeste Wege: Dijkstra, Bellman-Ford, Floyd-Warshall, $A^*$, ...
+    \item minimale aufgespannte Bäume: Kruskal, Prim-Janik, Borůvka, ...
+    \item topologisches Sortieren
+    \end{itemize}
+\end{description}
+
+\subsection[Flussproblem]{Flussproblem}
+\Bsp UdSSR: Problem Transportiere Zement von Nowosibirsk nach Moskau
+\begin{center}
+    \vspace{1em}
+    \begin{psmatrix}[mnode=dot,rowsep=1cm]
+          & O & T \\
+        N & A & x & M \\
+          & J & y
+    \end{psmatrix}
+    \vspace{1em}
+    \nput{90}{1,2}{O}
+    \nput{90}{1,3}{T}
+    \nput{180}{2,1}{N}
+    \nput{45}{2,2}{A}
+    \nput{0}{2,4}{M}
+    \nput{-90}{3,2}{J}
+    \ncarc{->}{1,2}{1,3}\naput{5}
+    \ncline{->}{1,2}{2,2}\naput{4}
+    \ncarc{->}{1,3}{1,2}\naput{10}
+    \ncline{->}{1,3}{2,3}\naput{15}
+    \ncline{->}{1,3}{2,4}\naput{10}
+    \ncline{->}{2,1}{1,2}\naput{10}
+    \ncline{->}{2,1}{2,2}\naput{5}
+    \ncline{->}{2,1}{3,2}\nbput{15}
+    \ncline{->}{2,2}{2,3}\naput{6}
+    \ncline{->}{2,2}{3,2}\naput{6}
+    \ncline{->}{2,3}{2,4}\naput{10}
+    \ncline{->}{3,3}{2,2}\nbput{6}
+    \ncline{->}{3,3}{2,3}\nbput{15}
+    \ncline{->}{3,3}{2,4}\nbput{10}
+    \ncline{->}{3,2}{3,3}\nbput{30}
+\end{center}
+\begin{itemize}
+\item   Strecken haben \emph{Kapazitäten}
+\item   wollen so viel Zement wie möglich von $N$ nach $M$\\
+        $\Rightarrow$ Flussproblem
+\end{itemize}
+USA (Klassenfeind)
+\begin{itemize}
+\item   Verhindere Transport, schneide $N$ von $M$ ab
+\item   Je breiter die Strecke, desto teurer die Unterbrechung\\
+    $\Rightarrow$ MIN-$s$-$t$-cut
+\end{itemize}
+Formalisierung (Flussnetzwerk):
+\begin{description}
+\item[Gegeben:]
+    \begin{itemize}
+    \item   Graph $G = (V, E)$ gerichtet
+    \item   $s,t \in V, s \neq t$
+            \begin{description}
+            \item   $s$: Quelle
+            \item   $t$: Abfluss/Senke
+            \end{description}
+    \item   $C{:}\ V \times V \to \mathbb{R}^+_0$, mit $c(u,v) = 0$, wenn $(u,v) \in E$.
+    \item   Kapazitäten
+    \end{itemize}
+\item[Fluss:] Funktion $f{:} V \times V \to \mathbb{R}$, so dass
+    \renewcommand{\theenumi}{\roman{enumi}}
+    \begin{enumerate}
+    \item   $\forall u,v \in V{:}\ f(u,v) \leq c(u,v)$ (Kapazitätseigenschaft)
+    \item   $\forall u,v \in V{:}\ f(u,v) = -f(v,u)$ (Antisymmetrie)
+    \item   $\forall u \in V \setminus \{s,t\}{:}\ \sum\limits_{v \in V} f(u,v) = 0$
+    \end{enumerate}
+\item[Bemerkungen:]
+    \begin{itemize}
+    \item   $f \equiv 0$ ist Fluss
+    \item   (i) und (ii) $\Rightarrow f(u,v) = 0$, wenn $(u,v) \in E$ und $(v,u) \in E$
+    \item   (ii) $\Rightarrow f(u,u) = 0, \forall u \in V$  
+    \end{itemize}
+\end{description}
+Wert des Flusses $f$
+\[|f| := \sum\limits_{v \in V} f(s,v)\]
+\textbf{Ziel:} Finde $f$ mit $|f|$ maximal.
+\Lemma $|f| = \sum\limits_{v \in V} f(v,t)$
+\Bew Betrachte 
+\[\sum\limits_{(u,v) \in V \times V} f(u,v) = \sum\limits_{\{u,v\} \in \binom{V}{2}} (f(u,v) - f(v,u)) = 0\]
+Also:
+\begin{align*}
+0 &= \sum\limits_{(u,v) \in V \times V} f(u,v) = \sum\limits_{v \in V} f(s,v) +  \sum\limits_{v \in V} f(t,v)
+    + \ovalnode[linecolor=red]{lst}{\sum\limits_{\begin{subarray}(u,v) \in V \times V\\ u \neq s,t\end{subarray}} f(t,v)}\\
+  &= \sum\limits_{(u,v) \in V \times V} f(u,v) = \sum\limits_{v \in V} f(s,v) +  \sum\limits_{v \in V} f(t,v)
+    + \underbrace{\sum\limits_{u \neq s,t} \sum\limits_{v \in V} f(u,v)}_{= 0} \\
+  &= \sum\limits_{(u,v) \in V \times V} f(u,v) = \sum\limits_{v \in V} f(s,v) +  \sum\limits_{v \in V} f(t,v)
+\end{align*} \hfill $\square$
+\begin{description}
+\item[Gegeben:]
+    \begin{itemize}
+    \item   $G = (V, E)$ Flussnetzwerk
+    \item   $s$-$t$-Schnitt $C = (A,B)$
+            \[A,B \subseteq V{;}\ A \cap B = \emptyset; A \cup B = V, s \in A, t \in B\]
+    \end{itemize}
+    Kapazität von $C$:
+    \[K(C) := \sum\limits_{u,v \in A \times B} c(u,v)\]
+\item[Gesucht:]
+    Schnitt $C$ mit minimaler Kapazität.
+\end{description}
+\Lemma (schwache Dualität)
+    Seien $C$ ein Schnitt, $f$ ein Fluss, dann: $|f| \leq K(C)$
+\Bew Betrachte
+    \[\underbrace{\sum\limits_{(u,v) \in A \times B} f(u,v)}_{\text{Totaler Ausfluss von $A$.}} \leq \sum\limits_{(u,v) \in A \times B} c(u,v) = K(C).\]
+\begin{itemize}
+\item   noch zu zeigen: $|f| \leq $ totaler Ausfluss aus $A$
+\item   Abkürzung: Ersetze $B$ durch Knoten $t'$.
+        \[|f| = \sum\limits_{v \in V} f(v,t') \leq \text{Ausfluss aus $A$}\]
+\end{itemize}
+
+    

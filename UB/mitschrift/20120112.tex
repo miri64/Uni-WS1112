@@ -1,0 +1,180 @@
+\paragraph*{allgemeine Methode:} Abhängigkeitsgraph zu Parsebaum $P$, topologische Sortierung \emph{aufwendig}!
+\paragraph*{Wunsch:} \emph{Integrierte} Syntaxanalyse und Attributierung\\
+$\Rightarrow$ Organisiere die SDD so, dass eine Berechnung der Attributwerte in der Riehenfolge möglich ist, in der die Knoten des Parsebaumes erzeugt (besucht) werden
+\paragraph*{$S$-Attributierung:} Nur synthetisierte Attribute!
+\begin{lstlisting}[language=Java,mathescape=True]
+postorder ($N$) {
+    for (jeden Nachfolger $C$ von links nach rechts) postorder(C);
+    berechne Attributwerte von $N$;
+}
+\end{lstlisting}
+
+\paragraph*{$L$-Attributierung} (Information darf im Parsebaum von \emph{l}inks nachr rechts fließen)
+\begin{lstlisting}[language=Java,mathescape=True]
+depthfirst ($N$) {
+    for (jeden Nachfolger $C$ von $N$) {
+        berechne ererbte Attribute von $C$;
+        depthfirst($C$);
+    }
+    berechne synthetisierte Attributwerte von $N$;
+}
+\end{lstlisting}
+
+\Defi Eine SDD heißt \emph{$L$-Attributierung}, wenn in jeder semantischen Regel zu einer Prod. $A \to X_1...X_n$ die Berechnung eines \emph{ererbten} Attributs von $X_j$ ($1 \leq j \leq n$) gilt:
+\begin{itemize}
+\item   Die Berechnung von diesem Attribut hängt nur ab von:
+        \begin{enumerate}
+        \item   ererbte Attribute von $A$.
+        \item   Attributwerten der Symbole $X_1...X_{j-1}$.
+        \item   Attributwerte von $X_j$, wenn dadurch keine Zyklen entstehen.
+        \end{enumerate}
+\end{itemize}
+
+\paragraph*{Typische anwendung von SDD's} mit kontrollierten \emph{Nebenwirkungen}
+\begin{itemize}
+\item   (bereits gesehen) Drucke Ergebnis aus
+\item   Trage Typinformationen von Variablen in Symboltabelle ein
+        \begin{center}
+            \begin{tabular}{|c|c|}
+                    & Typ \\\cline{1-1}
+            float   &     \\\cline{1-1}
+            int     &     \\\cline{1-1}
+            $\vdots$&     \\\hline
+            $x$     & float    \\\hline
+            $y$     & float    \\\hline
+            $z$     & float    \\\hline
+            \multicolumn{1}{c}{$\vdots$} & \multicolumn{1}{c}{}
+            \end{tabular}
+        \end{center}
+        \paragraph*{Hilfsfunktion:} \lstinline!addType($v$,$t$)! trägt den Typ von $t$ für die Variable $v$ ein.
+        \begin{center}
+            \begin{tabular}{|l|l|}
+                Produktion & Semantische Regeln \\\hline
+                $D \to TL$ & $L.t = T.t$\\\hline
+                $T \to \text{float}$ & $T.t = \text{float}$ \\\hline
+                $T \to \text{int}$ & $T.t = \text{int}$ \\\hline 
+                $T \to L_1, i$ & $L_1.t = L.t$; $i.t = L.t$; $\text{addType}(i.entry, i.t)$ \\\hline 
+                $T \to i$ & $i.t = L.t$; $\text{addType}(i.entry, i.t)$ \\\hline
+            \end{tabular}
+        \end{center}
+        \Bsp float $x, y, z$
+        \begin{center}
+            \psset{treesep=2cm,levelsep=1.5cm}
+            \pstree{\Tr{$D$}}{
+                \pstree{\Tr{$T$}\nput{10}{\pssucc}{\color{red}\small\rnode{T1_t}{.}t = float}}{
+                    \Tr{float}
+                }
+                \pstree{\Tr{$L$}\nput{0}{\pssucc}{\color{red}\small\rnode{L1_t}{.}t = float}}{
+                    \pstree{\Tr{$L$}\nput{0}{\pssucc}{\color{red}\small\rnode{L2_t}{.}t = float}}{
+                        \pstree{\Tr{$L$}\nput{0}{\pssucc}{\color{red}\small\rnode{L3_t}{.}t = float}}{
+                            \Tr{$i$}\nput{0}{\pssucc}{
+                                \begin{minipage}{3cm}
+                                    \color{red}\small
+                                    \rnode{i3_t}{.}t = float\\
+                                    .entry = $x$\\
+                                    \rnode{i3_addType}{.}addType(i.entry, i.t)
+                                \end{minipage}
+                            }
+                        }
+                        \Tr{,}
+                        \Tr{$i$}\nput{0}{\pssucc}{
+                            \begin{minipage}{3cm}
+                                \color{red}\small
+                                \rnode{i2_t}{.}t = float\\
+                                .entry = $x$\\
+                                \rnode{i2_addType}{.}addType(i.entry, i.t)
+                            \end{minipage}
+                        }
+                    }
+                    \Tr{,}
+                    \Tr{$i$}\nput{0}{\pssucc}{
+                        \begin{minipage}{3cm}
+                            \color{red}\small
+                            \rnode{i1_t}{.}t = float\\
+                            .entry = $x$\\
+                            \rnode{i1_addType}{.}addType(i.entry, i.t)
+                        \end{minipage}
+                    }
+                }
+            }
+            \ncarc[linecolor=red]{->}{T1_t}{L1_t}
+            \ncarc[linecolor=red]{->}{L1_t}{L2_t}
+            \ncarc[linecolor=red]{->}{L2_t}{L3_t}
+            \ncarc[linecolor=red]{->}{L1_t}{i1_t}
+            \ncarc[linecolor=red]{<-}{i1_addType}{i1_t}
+            \ncarc[linecolor=red]{->}{L2_t}{i2_t}
+            \ncarc[linecolor=red]{<-}{i2_addType}{i2_t}
+            \ncarc[linecolor=red]{->}{L3_t}{i3_t}
+            \ncarc[linecolor=red]{<-}{i3_addType}{i3_t}
+        \end{center}
+\end{itemize}
+
+\section{Erzeugung (abstrakter) Syntaxbäume}
+Verwende Hilfsfunktionen: Leaf(op, val) und Node(op, $c_1$, ..., $c_k$), wobei $k$ die Anzahl der unmittelbaren Komponenenten des Konstrukts op ist.
+\begin{center}
+    \begin{tabular}{l|l}
+        Produktion      & semantische Regeln \\\hline
+        $E \to E_1 + T$ & $E.k = $new Node('+', $E_1.k$, $E.k$)\\\hline
+        $E \to T$       & $E.k = T.k$\\\hline
+        $T \to T_1 * F$ & $T.k = $new Node('*', $T_1.k$, $F.k$)\\\hline
+        $T \to F$       & $T.k = F.k$\\\hline
+        $F \to (E)$     & \\\hline
+        $F \to n$       & $F.k = $new Leaf(num, $n$.val)
+    \end{tabular}
+\end{center}
+\Bsp 4+(2*5)
+    \begin{center}
+        \pstree{\Tr{$E$}}{
+            \pstree{\Tr{$E$}}{
+                \pstree{\Tr{$T$}}{
+                    \pstree{\Tr{$F$}}{
+                        \Tr{$n$}
+                    }
+                }
+            }
+            \Tr{$+$}
+            \pstree{\Tr{$T$}}{
+                \pstree{\Tr{$T$}}{
+                    \pstree{\Tr{$F$}}{
+                        \Tr{$n$}
+                    }
+                }
+                \Tr{$*$}
+                \pstree{\Tr{$F$}}{
+                    \Tr{$n$}
+                }
+            }
+        }
+    \end{center}
+    \begin{center}
+        \color{red}
+        \rnode{F1_leaf_num}{
+        \begin{tabular}{|c|c|}
+            \hline
+            num & 4 \\\hline
+        \end{tabular}} \hspace*{1cm}
+        \rnode{F2_leaf_num}{
+        \begin{tabular}{|c|c|}
+            \hline
+            num & 2 \\\hline
+        \end{tabular}} \hspace*{1cm}
+        \rnode{F3_leaf_num}{
+        \begin{tabular}{|c|c|}
+            \hline
+            num & 5 \\\hline
+        \end{tabular}}
+    \end{center}
+    \begin{center}
+        \color{red}
+        \rnode{F1_node}{
+        \begin{tabular}{|c|c|c|}
+            \hline
+            * & & \\\hline
+        \end{tabular}} \hspace*{1cm}
+        \rnode{F2_node}{
+        \begin{tabular}{|c|c|c|}
+            \hline
+            + & & \\\hline
+        \end{tabular}}
+    \end{center}
+    Ein Attribut $k$ (Zeiger auf Knoten im Syntaxbaum)
