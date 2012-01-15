@@ -68,9 +68,61 @@
 
 \section{}
 \begin{enumerate}
-\item   
-\item   
-\item   
+\item   Wir konstruieren zunächst eine geeignete Grammatik (mit $d$ als beliebige Ziffer)
+        \begin{align*}
+            E &\to E + T\ |\ T &    T &\to T * F\ |\ F \\
+            F &\to (E)         &    F &\to d
+        \end{align*}
+        Die syntaxgerichtete Definition ist dann:
+        \[
+            \begin{array}{l|l}
+                \textbf{Produktion} & \textbf{semantische Regel}                \\\hline\hline
+                E \to E_1 + T       & E.v = E_1.v + T.v                         \\
+                E \to T             & E.v = T.v                                 \\
+                T \to T_1 * F       & T.v = T_1.v \cdot F.v                     \\
+                T \to F             & T.v = F.v                                 \\
+                F \to (E)           & F.v = E.v                                 \\
+                F \to d             & F.v = d.\textit{lexval}
+            \end{array}
+        \]
+\item   Die syntaxgerichtete Definition enthält nur synthetisierte Attribute und ist somit eine $S$-Attributierung
+\item   \hfill
+        \begin{center}
+            \psset{treesep=2.5cm,levelsep=1cm}
+            \pstree[linestyle=dotted,linecolor=gray]{\Tr{$E$}\nput{0}{\pssucc}{\rnode{E_1_v}{$v = 38$}}\nput{175}{\pssucc}{$N_{11}$}}{
+                \pstree[linestyle=dotted,linecolor=gray]{\Tr{$E$}\nput{0}{\pssucc}{\rnode{E_2_v}{$v = 3$}}\nput{175}{\pssucc}{$N_4$}}{
+                    \pstree[linestyle=dotted,linecolor=gray]{\Tr{$T$}\nput{0}{\pssucc}{\rnode{T_2_v}{$v = 3$}}\nput{175}{\pssucc}{$N_3$}}{
+                        \pstree[linestyle=dotted,linecolor=gray]{\Tr{$F$}\nput{0}{\pssucc}{\rnode{F_2_v}{$v = 3$}}\nput{175}{\pssucc}{$N_2$}}{
+                            \Tr{$d$}\nput{0}{\pssucc}{\rnode{d_2_lexval}{$\textit{lexval} = 3$}\nput{175}{\pssucc}{$N_1$}}
+                        }
+                    }
+                }
+                \Tr{$+$}
+                \pstree[linestyle=dotted]{\Tr{$T$}\nput{0}{\pssucc}{\rnode{T_1_v}{$v = 35$}}\nput{175}{\pssucc}{$N_{10}$}}{
+                    \pstree[linestyle=dotted,linecolor=gray]{\Tr{$T$}\nput{0}{\pssucc}{\rnode{T_3_v}{$v = 5$}}\nput{175}{\pssucc}{$N_7$}}{
+                        \pstree[linestyle=dotted,linecolor=gray]{\Tr{$F$}\nput{0}{\pssucc}{\rnode{F_3_v}{$v = 5$}}\nput{175}{\pssucc}{$N_6$}}{
+                            \Tr{$d$}\nput{0}{\pssucc}{\rnode{d_3_lexval}{$\textit{lexval} = 5$}\nput{175}{\pssucc}{$N_5$}}
+                        }
+                    }
+                    \Tr{$*$}
+                    \pstree[linestyle=dotted,linecolor=gray]{\Tr{$F$}\nput{0}{\pssucc}{\rnode{F_1_v}{$v = 7$}}\nput{175}{\pssucc}{$N_9$}}{
+                        \Tr{$d$}\nput{0}{\pssucc}{\rnode{d_1_lexval}{$\textit{lexval} = 7$}}\nput{175}{\pssucc}{$N_8$}
+                    }
+                }
+            }
+            \psset{arrows=->}
+            \ncline{d_1_lexval}{F_1_v}
+            \ncline{d_2_lexval}{F_2_v}
+            \ncline{d_3_lexval}{F_3_v}
+            \ncline{E_2_v}{E_1_v}
+            \ncline{F_1_v}{T_1_v}
+            \ncline{F_2_v}{T_2_v}
+            \ncline{F_3_v}{T_3_v}
+            \ncline{T_3_v}{T_1_v}
+            \ncline{T_2_v}{E_2_v}
+            \ncline{T_1_v}{E_1_v}
+        \end{center}
+        Topologische Sortierung: $N_1N_2N_3N_4N_5N_6N_7N_8N_9N_{10}N_{11}$
 \end{enumerate}
 
 \section{}
