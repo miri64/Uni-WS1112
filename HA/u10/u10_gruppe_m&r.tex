@@ -1,0 +1,114 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+\usepackage{algorithmic}
+\usepackage{cancel}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\newcommand{\Authors}{Martin Lenders (Di. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
+\title{H\"ohere Algorithmik - 10. \"Ubungsblatt}
+\author{\Authors}
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}:}
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\theenumii}{\roman{enumii}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{\Authors}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Java,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+    escapeinside={((*}{*))},
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\begin{document}
+
+\maketitle
+
+\section{Hashing mit Verkettung}
+\begin{enumerate}
+\item   Die in der Formel gegebene Binomialverteilung die Wahrscheilichkeit für einen Bernoulli-Prozess $r$ Erfolge (Anzahl der Schlüssel an einem Platz) für $n$ Versuche (Anzahle der Plätze in der Hashtabelle) zu erzielen und drückt damit die Kollisionswahrscheinlichkeit aus.
+\item   
+\item   \begin{align*}
+	&&\binom{n}{r} &\leq \left( \frac{ne}{r} \right)^r \\
+	&\Leftrightarrow &\binom{n}{r} &\leq n^r \cdot \left( \frac{e}{r} \right)^r \\
+	&\Leftrightarrow& \left( \frac{1}{n} \right)^r \cdot \binom{n}{r} &\leq \left( \frac{e}{r} \right)^r \tag{$\left( 1 - \frac{1}{n} \right)^{n-r} < 1$} \\
+	&\Rightarrow &\left( \frac{1}{n} \right)^r \cdot \left( 1 - \frac{1}{n} \right)^{n-r} \cdot \binom{n}{r} &\leq \left( \frac{e}{r} \right)^r \\
+	&\Leftrightarrow &\text{Pr[$Q_0 = r$]} &\leq \left( \frac{e}{r} \right)^r
+        \end{align*}
+\item   
+\item   
+\end{enumerate}
+
+\section{Page-Rank}
+\begin{enumerate}
+\item   \[
+            A' = \begin{pmatrix}
+                0 & 1 & 0 & 0 \\
+                0 & 0 & \frac{1}{2} & \frac{1}{2} \\
+                1 & 0 & 0 & 0 \\
+                0 & 0 & 1 & 0
+            \end{pmatrix}
+        \]
+\item   
+\item   Wir haben den Algorithmus in Python implementiert:
+        \lstinputlisting[lastline=35,language=Python]{src/pagerank.py}
+        Für das Beispiel (Eingabe: \lstinline[language=Python]!pagerank(Graph(vertices=['a','b','c','d'],edges=[('a','b'),('b','c'),('b','d'),('c','a'),('d','c')]))!) weicht die Matix mit einem Fehler kleiner als $0{,}001$ (mit der im Tutorium vorgeschlagenen Maximumsnorm als Fehlermaß) nach \underline{\underline{12}} Iterationen ab.
+\end{enumerate}
+
+\section{Prioritätswarteschlangen}
+\begin{enumerate}
+\item   \begin{description}
+	\item[Doppelt verkettete Liste:] Die Liste ist so aufgebaut, dass sie aufsteigend sortiert ist. Diese Invariante wird über alle Operationen aufrecht erhalten. Das Enternen oder Einfügen von Elementen vor oder hinter anderen Elementen benötigt $O(1)$ Laufzeit, da nur die Zeiger auf die entsprechenden neuen Elemente umgebogen werden müssen. Daher hat diese Operationen keinen Einfluss auf die Laufzeit der angebotenen Operationen und wird in den nachfolgenden Betrachtungen ausser Acht gelassen.
+	\begin{description}
+		\item[insert:] Da man die Invariante der Sortiertheit aufrecht erhalten muss, muss man ein Element beim Einfügen direkt an die richtige Position schreiben. Dies erreicht man, indem man es mit jedem Element vergleicht und dann vor dem ersten Element einfügt, welches größer ist. Oder am Ende der Liste, falls dieses erreicht wird. Dies hat $O(n)$ Laufzeit.
+		\item[decrease-key:] Wir gehen davon aus, dass man das gewünschte Element bereits hat. (Andernfalls findet man es in $O(n)$, was wie wir sehen werden, keine Veränderung der Gesamtlaufzeit nach sich zieht). Um die Invariante aufrecht zu erhalten, muss das Element notfalls an eine weiter vorne liegende Position verschoben werden. Im Schlimmstfall wird das letzte Element an die erste Position verschoben. Somit wird das Element mit jedem Element der Liste verglichen, was zu einer Laufzeit von $O(n)$ führt.
+		\item[delete-min:] Dank der Invariante befindet sich das kleinste Element an der ersten Position. Das Entfernen eines Elements aus der Liste verletzt nicht die Invariante, sodass man für diese Operation nur $O(1)$ Laufzeit benötigt.
+	\end{description}
+
+	\item[Quake-Heap:] Diese Implementierung wurde in der Vorlesung vorgestellt, weshalb wir nicht genauer auf die Bestimmung der Laufzeiten eingehen werden.
+	\begin{description}
+		\item[insert:]$O(1)$ Laufzeit
+		\item[decrease-key:]$O(1)$ Laufzeit
+		\item[delete-min:]$O(\log n + T_0 + D)$ Laufzeit, mit $T_0$ Anzahl der Bäume und $D$ Anzahl der zu löschenden Knoten beim Erdbeben.
+	\end{description}
+\end{description}
+\item   Eine Menge von Elementen kann mittels dieser Datenstruktur auf folgende Weise sortiert werden. Füge alle Elemente ein und entferne anschließend immer das Minimum und füge es in eine Liste ein. Die so erhaltene Liste ist aufsteigend sortiert.
+In beiden Fällen hat man $n$ \textbf{insert}- und $n$ \textbf{delete-min}-Operationen. Bei der doppelt verketteten Liste erhält man eine Laufzeit von $O(n^2 + n) = O(n^2)$ und beim Quake-Heap erhält man eine Laufzeit von $O(n + n\cdot (\log n + T_0 + D)) = O(n \log n + n\cdot T_0 + n \cdot D)$.
+\item   Je nach Implementierung muss eine Sortierung erzeugt werden oder beibehalten werden, um effizient ein Minimum finden zu können. Dies bedeutet, dass es mindestens eine Operation geben muss, die dies erledigt. Diese Operation hat eine Laufzeit von $\Omega (n \log n)$. Amortisierte Analyse kann nicht helfen. Da wir bei der Buchhaltermethode für die einzahlenden Operationen nur einen konstanten Betrag $c$ einzahlen können, haben wir nach $n$ vielen dieser Operationen $c \cdot n$ viel Guthaben auf dem Konto. Da aber gilt: $O(n \log n) > O(n)$, gibt es eine Folge von Operationen, die Laufzeit $\Omega (n \log n)$ hat.
+\end{enumerate}
+\end{document}
