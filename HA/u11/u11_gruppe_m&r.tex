@@ -60,7 +60,19 @@
 \maketitle
 
 \section{Quake Heaps: Details}
- 
+Quake Heaps werden mit Hilfe von Turnierbäumen (auch Link-/Cut-Böume genannt) implementiert. Sie verwalten dazu einen Wald von Turnierbäumen, in deren Blättern die Einträge des Quake Heaps gespeichert sind. 
+Die inneren Knoten und Wurzeln verwalten, wie bei Turnierbäumen üblich, auf die Schlüssel der Einträge, wobei ein Knoten immer auf den kleineren Schlüssel seiner maximal 2 Kinder zeigt.
+Die Blätter verweisen dann jeweils auf den letzten Knoten im Pfad zur Wurzel, der den gleichen Schlüsselwert hat, wie das Blatt.
+Wird ein neues Element mit \verb!insert!$(k,v)$ eingefügt, wird lediglich ein neuer Turnierbaum, der nur aus dem entsprechendem Blatt mit dem Wert $v$ und dem Schlüssel $k$ besteht dem Wald hinzugefügt.
+
+\verb!decrease_key!$(v,k)$ verringert den Schlüssel von Wert $v$ auf $k$. Dazu wird zunächst das Blatt gesucht, in dem der Wert $v$ gespeichert ist. 
+Durch den Verweis auf den höchsten Knoten im Pfad zur Wurzel finden wir so den höchsten Knoten $u$, der auf den Schlüssel $k$ verweißt, dessen Sub-Baum wir dann mit einer \verb!cut!$(u)$-Operation des Turnierbaums aus dem Baum entfernen und den Schlüssel dann verringern. 
+Den aus dem Turnierbaum herausgeschnittenen Baum fügen wir dem Wald hinzu und verringern den Schlüssel auf $k$.
+
+Im Detail entfernt \verb!cut!$(u)$ einen Sub-Baum aus einem Turnierbaum, dessen Wurzel $u$ ist und dessen Schlüssel sich von seinem Elternknoten unterscheidet. Dadurch entstehen zwei neue Turnierbäume.
+Eine Eigenschaft von Turnierbäumen ist nun, dass der minimale Schlüssel eines Turnierbaums immer in seiner Wurzel steht.
+Daher können wir nach dem Herausschneiden den Schlüssel verringern, ohne die Turnierbaum-Eigenschaften zu verletzen.
+
 
 \section{Quake Heaps: Analyse}
 \begin{enumerate}
