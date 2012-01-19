@@ -91,7 +91,10 @@ Die Eigenschaften von Turnierbäumen gelten natürlich auch hier, womit alle inn
 Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!delete\_min! werden wie folgt implementiert.
 \begin{description}
 \item[insert($k$,$v$):]
-    Fügt einen Wert $v$ unter dem Schlüssel $k$ dem Quake-Heap hinzu. Dazu wird lediglich ein neuer Baum mit einem Knoten, der als Blatt das Schlüssel-Wert-Paar speichert. 
+    Fügt einen Wert $v$ unter dem Schlüssel $k$ dem Quake-Heap hinzu. 
+    Dazu wird lediglich ein neuer Baum mit einem Knoten, der als Blatt das Schlüssel-Wert-Paar speichert, dem Wald und der Liste $T[1]$ hinzugefügt. 
+    $n[1]$ wird um 1 inkrementiert. 
+    Da $1$ der kleinste Index für $n$ ist, wird durch das bloße Hinzufügen des Blattes zu $n$ die Invariante nicht verletzt.
     Die Laufzeit von \verb!insert! ist daher $O(1)$. 
     Rückgabewert dieser Operation ist ein Verweis auf das Blatt, in dem das Schlüssel-Wert-Paar gespeichert ist.
 \item[decrease\_key($k$,$v$):]
@@ -100,7 +103,9 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
     Wir schneiden nun mit \verb!cut(!$T$, $u$\verb!)! einen Unterbaum aus dem Turnierbaum $T$ ab, in dem das Blatt gespeichert ist, wobei $u$ der höchste Knoten ist, in dem der Schlüssel zu $v$ gespeichert ist.
     Dieser kann leicht gefunden werden, da das Blatt mit $v$ eine Verweis auf $u$ verwaltet.
     Nach dem Herausschneiden kann der Schlüssel verkleinert werden, da die Wurzel eines Turnierbaums immer auf den minimalen Schlüssel im Baum verweist und so die Turnierbaum-Eigenschaften erhalten bleiben.
-    Die beiden entstandenen Bäume aus \verb!cut! werden dann im Wald des Heaps gespeichert.
+    Die beiden entstandenen Bäume aus \verb!cut! werden dann im Wald des Heaps gespeichert. 
+    Der herausgeschnittene Unterbaum wird seiner Tiefe $i$ entsprechend $T[i]$ zugeordnet, der Baum aus dem der Unterbaum herausgeschnitten wurde behält seine Tiefe $j$ und kann daher in $T[j]$ verbleiben (bzw. je nach Implementierung wird der alte Baum aus $T[j]$ entfernt und der neue hinzugefügt). 
+    Da alle Knoten die selbe Höhe behalten, verändert sich $n$ nicht. 
 \item[delete\_min():]
     Löscht das Element mit dem kleinsten Schlüssel aus dem Heap und gibt den entsprechenden Wert zurück.
     Wir durchsuchen zunächst alle Wurzeln des Waldes nach dem Minimum und löschen dessen Pfad, indem wir auf jeden Knoten von der Wurzel bis zu den Blättern, die den Schlüssel enthalten \verb!cut! aufrufen.
@@ -123,20 +128,29 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
             \STATE Lösche alle Knoten mit Höhe > $i$
         \ENDIF
     \ENDFOR
-    In den Turnierbäumen müssen dann natürlich noch die Zeiger der Blätter auf das höchste Blatt wieder aktualisiert werden.
     \end{algorithmic}
+    In den Turnierbäumen müssen dann natürlich noch die Zeiger der Blätter auf das höchste Blatt wieder aktualisiert werden.
+    
+    Die Laufzeit von \verb!delete_min()! beträgt, wie in der Vorlesung bewiesen $O(\log n + T_0 + D)$.
 \end{description}
 
-\section{Quake Heaps: Analyse}
+\section{Quake-Heaps: Analyse}
 \begin{enumerate}
-\item   
-\item   
-\item   
+\item   Ohne Konsolidierung wäre die Laufzeitanalyse wie folgt:
+        \paragraph*{Satz:} Sei $T_0$ die Anzahl der Bäume vor \verb!delete_min()!. Die Zeit für \verb!delete_min()! ohne Konsolidierung ist $O(\log n + T_0 + D)$ wobei $D$ die Anzahl der gelöschten Knoten bezeichnet.
+        \paragraph*{Beweis:} Für die Suche nach dem Minimum wird auch ohne Konsolidierung $O(T_0)$ benötigt, da wir immer noch jede Wurzel durchsuchen müssen.
+        Zum Löschen wird dann auch wieder $O(\log n)$ Zeit benötigt.
+        Es können maximal $O(\log n)$ neue Bäume entstehen und die Tiefe aller Bäume ist maximal $O(\log n)$, da dies aber definitiv weniger tief sind, als nach eine möglichen Konsolidierung, bleibt damit die asymptotische Laufzeit $O(\log n + D)$ für die Erdbeben erhalten.
+        Die Laufzeit bleibt daher zusammengerechnet $O(\log n + T_0 + D)$. \hfill $\square$
+\item   Durch die Erdbeben kann sich die Zahl der Bäume mitunter verdoppeln. 
+        Die asymptotische Laufzeit ist von solch einer Vervielfältigung allerdings nicht betroffen (da konstante Faktoren wegfallen).
+        Damit ist die Laufzeit der Konsolidierung nach dem Erdbeben ebenfalls $O(T_0 + \log n)$.
+        Auch hier fällt der konstante Faktor, der durch die 2. Konsolidierung entsteht ($2 \cdot O(T_0 + \log n)$) weg, wodurch die Gesamtlaufzeit -- asymptotisch betrachtet -- von \verb!decrease_key! erhalten bleibt.
 \end{enumerate}
 
 \section{Potentialfunktionen}
 \begin{enumerate}
-\item   
+\item   Das Ergebnis der Potentialfunktion kann so gedeutet werden, dass es sich dabei um das Ersparte dieses Zustandes geht, ohne dass dabei vorhergegangene Zustände oder Operationen beachtet werden müssen. Die amortisierten Kosten einer Operation wären dann die speziellen Einnahmen, bzw Ausgaben dieser Operation.
 \item   \begin{align*}
 	\sum_i{\hat c_{X_i}} &= \sum\limits_{i = 0}^{n}{\left(c_{X_i} + \Phi \left( D_{i+1} \right) - \Phi \left( D_i \right) \right) } \\
 	&= \sum\limits_{i=0}^{n}{c_{X_i}} + \sum\limits_{i=0}^{n}{\left( \Phi \left( D_{i+1} \right) - \Phi \left( D_i \right) \right) } \tag{Teleskopsumme}\\
@@ -145,9 +159,23 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
 	&\geq \sum_i{c_{X_i}}
 	\end{align*}
 	\begin{description}
-	\item[Interpretation:]
+	\item[Interpretation:] Die Ungleichung sagt aus, dass die amortisierten Kosten einer Folge von Operationen mindestens gleich groß ist wie die wahren Kosten dieser Operationsfolge. Da die amortisierten Kosten jedoch unabhängig von den Operationen berechnet wird, ist dies die worst-case Laufzeit für alle Operationsfolgen dieser Länge.
 	\end{description}
-\item   
+\item   Laut Aufgabenstellung ist $\Phi \left( D\right) =$ \#Einsen in $D$. 
+%Es gilt, dass $\Phi\left( D' \right) = \Phi\left( D \right) + 1$, wenn \#Einsen in $D$ gerade, ansonsten $1 \leq \Phi\left( D' \right) \leq \Phi\left( D \right)$.
+Sei $j$ der Index der am weitesten rechts stehenden $0$ (Beginnend mit 1). Alle $(j-1)$ Einsen rechts davon, werden beim Hochzählen zu einer Null und die Null wird zu einer Eins. Dadurch erhalten wir:\begin{align*}
+	\Phi\left( D' \right) = \Phi\left( D \right) - (j - 1) + 1 = \Phi\left( D \right) - j + 2
+\end{align*}
+Die tatsächlichen Kosten für ein Hochzählen bestimmen sich aus der Anzahl der zu kippenden Bits. Dies betrifft jedoch die ganz rechts stehenden Einsen bis zur ersten Null. Dies sind genau $j$ Bits. Also gilt: \begin{align*}
+	c_X = j
+\end{align*}
+So erhält man:\begin{align*}
+	\hat c_X &= c_X + \Phi ( D' ) - \Phi ( D )\\
+	&= j + \Phi ( D ) - j + 2 - \Phi ( D )\\
+	&= 2
+\end{align*}
+Für $n$ Operationen erhalten wir $O(2n) = O(n)$ Laufzeit.
+Dies entspricht genau dem Ergebnis, welches wir im 8. Übungszettel erhalten haben. Dort haben wir das Ergebnis jedoch mittels einer Abschätzung nach oben, sowie dem Durchschnitt über eine gesamte Folge ermittelt. In dieser Aufgabe haben wir eine Operation isoliert betrachtet und die amortisierten Kosten präzise berechnet.
 \end{enumerate}
 
 \section{Quake-Heaps: Implementierung}
