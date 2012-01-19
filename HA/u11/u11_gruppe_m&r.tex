@@ -128,15 +128,24 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
             \STATE Lösche alle Knoten mit Höhe > $i$
         \ENDIF
     \ENDFOR
-    In den Turnierbäumen müssen dann natürlich noch die Zeiger der Blätter auf das höchste Blatt wieder aktualisiert werden.
     \end{algorithmic}
+    In den Turnierbäumen müssen dann natürlich noch die Zeiger der Blätter auf das höchste Blatt wieder aktualisiert werden.
+    
+    Die Laufzeit von \verb!delete_min()! beträgt, wie in der Vorlesung bewiesen $O(\log n + T_0 + D)$.
 \end{description}
 
 \section{Quake Heaps: Analyse}
 \begin{enumerate}
-\item   
-\item   
-\item   
+\item   Ohne Konsolidierung wäre die Laufzeitanalyse wie folgt:
+        \paragraph*{Satz:} Sei $T_0$ die Anzahl der Bäume vor \verb!delete_min()!. Die Zeit für \verb!delete_min()! ohne Konsolidierung ist $O(\log n + T_0 + D)$ wobei $D$ die Anzahl der gelöschten Knoten bezeichnet.
+        \paragraph*{Beweis:} Für die Suche nach dem Minimum wird auch ohne Konsolidierung $O(T_0)$ benötigt, da wir immer noch jede Wurzel durchsuchen müssen.
+        Zum Löschen wird dann auch wieder $O(\log n)$ Zeit benötigt.
+        Es können maximal $O(\log n)$ neue Bäume entstehen und die Tiefe aller Bäume ist maximal $O(\log n)$, da dies aber definitiv weniger tief sind, als nach eine möglichen Konsolidierung, bleibt damit die asymptotische Laufzeit $O(\log n + D)$ für die Erdbeben erhalten.
+        Die Laufzeit bleibt daher zusammengerechnet $O(\log n + T_0 + D)$. \hfill $\square$
+\item   Durch die Erdbeben kann sich die Zahl der Bäume mitunter verdoppeln. 
+        Die asymptotische Laufzeit ist von solch einer Vervielfältigung allerdings nicht betroffen (da konstante Faktoren wegfallen).
+        Damit ist die Laufzeit der Konsolidierung nach dem Erdbeben ebenfalls $O(T_0 + \log n)$.
+        Auch hier fällt der konstante Faktor, der durch die 2. Konsolidierung entsteht ($2 \cdot O(T_0 + \log n)$) weg, wodurch die Gesamtlaufzeit -- asymptotisch betrachtet -- von \verb!decrease_key! erhalten bleibt.
 \end{enumerate}
 
 \section{Potentialfunktionen}
