@@ -137,11 +137,20 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
 \section{Potentialfunktionen}
 \begin{enumerate}
 \item   
-\item   
+\item   \begin{align*}
+	\sum_i{\hat c_{X_i}} &= \sum\limits_{i = 0}^{n}{\left(c_{X_i} + \Phi \left( D_{i+1} \right) - \Phi \left( D_i \right) \right) } \\
+	&= \sum\limits_{i=0}^{n}{c_{X_i}} + \sum\limits_{i=0}^{n}{\left( \Phi \left( D_{i+1} \right) - \Phi \left( D_i \right) \right) } \tag{Teleskopsumme}\\
+	&= \sum\limits_{i=0}^{n}{c_{X_i}} + \Phi \left( D_{n+1} \right) - \Phi \left( D_0 \right) \tag{$\Phi \left( D_0 \right) = 0$}\\
+	&= \sum\limits_{i=0}^{n}{c_{X_i}} + \Phi \left( D_{n+1} \right) \tag{$\Phi : \mathcal{D} \rightarrow \mathbb{N}_0 $}\\
+	&\geq \sum_i{c_{X_i}}
+	\end{align*}
+	\begin{description}
+	\item[Interpretation:]
+	\end{description}
 \item   
 \end{enumerate}
 
-\section{Potentialfunktionen}
+\section{Quake-Heaps: Implementierung}
 
 
 \end{document}
