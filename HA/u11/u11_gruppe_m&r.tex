@@ -88,7 +88,7 @@ Speichern wir die Tiefen der Bäume und Höhen der Knoten, können wir beide Arr
 Außerdem müssen \emph{alle} Operationen folgende Invariante aufrechterhalten:
 \[\forall i \geq 0{:}\ n[i+1] \leq \frac{3}{4} n[i]\]
 Die Eigenschaften von Turnierbäumen gelten natürlich auch hier, womit alle inneren Knoten auf den kleinsten Schlüsselwert seiner Kinder.
-Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!delete\_min! werden wie folgt implementiert.
+Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!delete_min! werden wie folgt implementiert.
 \begin{description}
 \item[insert($k$,$v$):]
     Fügt einen Wert $v$ unter dem Schlüssel $k$ dem Quake-Heap hinzu. 
@@ -99,10 +99,10 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
     Rückgabewert dieser Operation ist ein Verweis auf das Blatt, in dem das Schlüssel-Wert-Paar gespeichert ist.
 \item[decrease\_key($k$,$v$):]
     \emph{Verringert} den Schlüssel zum Wert $v$ auf $k$. Ist der Schlüssel zu $v$ bereits kleiner als $k$ ist diese Operation nicht zulässig.
-    Optimaler Weise übergeben wir dabei gleich einen Verweis auf das Blatt (den uns \verb!insert! als Rückgabewert liefert).
+    Optimalerweise übergeben wir dabei gleich einen Verweis auf das Blatt (den uns \verb!insert! als Rückgabewert liefert).
     Wir schneiden nun mit \verb!cut(!$T$, $u$\verb!)! einen Unterbaum aus dem Turnierbaum $T$ ab, in dem das Blatt gespeichert ist, wobei $u$ der höchste Knoten ist, in dem der Schlüssel zu $v$ gespeichert ist.
     Dieser kann leicht gefunden werden, da das Blatt mit $v$ eine Verweis auf $u$ verwaltet.
-    Nach dem Herausschneiden kann der Schlüssel verkleinert werden, da die Wurzel eines Turnierbaums immer auf den minimalen Schlüssel im Baum verweist und so die Turnierbaum-Eigenschaften erhalten bleiben.
+    Nach dem Herausschneiden kann der Schlüssel verkleinert werden, da die Wurzel eines Turnierbaums immer auf den minimalen Schlüssel im Baum verweist und so die Turnierbaum-Eigenschaften erhalten bleiben. Wenn die Schlüssel der inneren Knoten keine eigenen Variablen sind, sondern Referenzen auf die Variable im entsprechenden Blatt, kann man in $O(1)$ den Schlüssel im Blatt verringern und verringert dadurch implizit die Schlüssel der entsprechenden inneren Knoten.
     Die beiden entstandenen Bäume aus \verb!cut! werden dann im Wald des Heaps gespeichert. 
     Der herausgeschnittene Unterbaum wird seiner Tiefe $i$ entsprechend $T[i]$ zugeordnet, der Baum aus dem der Unterbaum herausgeschnitten wurde behält seine Tiefe $j$ und kann daher in $T[j]$ verbleiben (bzw. je nach Implementierung wird der alte Baum aus $T[j]$ entfernt und der neue hinzugefügt). 
     Da alle Knoten die selbe Höhe behalten, verändert sich $n$ nicht. 
@@ -111,11 +111,12 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
     Wir durchsuchen zunächst alle Wurzeln des Waldes nach dem Minimum und löschen dessen Pfad.
     Danach konsolidieren wir den Heap und stellen so sicher, dass nur jeweils ein Baum mit Tiefe $i$ existiert.
     \begin{algorithmic}
-    \FOR{$t_i \in T$}
-        \WHILE{$t_i > 1$}
-            \STATE Entferne zwei Bäume $T_1, T_2$ aus $t$
+    \FOR{$i \to O(\log n)$}
+        \WHILE{$|T[i]| > 1$}
+            \STATE Entferne zwei Bäume $T_1, T_2$ aus $T[i]$
             \STATE $T' \gets$\ \verb!link(!$T_1, T_2$\verb!)!
             \STATE $T[i+1] \gets$\ \verb!concat(!$T[i+1], [T']$\verb!)!
+	 \STATE $n[i+1] \gets n[i+1]+1$
         \ENDWHILE
     \ENDFOR
     \end{algorithmic}
@@ -146,6 +147,7 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
         Die asymptotische Laufzeit ist von solch einer Vervielfältigung allerdings nicht betroffen (da konstante Faktoren wegfallen).
         Damit ist die Laufzeit der Konsolidierung nach dem Erdbeben ebenfalls $O(T_0 + \log n)$.
         Auch hier fällt der konstante Faktor, der durch die 2. Konsolidierung entsteht ($2 \cdot O(T_0 + \log n)$) weg, wodurch die Gesamtlaufzeit -- asymptotisch betrachtet -- von \verb!decrease_key! erhalten bleibt.
+\item   Wir nehmen an, dass zu Beginn nur \verb!insert! ausgeeführt wird. In diesem Fall verhält sich die Größe der Turnierbäume wie das binäre Zählwerk von Zettel 8. Die Laufzeit des Konsolidierens ist $O(T_0 + \log n)$. Amortisiert erhält man also für \verb!insert! $O(2 \cdot (T_0 + \log n)) = O(T_o + \log n)$ Laufzeit. Sollten dazwischen andere Operationen durchgeführt worden sein, kann es sein, dass es nach einem \verb!insert! nicht mehr Bäume gleicher Höhe gibt als die maximal zwei Bäume der Höhe 1. Das Konsolidieren benötigt dennoch nur $O(T_0 + \log n)$ Zeit, was die amortisierten Kosten für \verb!insert! nicht verändert. Mit der Zeit wird jedoch die Invariante verletzt, was an dieser Stelle jedoch keinen Einfluss auf die Laufzeit hat. Die Laufzeit von \verb!decrease_key! bleibt unverändert, da immer noch die Referenz auf den Knoten übergeben wird. Die Laufzeit von \verb!delete_min! kann gegebenenfalls größer werden, da das Löschen des Pfades die Invariante benötigt. Da diese aber verletzt sein kann, kann sich diese Laufzeit auf $O(\log (\#$vorangegangene \verb!insert!$))$ erhöhen.
 \end{enumerate}
 
 \section{Potentialfunktionen}
