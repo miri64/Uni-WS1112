@@ -91,7 +91,10 @@ Die Eigenschaften von Turnierbäumen gelten natürlich auch hier, womit alle inn
 Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!delete\_min! werden wie folgt implementiert.
 \begin{description}
 \item[insert($k$,$v$):]
-    Fügt einen Wert $v$ unter dem Schlüssel $k$ dem Quake-Heap hinzu. Dazu wird lediglich ein neuer Baum mit einem Knoten, der als Blatt das Schlüssel-Wert-Paar speichert. 
+    Fügt einen Wert $v$ unter dem Schlüssel $k$ dem Quake-Heap hinzu. 
+    Dazu wird lediglich ein neuer Baum mit einem Knoten, der als Blatt das Schlüssel-Wert-Paar speichert, dem Wald und der Liste $T[1]$ hinzugefügt. 
+    $n[1]$ wird um 1 inkrementiert. 
+    Da $1$ der kleinste Index für $n$ ist, wird durch das bloße Hinzufügen des Blattes zu $n$ die Invariante nicht verletzt.
     Die Laufzeit von \verb!insert! ist daher $O(1)$. 
     Rückgabewert dieser Operation ist ein Verweis auf das Blatt, in dem das Schlüssel-Wert-Paar gespeichert ist.
 \item[decrease\_key($k$,$v$):]
@@ -100,7 +103,9 @@ Die bekannten Heap-Operationen \verb!insert!, \verb!decrease_key! und \verb!dele
     Wir schneiden nun mit \verb!cut(!$T$, $u$\verb!)! einen Unterbaum aus dem Turnierbaum $T$ ab, in dem das Blatt gespeichert ist, wobei $u$ der höchste Knoten ist, in dem der Schlüssel zu $v$ gespeichert ist.
     Dieser kann leicht gefunden werden, da das Blatt mit $v$ eine Verweis auf $u$ verwaltet.
     Nach dem Herausschneiden kann der Schlüssel verkleinert werden, da die Wurzel eines Turnierbaums immer auf den minimalen Schlüssel im Baum verweist und so die Turnierbaum-Eigenschaften erhalten bleiben.
-    Die beiden entstandenen Bäume aus \verb!cut! werden dann im Wald des Heaps gespeichert.
+    Die beiden entstandenen Bäume aus \verb!cut! werden dann im Wald des Heaps gespeichert. 
+    Der herausgeschnittene Unterbaum wird seiner Tiefe $i$ entsprechend $T[i]$ zugeordnet, der Baum aus dem der Unterbaum herausgeschnitten wurde behält seine Tiefe $j$ und kann daher in $T[j]$ verbleiben (bzw. je nach Implementierung wird der alte Baum aus $T[j]$ entfernt und der neue hinzugefügt). 
+    Da alle Knoten die selbe Höhe behalten, verändert sich $n$ nicht. 
 \item[delete\_min():]
     Löscht das Element mit dem kleinsten Schlüssel aus dem Heap und gibt den entsprechenden Wert zurück.
     Wir durchsuchen zunächst alle Wurzeln des Waldes nach dem Minimum und löschen dessen Pfad, indem wir auf jeden Knoten von der Wurzel bis zu den Blättern, die den Schlüssel enthalten \verb!cut! aufrufen.

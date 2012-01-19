@@ -37,4 +37,5 @@ def pagerank(graph, d = 0.25, error = 0.001):
 G = Graph(['a','b','c','d'],[('a','b'),('b','c'),('b','d'),('c','a'),('d','c')])
 print "Modified adjacency matrix:", get_mod_addj_matrix(G)
 p,it = pagerank(G)
+print "Pi:", p
 print "Number of iterations for page rank:", it
