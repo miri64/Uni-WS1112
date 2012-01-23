@@ -1,0 +1,119 @@
+\section{Übersetzungsschemata}
+Syntax Directed Translation Schemes (SDT)
+\Defi Eine kontextfreie Grammatik, in deren Produktionen auf der rechten Regelseite semantische Aktionen eingestreut sind, heißt \emph{Übersetzungsschema}, wobei semantische Aktionen, in geschweifte Klammern eingeschlossene Code-Fragmente der Implementierungssprache sind.
+\begin{itemize}
+ \item Semantische Aktionen tragen nicht zu der erzeugten Sprache bei. Beim Aufbau des Parsebaumes werden sie wie Terminale behandelt, jedoch mit gestrichelten Kanten zu deren Blättern (\emph{Pseudoterminale})
+ \item Jedes Übersetzungsschema definiert eine Ausführung der Code-Fragmente, wie sie durch einen depth-first-left-to-right Durchlauf des Parsebaumes gegeben ist.
+\end{itemize}
+\paragraph*{Ziel:} nach Möglichkeit SDD $\rightarrow$ SDT. \\
+2 Spezialfälle:
+\begin{enumerate}
+ \item LR-Grammatik uns $S$-Attributierung
+ \item LL-Grammatik und $L$-Attributierung
+\end{enumerate}
+(Attributierung sind auf dem Parser-Stack möglich!)
+\Bsp SDD:
+\begin{center}
+    \begin{tabular}{l|l}
+        $L \to E$\verb!\n! & \verb!print(!$E.v$\verb!)! \\
+        $E \to E_1 + T$ & $E.v = E_1.v + T.v$ \\
+        $E \to T$ & $E.v = T.v$ \\
+        $T \to T_1 * F$ & $T.v = T_1.v * F.v$ \\
+        $T \to F$ & $T.v = F.v$\\
+        $F \to d$ & $F.v = d.l$\\
+    \end{tabular}
+\end{center}
+$S$-Attributierung.\\
+Generiere äquivalentes Übersetzungsschema im Fall (1. s. o.) durch Anfügen von semantischen Aktionen nach jeder Produktion, die gene den semantischen Regeln entsprechen.
+\paragraph*{} SDT zum gegebenen Beispiel:
+\begin{align*}
+    L &\to E\texttt{\textbackslash n} \{\texttt{print(}E.v\texttt{);}\} \\
+    E &\to E_1 + T \{E.v = E_1.v + T.v; \}
+\end{align*}
+\begin{center}
+    \psset{treesep=2.3cm}
+    \def\dedge{\ncline[linestyle=dashed,linecolor=red]}
+    \pstree{\Tr{$L$}}{
+        \pstree{\Tr{$E$}\nput{0}{\pssucc}{\color{red}v = 7}}{
+            \pstree{\Tr{$E$}\nput{0}{\pssucc}{\color{red}v = 3}}{
+                \pstree{\Tr{$T$}\nput{0}{\pssucc}{\color{red}v = 3}}{
+                    \pstree{\Tr{$F$}\nput{0}{\pssucc}{\color{red}v = 3}}{
+                        \Tr{d}\nput{0}{\pssucc}{\color{red}l = 3}
+                        \Tr[edge=\dedge]{\color{red}\{$F.v = d.l$\}}
+                    }
+                    \Tr[edge=\dedge]{...}
+                    
+                }
+                \Tr[edge=\dedge]{\color{red}\{$E.v = T.v$\}}
+            }
+            \Tr{+}
+            \pstree{\Tr{$E$}\nput{0}{\pssucc}{\color{red}v = 4}}{
+                \pstree{\Tr{$T$}\nput{0}{\pssucc}{\color{red}v = 4}}{
+                    \pstree{\Tr{$F$}\nput{0}{\pssucc}{\color{red}v = 4}}{
+                        \Tr{d}\nput{0}{\pssucc}{\color{red}l = 4}
+                        \Tr[edge=\dedge]{...}
+                    }
+                    \Tr[edge=\dedge]{...}
+                }
+                \Tr[edge=\dedge]{...}
+            }
+            \Tr[edge=\dedge]{\color{red}\{$E.v = E_1.v + T.v$\}}
+        }
+        \Tr{\texttt{\textbackslash n}}
+        \Tr[edge=\dedge]{\color{red}\{\texttt{print ...}\}}
+    }
+\end{center}
+
+\paragraph*{Idee zur Vermeidung des Aufbaus des Parsebaumes:}
+Parse Stack:
+\begin{center}
+    \begin{tabular}{cc|c|c|l}\cline{1-4}
+        ... & $x$   & $y$   & $z$   & top\\\cline{1-4}
+            & $X.x$ & $Y.y$ & $Z.z$ & Attributwerte\\\cline{1-4}
+    \end{tabular}
+\end{center}
+Aus den SDT, welche durch Anfügen der semantischen Aktionen entstanden ist, lässt sich ein äquivalentes SDT erzeugen, das auf dem Parser-Stack operiert!
+\begin{align*}
+    L &\to E\texttt{\textbackslash n} \{\texttt{print(stack[top-1]}.v\texttt{); top = top - 1;}\} \\
+    E &\to E_1 + T \{\texttt{stack[top-2]}.v\texttt{ = stack[top-2]}.v\texttt{ + stack[top]}.v\texttt{; top = top - 2;}\} \\
+    &\vdots
+\end{align*}
+\begin{center}
+    \begin{tabular}{cc|c|c|}\hline
+        ... & $E_1$   & $+$   & $T$\\\hline
+            & 3 & $\cdot$ & 4 \\\hline
+    \end{tabular}
+\end{center}
+Postfix-Übersetzungsschemata
+\subsection{Übersetzungsschemata mit semantischen Aktionen innerhalb der Produktionen}
+Sei $B \to X \{a\} Y$ eine Produktion des gegebenen Übersetzungsschemas.
+\begin{itemize}
+\item   Beim Bottom-Up-Parsen führe wir $\{a\}$ aus, sobald $X$ auf dem Stack erscheint.
+\item   Beim Top-Down-Parsen führen wir $\{a\}$ aus, bevor $Y$ expandiert wird bzw. mit aktueller Eingabe gematcht wird
+\end{itemize}
+Nicht alle SDTs lassen sich beim Parsen implementieren
+\Bsp Infix $\longleftarrow$ Präfix-Notation: $E \to \{\texttt{print($+$);}\} E_1 + T$
+\paragraph*{Frage:} Lässt sich entscheiden, ob ein SDT auf dem Parser-Stack implementiert werden kann?
+\paragraph*{Ja:}  Ersetze jede semantische Aktion durch ein neues Nichtterminal $M_1, ..., M_k$ und füge Produktionen \linebreak
+$M_i \to \varepsilon, i \leq i \leq k$ hinzu. Erzeuge Parse-Tabelle.
+
+\paragraph*{Implementierung von $L$-Attributierungen zu gegebenen $LL$-Grammatik}
+\begin{enumerate}
+ \item Schreibe semantische Aktionen zur Berechnung ererbter Attribute von $A$ unmittelbar vor das entsprechende Vorkommen von $A$
+         \[B \to ... \{A.a = ...\} A ... \{B.b = ...\}\]
+ \item Schreibe semantische Aktionen zur Berechnung von synthetisierten Attributen gant an das Ende der entsprechenden Produktionen
+\end{enumerate}
+
+\Bsp Ausschnitt aus Zwischencode-Erzeugung, Hier: Kontrollfluss
+\begin{center}
+    \begin{tabular}{l|p{10cm}}
+        \textbf{Produktion} & \textbf{sem. Regeln} \\\hline
+        $\vdots$ & \\
+        $S \to \textbf{while}(C) S_1$ & $L1 = \text{new}(); L2 = \text{new}(); S_1.\text{next} = L1;$ \newline $ C.\text{false} = S.\text{next}; C.\text{true} = L2;$ \newline
+        $S.\text{code} = \text{label} \| L1 \| C.\text{code} \| \text{label} \| L2 \| S_1.\text{code}$ \\ 
+    \end{tabular}
+\end{center}
+$S \to \textbf{while}(\{L1 = \text{new}(); L2 = \text{new}(); C.\text{false} = S.\text{next}; C.\text{true} = L2;\}C)\{S_1.\text{next} = L1;\} S_1 \{S.\text{code} = ...\}$
+
+
+

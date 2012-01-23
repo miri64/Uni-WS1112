@@ -1,0 +1,92 @@
+\Satz Edmunds-Karp benötigt $O(|V| \cdot |E|)$ Iterationen
+\Bew Sei $R_{G,F}$ Restgraph
+\Defi \emph{BFS-Schicht}: Alle Knoten mit Abstand $i$ von $s$.
+\begin{itemize}
+\item   Zunehmender Weg hat nur Kanten von BFS-Schicht zu $i-1$
+\item   Bei Flussvergrößerung:
+    \begin{itemize}
+    \item   $\geq 1$ Kanten verschwinden aus $R_{G,F}$ (Sättigung)
+    \item   neue Kanten können im $R_{G,F}$ auftauchen, aber nur von Schicht $i+1$ zu $i$
+    \end{itemize}
+\end{itemize}
+
+\paragraph*{Behauptung 1} Durch Flussvergrößerung kann sich die BFS-Schicht eines Knoten nur erhöhen
+\Bew Sei $v$ Knoten, dessen BFS-Schicht kleiner wird.
+\begin{itemize}
+\item   Nehmen an, dass $v$ einziger Knoten auf $Q$ ist, dessen BFS-Schicht kleiner geworden ist.
+\item   Sei Vorgänger von $v$ auf $Q$
+\item   Die BFS-Schicht von $u$ ist nicht kleiner geworden, also muss die Kante $u_v$ neu sein.
+\item   Das kann aber nicht sein, da neue Kanten von BFS-Schicht $i+1$ zu $i$, also die BFS-Schicht von $v$ kleiner als die von $u$ gewesen wäre. 
+\end{itemize}
+\paragraph*{Behauptung 2} Eine Kante kann höchstens $O(|V|)$ mal gesättigt werden.
+\Bew Sei $(u,v)$ Kante.x
+\begin{itemize}
+ \item Sei $v$ Knoten, dessen BFS-Schicht kleiner wird.
+ \item $(u,v)$ kann nur wieder in $R_{G,F}$ auftauchen, wenn entlang $(v,u)$ eine Flussvergrößerung stattfindet.
+ \item Das heißt: BFS-Schicht von $u$ muss sich um mindestens $2$ erhöht haben. \\
+     $\Rightarrow$ maximal $O(|V|)$ mal \hfill $\square$
+\end{itemize}
+Es folgt: Können höchstens $O(|V| \cdot |E|)$ Flussvergrößerungen durchführen \hfill $\square$\\
+Laufzeit von Edmund-Karp ist $O(|V| \cdot |E|^2)$ (stark polynomiell)
+
+\section{Lineares Programmieren}
+Schnaps-Herstellung:
+\begin{description}
+ \item Zutaten:
+     \begin{itemize}
+      \item Alkohol
+      \item Wasser
+      \item Zucker
+      \item Geheimzutat $Z_1$
+      \item Geheimzutat $Z_2$
+     \end{itemize}
+ \item 2 Schnapsarten: $S_1$, $S_2$
+ \item Gewinne:
+     \begin{center}
+     \begin{tabular}{ll}
+      $S_1$ & $7 \euro/\text{l}$ \\
+      $S_2$ & $3 \euro/\text{l}$
+     \end{tabular}
+     \end{center}
+ \item Rezept:
+     \begin{center}
+        \begin{tabular}{l|ll|r}
+                    & $S_1$    & $S_2$    & Vorrat (in l)\\\hline
+            Alkohol & $0{,}4$  & $0{,}25$ &  30\\
+            Zucker  & $0{,}2$  & $0{,}3$  &  25\\
+            $Z_1$   & $0{,}15$ & $0$      &  10\\
+            $Z_2$   & $0$      & $0{,}5$  &  20\\
+            Wasser  & $0{,}25$ & $0{,}15$ & 100\\\hline
+        \end{tabular}
+     \end{center}
+ \item Sei
+     \begin{itemize}
+      \item $x_1$ = l für Schnaps 1
+      \item $x_2$ = l für Schnaps 2
+     \end{itemize}
+ \item[Ziel:] maximiere $7x_1 + 3x_2$, wobei
+        \begin{align*}
+            0{,}4 x_1 + 0{,}25 x_2 &\leq 30 \tag{1} \\
+            0{,}2 x_1 + 0{,}3 x_2 &\leq 25 \tag{2} \\
+            0{,}15 x_1 &\leq 10 \tag{3}\\
+            0{,}3 x_2 &\leq 20  \tag{4}\\
+            0{,}25 x_1 + 0{,}15 x_2 &\leq 100 \tag{5} \\
+            x_1, x_2 &\geq 0
+        \end{align*}
+\Defi Ein Punkt $(x_1,x_2)$ heißt \emph{zulässige Lösung}, wenn er alle Nebenbedingungen erfüllt.
+ \item Wie sieht die Menge der Zulässigen Lösungen.
+ \item Eine Nebenbedingung $a_1 x_1 + a_2 x_2 \leq b$ definiert eine \emph{Halbebene}
+ \begin{center}
+  \begin{pspicture}(0,0)(5,2)
+   \psline[linestyle=none,fillstyle=solid,fillcolor=red](0,0)(0,2)(5,1)(5,0)
+   \psline(0,2)(5,1)
+   \rput(4,1.6){$a_1 x_1 + a_2 x_2 = b$}
+  \end{pspicture}
+ \end{center}
+Menge der zulässigen Lösungen ist ein Schnitt von Halbebenen.
+\Geg Ein Wert $\alpha$, was ist die Menge aller Punkte, für die die Zielfunktion Wert $\alpha$ annimmt?
+\[7x_1 + 3x_2 = \alpha\]
+Verschiebe Zielfunktionsgerade parallel, bis sie gerade noc den zulässigen Bereich erhöht \\
+$\Rightarrow$ Optimale Lösung ist Schnitt mit $g_1$ und $g_3$
+\item $\dfrac{200}{3}$ l Schnaps 1 und $\dfrac{40}{3}$ l Schnaps 2.
+\end{description}

@@ -1,0 +1,146 @@
+\begin{itemize}
+ \item Lineare Programmierung hat die Form
+     \[\max c_1x_1 + c_2x_2 + ... + c_nx_n\]
+     wobei
+     \begin{align*}
+      a_{11}x_1 + a_{12}x_2 + ... + a_{1n}x_n &\leq b_1 \\
+      a_{21}x_1 + a_{22}x_2 + ... + a_{2n}x_n &\leq b_2 \\
+      \vdots\\
+      a_{m1}x_1 + a_{m2}x_2 + ... + a_{mn}x_n &\leq b_m \\
+     \end{align*}
+ \item Kompakte Schreibweise:
+     \[c^T \cdot x, \text{wobei}\ A \cdot x \leq b, c \in \mathbb{R}^n, A \in \mathbb{R}^{n \times m}, b \in \mathbb{R}^n\]
+ \item Fakt: lineare Programme kann man lösen (in Theorie und Praxis)
+\end{itemize}
+Varianten:
+\begin{itemize}
+ \item $\min$ statt $\max$: Verwende $-c$ statt $c$
+ \item Nebenbedingungen der Form $a - x = b$: Schriebe als $a\cdot x \leq b$ und $-ax \leq -b$
+\end{itemize}
+
+\begin{description}
+ \item Zulässige Lösung: $x \in \mathbb{R}^n, A \cdot x \leq b$
+ \item Zulässiger Bereich: Menge alle zulässigen Lösungen $\Rightarrow$ Schnitt von Halbräumen (konvexes Polyeder)
+\end{description}
+Fragen
+\begin{description}
+ \item Existiert eine zulässige Lösung?
+ \item Existiert eine optimale Lösung?
+ \item Wie findet man eine optimale Lösung?
+\end{description}
+
+\Defi Sei $i_1 \leq i_2 \leq ... \leq i_n$, so dass
+\[\operatorname{Rg}\begin{pmatrix}
+                    a_{i_11} & \hdots & a_{i_1m} \\
+                    a_{i_21} & \hdots & a_{i_2m} \\
+                    \vdots & \ddots & \vdots \\
+                    a_{i_n1} & \hdots & a_{i_nm}
+                   \end{pmatrix} = n
+\]
+und so dass
+\[ \tilde x = \begin{pmatrix}
+                    a_{i_11} & \hdots & a_{i_1m} \\
+                    a_{i_21} & \hdots & a_{i_2m} \\
+                    \vdots & \ddots & \vdots \\
+                    a_{i_n1} & \hdots & a_{i_nm}
+                   \end{pmatrix}^{-1} \cdot \begin{pmatrix}
+                    b_{i_11} \\
+                    b_{i_21} \\
+                    \vdots \\
+                    b_{i_n1} 
+                   \end{pmatrix}\]
+zulässige Lösung ist. Dann heißt $\tilde x$ \emph{Ecke} des zulässigen Bereichs \\
+$\Rightarrow$ Eine Ecke ist Schnitt von $n$ Hyperebenen.
+\begin{itemize}
+ \item Man kann zeigen: Wenn $\operatorname{Rg}(A) = n$ und wenn eine optimale Lösung existiert, dann existiert optimale Lösung, die Ecke ist.
+ \item Wie findet man optimale Ecke?
+ \item Idee: Beginne bei irgendeiner Ecke.
+     \begin{itemize}
+      \item Ist die Ecke optimal? $\rightarrow$ fertig
+      \item Wenn nicht $\rightarrow$ Gehe zu besseren Nachbarecke. Wiederhole
+     \end{itemize}
+     $\Rightarrow$ Simplex-Algorithmus
+\end{itemize}
+
+\Bsp
+\begin{align*}
+ \frac{2}{5} x_1 + \frac{1}{4} x_2 &\leq \overset{{\color{green}x_1 \leq 75}}{30} \tag{1} \\
+ \frac{1}{5} x_1 + \frac{3}{10} x_2 &\leq \overset{{\color{green}x_1 \leq 125}}{25} \tag{2} \\
+ {\color{green} \min \rightarrow\ }\frac{3}{20} x_1 &\leq \overset{{\color{green}x_1 \leq 66{,}\overline{6}}}{10} \tag{3} \\
+ \frac{3}{10} x_2 &\leq \overset{{\color{green}x_1 \leq \infty}}{20} \tag{4} \\
+ \frac{1}{4} x_1 + \frac{3}{20} x_2 &\leq \overset{{\color{green}x_1 \leq 400}}{100} \tag{5} \\
+ x_1 &\geq \overset{{\color{green}x_1 \leq \infty}}{0} \tag{6} \\
+ x_2 &\geq \overset{{\color{green}x_1 \leq \infty}}{0} \tag{7} \\
+ \max \left(7 x_1 + 3 x_2\right) \tag*{Zielfunktion} 
+\end{align*}
+\begin{center}
+ \psset{unit=0.5,ticks=none,labels=none}
+ \begin{pspicture}(0,-2)(6,6)
+  \pspolygon[linestyle=none,fillstyle=hlines,hatchcolor=red](0,0)(0,3)(2,3)(3,2.5)(4,1)(4,0)
+  \psline{*-*}(0,0)(0,3)\uput[180](0,1.5){$g_6$}
+  \psline{*-*}(0,3)(2,3)\uput[90](1,3){$g_4$}
+  \psline{*-*}(2,3)(3,2.5)\uput[80](2.5,2.75){$g_2$}
+  \psline{*-*}(3,2.5)(4,1)\uput[20](3.5,1.75){$g_1$}
+  \psline{*-*}(4,1)(4,0)\uput[0](4,0.5){$g_3$}
+  \psline{*-*}(4,0)(0,0)\uput[-90](2,0){$g_7$}
+  \psaxes{->}(0,0)(0,0)(6,6)
+  \psline[linecolor=blue](-1,2)(1,-2)
+  \psline[linecolor=blue]{->}(0,0)(.5,.25)
+ \end{pspicture}
+\end{center}
+\begin{itemize}
+ \item Startecke $\{(6),(7)\}$
+ \item Ist Ecke optimal? Nein, Koeffizienten von $x_1$ und $x_2$ in Zielfunktion sind $> 0$\\
+     $\rightarrow$ Erhöhe $x_1$. Wie weit? Überprüfe andere Nebenbedingungen
+ \item (3) wird als erstes fest
+ \item Neue Ecke: $\{(3),(7)\}$
+ \item Wie können wir feststellen, ob neue Ecke optimal ist? Ändere Koordinatensystem, so dass neue Ecke die Form $y_1 \geq 0, y_2 \geq 0$ hat.\\
+ Also:
+ \begin{align*}
+  y_1 &:= 10 - \frac{3}{20} x_1 & \mapsto x_1 &= \frac{200}{30} - \frac{20}{3} y_1 \\
+  y_2 &:= x_2 & \mapsto x_2 &= y_2
+ \end{align*}
+ Erhalten:
+\begin{align*}
+ {\color{green} \min \rightarrow\ }-\frac{8}{3} y_1 + \frac{1}{4} y_2 &\leq \frac{10}{3} {\color{green}\ \frac{40}{3}} \tag{1} \\
+ -\frac{4}{3} y_1 + \frac{3}{10} y_2 &\leq \frac{35}{3} {\color{green}\ \frac{350}{9}} \tag{2} \\
+ y_1&\geq 0 {\color{green}\ \infty} \tag{3} \\
+ \frac{3}{10} y_2 &\leq 20 {\color{green}\ \frac{200}{9}} \tag{4} \\
+ -\frac{5}{3} y_1 + \frac{3}{20} y_2 &\leq \frac{250}{3} {\color{green}\ \frac{5000}{9}} \tag{5} \\
+ x_1 &\geq 0 {\color{green}\ \infty} \tag{6} \\
+ x_2 &\geq 0 {\color{green}\ \infty} \tag{7} \\
+ \max \left(\frac{1400}{3} - \frac{140}{3} y_1 + 3 y_2\right) \tag*{Zielfunktion} 
+\end{align*}
+\item nicht optimal! Können $y_2$ erhöhen! Wie weit?
+\item Neue Ecke: $\{(3),(1)\}$
+\item Koordinatentransformation $z_1 := y_1 \Leftrightarrow y_1 = z_1$
+    \begin{align*}
+     z_1 &:= y_1 \\
+     z_2 &:= \frac{10}{3} + \frac{8}{3} y_1 - \frac{1}{4} y_2 \ \Leftrightarrow y_2 = \frac{40}{3} + \frac{32}{3} z_1 + 4 z_2
+    \end{align*}
+    Erhalte:
+\begin{align*}
+ z_2 &\leq 0 \tag{1} \\
+ \frac{28}{15} z_1 + \frac{6}{5} z_2 &\leq \frac{23}{3}  \tag{2} \\
+ z_1&\geq 0 \tag{3} \\
+ \frac{16}{10} z_1 - \frac{6}{5} z_2 &\leq 16 \tag{4} \\
+ -\frac{1}{15} z_1 + \frac{3}{5} z_2 &\leq \frac{244}{3} \tag{5} \\
+ z_1 &\geq 10 \tag{6} \\
+ - \frac{32}{3} z_1 + 4 z_2 &\geq \frac{40}{3} \tag{7} \\
+ \max \left(\frac{1520}{3} - \frac{41}{3} z_1 + 12 z_2\right) \tag*{Zielfunktion} 
+\end{align*}
+\end{itemize}
+\paragraph*{Simplex}
+\begin{itemize}
+ \item Wähle Startecke, setze Koordinatensystem in Startecke (Nebenbedingungen $x_1 \geq 0, x_2 \geq 0, ..., x_n \geq 0$ für Startecke)
+ \item Wenn alle Koeffizienten der Zielfunktion $\leq 0$ sind $\rightarrow$ fertig (Ecke optional)
+ \item Wenn nicht: wähle Variable $x_i$ mit positiven Koeffizienten in der Zielfunktion
+     \begin{itemize}
+      \item Erhöhe $x_i$ so weit wie möglich. Finde Nebenbedingung, die als erstes fest wird
+      \item Ersetze Nebenbedingung $x_i \geq 0$ durch neue Nebenbedingung in der Ecke, transformiere Koordinaten.
+      \item springe zum zweiten Punkt
+     \end{itemize}
+\end{itemize}
+Wenn Simplex terminiert, so haben wir eine optimale Lösung.
+
+

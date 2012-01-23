@@ -1,0 +1,134 @@
+\begin{align*}
+    |f| &= \sum\limits_{v \in V} f(s,v) \\
+        &= \sum\limits_{v \in V} f(s,v) + \sum\limits_{u \in A \setminus \{s\}} \underbrace{\sum\limits_{v \in V} f(u,v)}_{= 0} \\
+        &= \sum\limits_{u \in A}\sum\limits_{v \in V} f(u,v) \\
+        &= \underbrace{\sum\limits_{u \in A}\sum\limits_{v \in A} f(u,v)}_{= 0} + \sum\limits_{u \in A}\sum\limits_{v \in B} f(u,v) \\
+        &= \sum\limits_{u \in A}\sum\limits_{v \in B} f(u,v) \leq \sum\limits_{u \in A}\sum\limits_{v \in B} c(u,v) = K(C)
+\end{align*}
+\begin{itemize}
+\item   Merke:
+\[
+    |f| = \sum\limits_{u \in A} \sum\limits_{v \in B} f(u,v)
+\]
+\item   Folgerung: Falls $\exists$ Schnitt $C$ und ein Fluss $F$ mit $K(C) \leq |F|$. Dann $K(C) = |F|$ und $C$ und $F$ sind optional.
+\item   Wie kann man $F$ optimieren?
+        \begin{description}
+        \item[Idee 1 (Grierig):]
+            \begin{itemize}
+            \item   Starten mit $F = 0$
+            \item   Solange Weg $P$ existiert von $s$ nach $t$ mit freier Kapazität, schicke Fluss entlang von $P$.
+            \end{itemize}
+            \Bsp
+            \begin{center}
+                \begin{psmatrix}[mnode=circle,rowsep=0.5]
+                        & \ \\
+                    $s$ &   & $t$ \\
+                        & \ 
+                \end{psmatrix}
+                \psset{arrows=->}
+                \ncline{1,2}{2,3}\naput{{\color{red}0/}10}
+                \ncline{1,2}{3,2}\naput{{\color{red}20/}30}
+                \ncline{2,1}{1,2}\naput{{\color{red}20/}20}
+                \ncline{2,1}{3,2}\nbput{{\color{red}0/}10}
+                \ncline{3,2}{2,3}\nbput{{\color{red}20/}20}
+            \end{center}
+            Nicht optimal!
+            \begin{center}
+                \begin{psmatrix}[mnode=circle,rowsep=0.5]
+                        & \ \\
+                    $s$ &   & $t$ \\
+                        & \ 
+                \end{psmatrix}
+                \psset{arrows=->}
+                \ncline{1,2}{2,3}\naput{{\color{red}10/}10}
+                \ncline{1,2}{3,2}\naput{{\color{red}20/}30}
+                \ncline{2,1}{1,2}\naput{{\color{red}20/}20}
+                \ncline{2,1}{3,2}\nbput{{\color{red}10/}10}
+                \ncline{3,2}{2,3}\nbput{{\color{red}20/}20}
+            \end{center}
+            Wert 30: Optimal, denn $exists$Schnitt mit Kapazität 30.
+        \item[Idee 2 (Ford-Fulkerson)]
+            Erlaube es, Fluss zurück zu pumpen.\\
+            Sei $G = (V, E)$ Flussnetzwerk. $Ff$ Fluss für $u,v \in V \times V$, definiere Restkapazität (Schlupf) $r(u,v) = c(u,v) - f(u,v)$, $r(u,v) \geq 0$\\
+            Restnetzwerk (Schlupfnetzwerk): $R_{G,F} = (V,E')$, mit $G = (V, E)$ und
+            \[E' = \{(u,v) \in V \times V\ |\ r_F(u,v) > 0\}\]
+            \Bsp
+            \begin{center}
+                \begin{psmatrix}[mnode=circle,rowsep=0.5]
+                        & \ \\
+                    $s$ &   & $t$ \\
+                        & \ 
+                \end{psmatrix}
+                \psset{arrows=->}
+                \ncarc{1,2}{2,1}\nbput{20}
+                \ncarc{1,2}{3,2}\nbput{20}
+                \ncarc{3,2}{1,2}\nbput{10}
+                \ncarc{2,1}{3,2}\nbput{10}
+                \ncarc{2,3}{3,2}\naput{20}
+                \ncarc{1,2}{2,3}\naput{10}
+            \end{center}
+            bzw.
+            \begin{center}
+                \begin{psmatrix}[mnode=circle,rowsep=0.5]
+                        & \ \\
+                    $s$ &   & $t$ \\
+                        & \ 
+                \end{psmatrix}
+                \psset{arrows=->}
+                \ncarc{1,2}{2,1}\nbput{20}
+                \ncarc{1,2}{3,2}\nbput{10}
+                \ncarc{3,2}{1,2}\nbput{20}
+                \ncarc{2,1}{3,2}\nbput{10}
+                \ncarc{2,3}{3,2}\naput{20}
+                \ncarc{2,3}{1,2}\nbput{10}
+            \end{center}
+            \item Beobachtung $\exists$ in $R_{C,F}$ ein Pfad um $s$ nach $t$, dann können wir $|F|$ erhöhen, und zwar um die minimale Restkapazität entlang des Pfades $r_P$. 
+            \item $P$ heißt zunehmender (aufgmentierender) Graph.
+            \item Ford-Fulkerson
+            \begin{algorithmic}
+            \STATE Setze $F \equiv 0$
+            \REPEAT
+                \STATE Konstruiere $R_{G,F}$
+                \IF{$\exists$zunehmender Pfad $P$ in $R_{G,F}$}
+                    \STATE schicke $r_p$ Einheiten Fluss entlang $P$.
+                \ENDIF
+            \UNTIL{kein zulässiger Pfad gefunden.}
+            \end{algorithmic}
+            \Satz $\exists$ zunehmender Pfad in $R_{G,F} \Leftrightarrow |F|$ nicht maximal ist
+            \Bew
+            \begin{description}
+            \item $\Rightarrow$ Wenn zunehmender Pfad nicht existiert, so können wir $|F|$ um $r_p > 0$ erhöhen. Also ist $|F|$ nicht maximal.
+            \item $\Leftarrow$ Angenommen $\exists$Kennzeichnenden Pfad in $R_{G,F}$. Definiere: 
+                \begin{align*}
+                    A &:= \{v \in V\ |\ \text{$s$ kann $v$ in $R_{G,F}$ erreichen}\}
+                    B &:= V\setminus A
+                \end{align*}
+                Annahme $\Rightarrow C= (A,B)$ ist $s$-$t$-Schnitt. Es gilt $\forall (u,v) \in A \times B$: $c(u,v) = 0 \Rightarrow c(u,v) = f(u,v)$
+                \[K(C) = \sum\limits_{(u,v) \in A \times B} c(u,v) = \sum\limits_{(u,v) \in A \times B} f(u,v) = |F| \Rightarrow \text{ist optimal}\]
+                Folgerung: Wenn Ford-Fulkerson terminiert, so ist $|F|$ optimal
+                \begin{align*}
+                    \max\limits_{F} |F| &= \min\limits_{C} K(C) \tag{starke Dualität}
+                \end{align*}
+                Min-Schnitt-Max-Fluss-Satz.
+            \end{description}
+            \paragraph*{Laufzeit:} Eine Iteration benötigt $O(|E|)$. Wieviele Iterationen?
+            \begin{center}
+                \begin{psmatrix}[mnode=circle,rowsep=0.5]
+                        & \ \\
+                    $s$ &   & $t$ \\
+                        & \ 
+                \end{psmatrix}
+                \psset{arrows=->}
+                \ncline{1,2}{2,3}\naput{$c$}
+                \ncline{1,2}{3,2}\naput{1}
+                \ncline{2,1}{1,2}\naput{$c$}
+                \ncline{2,1}{3,2}\nbput{$c$}
+                \ncline{3,2}{2,3}\nbput{$c$}
+            \end{center}
+            Wenn Ford-Fulkerson sich blöd anstellt: $O(c)$ Iterationen.\\
+            Kann exponentiell in der Eingabelänge sein (brauchen $\Theta(\log c)$) Bits, um $c$ Kodieren $\Rightarrow$ Pseudopolynomiell (Problem)\\
+            Reperatur: Wähle $P$ immer mit minimaler $\#$Kanten durch BFS (Edmonds-Karp)
+        \end{description}
+\end{itemize}
+
+

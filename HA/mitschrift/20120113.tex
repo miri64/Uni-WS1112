@@ -76,15 +76,15 @@ Formalisierung (Flussnetzwerk):
     \end{enumerate}
 \item[Bemerkungen:]
     \begin{itemize}
-    \item   $f \equiv 0$ ist Fluss
+    \item   $F \equiv 0$ ist Fluss
     \item   (i) und (ii) $\Rightarrow f(u,v) = 0$, wenn $(u,v) \in E$ und $(v,u) \in E$
     \item   (ii) $\Rightarrow f(u,u) = 0, \forall u \in V$  
     \end{itemize}
 \end{description}
-Wert des Flusses $f$
-\[|f| := \sum\limits_{v \in V} f(s,v)\]
-\textbf{Ziel:} Finde $f$ mit $|f|$ maximal.
-\Lemma $|f| = \sum\limits_{v \in V} f(v,t)$
+Wert des Flusses $F$
+\[|F| := \sum\limits_{v \in V} f(s,v)\]
+\textbf{Ziel:} Finde $f$ mit $|F|$ maximal.
+\Lemma $|F| = \sum\limits_{v \in V} f(v,t)$
 \Bew Betrachte 
 \[\sum\limits_{(u,v) \in V \times V} f(u,v) = \sum\limits_{\{u,v\} \in \binom{V}{2}} (f(u,v) - f(v,u)) = 0\]
 Also:
@@ -108,13 +108,13 @@ Also:
     Schnitt $C$ mit minimaler Kapazität.
 \end{description}
 \Lemma (schwache Dualität)
-    Seien $C$ ein Schnitt, $f$ ein Fluss, dann: $|f| \leq K(C)$
+    Seien $C$ ein Schnitt, $F$ ein Fluss, dann: $|F| \leq K(C)$
 \Bew Betrachte
     \[\underbrace{\sum\limits_{(u,v) \in A \times B} f(u,v)}_{\text{Totaler Ausfluss von $A$.}} \leq \sum\limits_{(u,v) \in A \times B} c(u,v) = K(C).\]
 \begin{itemize}
-\item   noch zu zeigen: $|f| \leq $ totaler Ausfluss aus $A$
+\item   noch zu zeigen: $|F| \leq$ totaler Ausfluss aus $A$
 \item   Abkürzung: Ersetze $B$ durch Knoten $t'$.
-        \[|f| = \sum\limits_{v \in V} f(v,t') \leq \text{Ausfluss aus $A$}\]
+        \[|F| = \sum\limits_{v \in V} f(v,t') \leq \text{Ausfluss aus $A$}\]
 \end{itemize}
 
     

@@ -1,0 +1,117 @@
+\chapter{Zwischencode-Erzeugung}
+;ethode wie bei semantischer Analyse SDD bzw. SDT
+\begin{center}
+    \begin{psmatrix}[colsep=1.5cm]
+        Quellprogramm & \framebox{Lexer} & \framebox{Parser} & \framebox{
+                        \begin{minipage}{1.4cm}
+                         \centering
+                         Static\\Checker
+                        \end{minipage}} & \framebox{\begin{minipage}{2.2cm}
+                         \centering
+                         Zwischencode-Erzeugung
+                        \end{minipage}} & ?
+    \end{psmatrix}
+    \ncline{->}{1,1}{1,2}\naput{String}
+    \ncline{->}{1,2}{1,3}\naput{Tokens}
+    \ncline{->}{1,3}{1,4}\naput{\begin{minipage}{1.5cm}\centering Parse"-baum\end{minipage}}
+    \ncline{->}{1,4}{1,5}\naput{\begin{minipage}{1.5cm}\centering dek. Parse"-baum\end{minipage}}
+    \ncline{->}{1,5}{1,6}\naput{\begin{minipage}{1.5cm}\centering Zwi"-schen"-code\end{minipage}}
+\end{center}
+Standard: Drei-Adress-Code.
+\begin{description}
+\item[Charakteristika:] Jeder Befehl enthält höchstens 3 Adressen
+\end{description}
+
+\begin{description}
+\item[Gelegentlich:] Schrittweise Übersetzung im Zwischencode absteigender Ebenen. Höhere Ebene (Syntaxbäume, nahe der Quellsprache) in niedrigerer Ebene (Drei-Adress-Code: nahe Maschinensprache).
+\end{description}
+\section{Erste Optimierung auf der Ebene der (abstrakten) Syntaxbäume}
+\begin{description}
+\item[Idee:] Gemeindame Teilausdrücke sollen nur einmal dargestellt werden.
+\item[Beispiel:] $a + a * (b - c) + (b - c) * d$
+\item[GaG:] (Gerichteter azyklischer Graph) (DAG, Directed acyclic graph)\\
+    Verwende zur Erstellung eines GaG's dieselbe SSD. die zur Erzeugung des Syntaxbaumes verwendet wurde, allerdings unter Verwendung modifizierter Hilfsfunktionen. leaf und node anstelle von new Leaf und new Node. \\
+    Speichere Blätter und Knoten in einem Array. Die Funktionen leaf und node liefern vorh. Knoten und Blätter zurück.
+    \begin{center}
+        \begin{tabular}{l|l}
+            \textbf{Produktion} & \textbf{semantische Regeln} \\
+            $E \to E + T$       & $T.k = \text{node}(\texttt{'+'}, E_1.k, T.k)$\\
+            $E \to E - T$       & $E.k = \text{node}(\texttt{'-'}, E_1.k, T.k)$\\
+            $E \to T$           & $F.k = T.k$\\
+            $T \to T_1 * F$     & $T.k = \text{node}(\texttt{'*'}, T_1.k, F.k)$\\
+            $T \to F$           & $T.k = F.k$\\
+            $F \to (E)$         & $F.k = T.k$\\
+            $F \to i$           & $F.k = \text{leaf}(i,v)$\\
+            $F \to n$           & $F.k = \text{leaf}(n, n.v)$
+        \end{tabular}
+    \end{center}
+    $a * b + a$
+    \begin{center}
+        \psset{treesep=2cm}
+        \pstree{\Tr{$E$}\nput{0}{\pssucc}{\color{red}$k = k_4$}}{
+            \pstree{\Tr{$E$}\nput{0}{\pssucc}{\color{red}$k = k_3$}}{
+                \pstree{\Tr{$T$}\nput{0}{\pssucc}{\color{red}$k = k_3$}}{
+                    \pstree{\Tr{$T$}\nput{0}{\pssucc}{\color{red}$k = k_1$}}{
+                        \pstree{\Tr{$F$}\nput{0}{\pssucc}{\color{red}$k = k_1$}}{
+                            \Tr{$i$}\nput{0}{\pssucc}{\color{red}$v = a$}
+                        }
+                    }
+                    \Tr{*}
+                    \pstree{\Tr{$F$}\nput{0}{\pssucc}{\color{red}$k_2$}}{
+                        \Tr{$i$}\nput{0}{\pssucc}{\color{red}$v = b$}
+                    }
+                }
+            }
+            \Tr{+}
+            \pstree{\Tr{$T$}\nput{0}{\pssucc}{\color{red}$k k_1$}}{
+                \pstree{\Tr{$F$}\nput{0}{\pssucc}{\color{red}$k = k_1$}}{
+                    \Tr{$i$}\nput{0}{\pssucc}{\color{red}$v = a$}
+                }
+            }
+        }
+    \end{center}
+\end{description}
+
+\section{Implementierung von GaG's}
+Wertnummermethode: Verwende Knotennummern anstelle der Verweise.
+\Bsp
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+     Index & \multicolumn{3}{|c|}{ } \\\hline
+     1 & $i$ & \multicolumn{2}{|c|}{$a$} \\\hline
+     2 & $i$ & \multicolumn{2}{|c|}{$b$} \\\hline
+     3 & * & 1 & 2 \\\hline
+     4 & + & 3 & 1 \\\hline
+    \end{tabular}
+\end{center}
+
+\paragraph*{Drei-Adress-Code}
+Adressierungsarten:
+\begin{enumerate}
+ \item Hilfsvariablen (vom Übersetzer erzeugt)
+ \item Variablen (Bez.) aus Quellprogramm
+ \item Konstanten (unterschiedliche Typ, aus Quellprogramm, Adressen)
+\end{enumerate}
+Befehlsarten:
+\begin{enumerate}
+ \item $x = y \operatorname{op} z$: für alle binären Operationen der Quellsprache und Adressen $x$, $y$ und $z$
+ \item $x = \operatorname{op} y$: für alle unären Operationen der Quellsprache und Adressen $x$, $y$ und $z$
+ \item $x = y$: Kopierbefehl
+ \item $\operatorname{goto} L$: unbedingter Sprung
+ \item $\operatorname{if} x \operatorname{goto} L$ und $\operatorname{if} \operatorname{False} x \operatorname{goto} L$: bedingte Sprünge
+ \item $\operatorname{if} x \operatorname{relop} y \operatorname{goto} L$: bedingte Sprünge unter Relationen $<, >, <=, ...$
+ \item $\operatorname{param} x, \operatorname{call} p, n, \operatorname{return} y$ und return für Prozeduren\\
+          z. B.
+          \begin{algorithmic}
+           \STATE param $x$
+           \STATE param $y$
+           \STATE param $z$
+           \STATE call $p, 3$
+          \end{algorithmic}
+ \item Indizierte Kopierbefehle
+     \[x = y[i] \operatorname{und} x[i] = y\]
+ \item Adress- und Zeigeroperationen
+     \[x = \&y, x = *y \operatorname{und} *x = y\]
+\end{enumerate}
+
+
