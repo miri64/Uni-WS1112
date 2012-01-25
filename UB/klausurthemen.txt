@@ -1,0 +1,15 @@
+= Vorlesungsthemen =
+ 1. kontextfreie Grammatiken
+ 2. Mehrdeutigkeiten in kontextfreien Grammatiken
+ 3. SDD, SDT für arithmetische Ausdrücke
+ 4. Endliche Automaten (Lexer)
+ 5. Reguläre Definitionen/Ausdrücke
+ 6. „Recursive Descent“-Parser
+ 7. LL(1)-Grammatiken
+ 8. Elemenierung Linksrekursion
+ 9. Linksfaktorisierung
+10. Top-Down-Parsetabelle
+11. Shift-Reduce-Parser
+12. SLR [= LR(1)]
+13. SDD, SDT mit Auswertung
+14. 3-Adresscode
