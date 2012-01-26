@@ -216,5 +216,7 @@ Damit wir überhaupt Flüsse in G finden können, muss dieser in einen gerichtet
 Um diese beiden Knoten zusammenhangslos zu machen, muss man mindestens so viele Kanten entfernen, wie die Kapazität des maximalen Flusses zwischen diesen beiden Knoten.
 
 Die Zusammenhangskomponente ist das Minimum aller maximalen Flüsse in dem Graph. Dies sind jedoch $O(|V|^2)$ viele.
+Es reicht jedoch aus, sich einen beliebiegen Knoten fest zu wählen und den maximalen Fluss zu jedem anderen Knoten zu bestimmen. Denn dabei findet man einen maximalen Fluss mit minimaler Kapazität. Der maximale Fluss minimaler Kapazität ist durch eine minimale "Verjüngung" im Graphen bestimmt, die den Graph in zwei Teilgraphen unterteilt. Diese Verjüngung bestimmt auch die Zusammenhangskomponente. Der fest gewählte Startknoten liegt nun in einem der beiden Teilgraphen. Da man jeden anderen Knoten einmal als Zielknoten wählt, ist irgendwann ein Knoten aus dem anderen Teilgraph der Zielknoten. Der Fluss zwischen diesen beiden Knoten hat genau die Kapazität wie die Anzahl an Kanten in der Verjüngung. Ist dies nicht der Fall, so ist der Fluss entweder nicht maximal oder er verläuft durch eine schmalere Verjüngung. Beides ist ein Wiederspruch zu den Annahmen, dass der Fluss maximal ist und die Verjüngung die minimalste Verjüngung ist.
 
+Somit kann man einen maximalen Fluss minimaler Kapazität in $O(|V|)$ Netzen finden.
 \end{document}
