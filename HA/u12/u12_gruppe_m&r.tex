@@ -59,7 +59,7 @@
 \maketitle
 
 \section{Netzwerkfluss}
-\psset{mnode=circle,rowsep=0.9cm,arrows=->}
+\psset{mnode=circle,rowsep=1cm,arrows=->}
 \begin{center}
 \begin{psmatrix}[]
               & [name=a] $a$ & [name=d] $d$ \\
@@ -198,9 +198,31 @@
  \ncarc{g}{t}\naput{6}
 \ncline{t}{f}\naput{4}
  \ncarc{t}{g}\naput{6}
-\hspace{1cm}Kein Pfad von $s$ zu $t$ mehr möglich $\Rightarrow$ Maximaler Fluss.
+\hspace{1cm}Kein Pfad von $s$ zu $t$ mehr möglich $\Rightarrow$ Stopp.
 \end{center}
-Minimum-$s$-$t$-Schnitt: $C = (A, B)$ mit $A = \{s,a,c,f\}$, $B = \{b,d,e,g,t\}$
+Minimum-$s$-$t$-Schnitt:\[C = (A, B)\text{ mit $A = \{s,a,c,f\}$, $B = \{b,d,e,g,t\}$}\]
+Maximaler Fluss $f$ ($C(f) = 10$)
+\begin{center}
+\begin{psmatrix}[]
+              & [name=a] $a$ & [name=d] $d$ \\
+ [name=s] $s$ & [name=b] $b$ & [name=e] $e$ & [name=g] $g$ \\
+              & [name=c] $c$ & [name=f] $f$ & [name=t] $t$
+\end{psmatrix}
+\ncline{s}{a}\naput{5}
+\ncline{s}{b}\naput{1}
+\ncline{s}{c}\naput{4}
+\ncline{a}{d}\naput{4}
+\ncline{a}{e}\naput{1}
+\ncline{b}{e}\naput{1}
+\ncline{c}{f}\naput{4}
+\ncline{e}{d}\naput{2}
+\ncline{d}{g}\naput{4}
+\ncline{f}{e}\naput{6}
+\ncline{f}{t}\naput{4}
+\ncline{e}{g}\naput{2}
+\ncline{g}{t}\naput{6}
+\end{center}
+
 
 
 \section{Flüsse, Paarungen, Knotenüberdeckungen}
