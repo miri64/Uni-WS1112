@@ -60,6 +60,149 @@
 \maketitle
 
 \section{Netzwerkfluss}
+\psset{mnode=circle,rowsep=0.9cm,arrows=->}
+\begin{center}
+\begin{psmatrix}[]
+              & [name=a] $a$ & [name=d] $d$ \\
+ [name=s] $s$ & [name=b] $b$ & [name=e] $e$ & [name=g] $g$ \\
+              & [name=c] $c$ & [name=f] $f$ & [name=t] $t$
+\end{psmatrix}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{s}{c}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{c}{f}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{f}{t}
+\ncline{s}{a}\naput{6}
+\ncline{s}{b}\naput{1}
+\ncline{s}{c}\naput{10}
+\ncline{a}{d}\naput{4}
+\ncline{a}{e}\naput{1}
+\ncline{b}{e}\naput{20}
+\ncline{c}{f}\naput{5}
+\ncline{d}{e}\naput{2}
+\ncline{d}{g}\naput{5}
+\ncline{e}{f}\naput{6}
+\ncline{e}{g}\naput{10}
+\ncline{f}{t}\naput{4}
+\ncline{g}{t}\naput{12}
+\hspace{1cm}$s \to c \to f \to t; \min = 4$
+\end{center}
+\begin{center}
+\begin{psmatrix}[]
+              & [name=a] $a$ & [name=d] $d$ \\
+ [name=s] $s$ & [name=b] $b$ & [name=e] $e$ & [name=g] $g$ \\
+              & [name=c] $c$ & [name=f] $f$ & [name=t] $t$
+\end{psmatrix}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{s}{a}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{a}{d}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{d}{g}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{g}{t}
+\ncline{s}{a}\naput{6}
+\ncline{s}{b}\naput{1}
+ \ncarc{s}{c}\naput{6}
+\ncline{a}{d}\naput{4}
+\ncline{a}{e}\naput{1}
+\ncline{b}{e}\naput{20}
+ \ncarc{c}{s}\naput{4}
+ \ncarc{c}{f}\naput{1}
+\ncline{d}{e}\naput{2}
+\ncline{d}{g}\naput{5}
+\ncline{e}{f}\naput{6}
+\ncline{e}{g}\naput{10}
+ \ncarc{f}{c}\naput{4}
+\ncline{g}{t}\naput{12}
+\ncline{t}{f}\naput{4}
+\hspace{1cm}$s \to a \to d \to g \to t; \min = 4$
+\end{center}
+\begin{center}
+\begin{psmatrix}[]
+              & [name=a] $a$ & [name=d] $d$ \\
+ [name=s] $s$ & [name=b] $b$ & [name=e] $e$ & [name=g] $g$ \\
+              & [name=c] $c$ & [name=f] $f$ & [name=t] $t$
+\end{psmatrix}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{s}{a}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{a}{e}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{e}{g}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{g}{t}
+ \ncarc{s}{a}\naput{2}
+\ncline{s}{b}\naput{1}
+ \ncarc{s}{c}\naput{6}
+ \ncarc{a}{s}\naput{4}
+\ncline{a}{e}\naput{1}
+\ncline{b}{e}\naput{20}
+ \ncarc{c}{s}\naput{4}
+ \ncarc{c}{f}\naput{1}
+\ncline{d}{a}\nbput{4}
+\ncline{d}{e}\naput{2}
+ \ncarc{d}{g}\naput{1}
+\ncline{e}{f}\naput{6}
+\ncline{e}{g}\nbput{10}
+ \ncarc{f}{c}\naput{4}
+ \ncarc{g}{d}\naput{4}
+ \ncarc{g}{t}\naput{8}
+\ncline{t}{f}\naput{4}
+\ncarc{t}{g}\naput{4}
+\hspace{1cm}$s \to a \to e \to g \to t; \min = 1$
+\end{center}
+\begin{center}
+\begin{psmatrix}[]
+              & [name=a] $a$ & [name=d] $d$ \\
+ [name=s] $s$ & [name=b] $b$ & [name=e] $e$ & [name=g] $g$ \\
+              & [name=c] $c$ & [name=f] $f$ & [name=t] $t$
+\end{psmatrix}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{s}{b}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{b}{e}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{e}{g}
+\ncbox[linestyle=none,fillstyle=solid,fillcolor=black,linearc=12pt,opacity=0.3]{g}{t}
+ \ncarc{s}{a}\naput{1}
+\ncline{s}{b}\naput{1}
+ \ncarc{s}{c}\naput{6}
+ \ncarc{a}{s}\naput{5}
+\ncline{b}{e}\naput{20}
+ \ncarc{c}{s}\naput{4}
+ \ncarc{c}{f}\naput{1}
+\ncline{d}{a}\nbput{4}
+\ncline{d}{e}\naput{2}
+ \ncarc{d}{g}\naput{1}
+\ncline{e}{a}\nbput{1}
+\ncline{e}{f}\naput{6}
+ \ncarc{e}{g}\naput{9}
+ \ncarc{f}{c}\naput{4}
+ \ncarc{g}{d}\naput{4}
+ \ncarc{g}{e}\naput{1}
+ \ncarc{g}{t}\naput{7}
+\ncline{t}{f}\naput{4}
+\ncarc{t}{g}\naput{5}
+\hspace{1cm}$s \to b \to e \to g \to t; \min = 1$
+\end{center}
+\begin{center}
+\begin{psmatrix}[]
+              & [name=a] $a$ & [name=d] $d$ \\
+ [name=s] $s$ & [name=b] $b$ & [name=e] $e$ & [name=g] $g$ \\
+              & [name=c] $c$ & [name=f] $f$ & [name=t] $t$
+\end{psmatrix}
+ \ncarc{s}{a}\naput{1}
+ \ncarc{s}{c}\naput{6}
+ \ncarc{a}{s}\naput{5}
+\ncline{b}{s}\nbput{1}
+ \ncarc{b}{e}\naput{19}
+ \ncarc{c}{s}\naput{4}
+ \ncarc{c}{f}\naput{1}
+\ncline{d}{a}\nbput{4}
+\ncline{d}{e}\naput{2}
+ \ncarc{d}{g}\naput{1}
+\ncline{e}{a}\nbput{1}
+ \ncarc{e}{b}\naput{1}
+\ncline{e}{f}\naput{6}
+ \ncarc{e}{g}\naput{8}
+ \ncarc{f}{c}\naput{4}
+ \ncarc{g}{d}\naput{4}
+ \ncarc{g}{e}\naput{2}
+ \ncarc{g}{t}\naput{6}
+\ncline{t}{f}\naput{4}
+ \ncarc{t}{g}\naput{6}
+\hspace{1cm}Kein Pfad von $s$ zu $t$ mehr möglich $\Rightarrow$ Maximaler Fluss.
+\end{center}
+Minimum-$s$-$t$-Schnitt: $C = (A, B)$ mit $A = \{s,a,c,f\}$, $B = \{b,d,e,g,t\}$
+
 
 \section{Flüsse, Paarungen, Knotenüberdeckungen}
 \begin{enumerate}
