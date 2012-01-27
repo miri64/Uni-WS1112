@@ -220,8 +220,8 @@ Maximaler Fluss $f$ ($|f| = k(C) = 10$)
 \ncline{e}{g}\naput{2}
 \ncline{g}{t}\naput{6}
 \end{center}
-\newpage
 
+\pagebreak
 
 \section{Flüsse, Paarungen, Knotenüberdeckungen}
 \begin{enumerate}
@@ -235,6 +235,8 @@ Die Laufzeit ist $O(|E|)$ für das Ersetzen der ungerichteten Kanten durch geric
 
 \item Verwende die Beschreibungen und Ergebnisse aus (b). Jeder Knoten in $X$ oder $Y$, der mit einem Knoten aus der anderen Teilmenge verbunden ist, ist Teil der maximalen Paarung. Mögliche Kandidaten für zu überdeckende Knoten sind nur die Knoten, die Teil des maximalen Flusses sind. Die anderen Knoten haben keine Verbindung zu einem Knoten der anderen Teilmenge. Andernfalls könnte diese Verbindung den Wert des Flusses noch weiter erhöhen. Dies bedeutet, dass sie im ursprünglichen Graph keine Kante zu anderen Knoten hatten. Da jede Kante der maximalen Paarung keine gemeinsamen Endpunkte mit einer anderen Kante der Paarung teilt, muss einer der beiden Endknoten in die Knotenüberdeckung genommen werden.Wir entscheiden uns dafür, dass wie jeweils den Knoten nehmen, der in $X$ liegt. Dadurch ist jede ausgehende Kante aus $X$ mit einem überdeckten Knoten verbunden. Da dies gleichzeitig die eingehenden Kanten von $Y$ sind, werden dort keine weiteren Knoten zum Überdecken benötigt. Die Menge ist minimal, da keine Kante zwei überdeckte Knoten miteinander verbindet.
 \end{enumerate}
+
+\pagebreak
 
 \section{Kantenzusammenhang}
 Damit wir überhaupt Flüsse in G finden können, muss dieser in einen gerichteten Graphen umgewandelt werden. Dafür ersetzen wir jede (ungerichtete) Kante durch zwei gerichtete Kanten, die die benachbarten Knoten miteinander verbinden. Die Kanten erhalten dabei ein Gewicht von 1. So ist der Wert eines Flusses gleichzeitig die minimale Anzahl an Kanten in diesem Fluss. Ebenso kann jede Kante nur einmal verwendet werden, sodass jeder Knoten des Flusses genauso viele eingehende wie ausgehende Kanten hat. Nach Berechnen des maximalen Flusses kann man dessen Wert anhand der Anzahl der eingehenden Kanten am Zielknoten direkt bestimmen. Der Wert eines maximalen Flusses ist also die maximale Anzahl der Pfade zwischen zwei Knoten, die keine gleichen Kanten verwenden.
