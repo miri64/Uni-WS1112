@@ -201,7 +201,7 @@
 \hspace{1cm}Kein Pfad von $s$ zu $t$ mehr möglich $\Rightarrow$ Stopp.
 \end{center}
 Minimum-$s$-$t$-Schnitt:\[C = (A, B)\text{ mit $A = \{s,a,c,f\}$, $B = \{b,d,e,g,t\}$}\]
-Maximaler Fluss $f$ ($C(f) = 10$)
+Maximaler Fluss $f$ ($k(f) = 10$)
 \begin{center}
 \begin{psmatrix}[]
               & [name=a] $a$ & [name=d] $d$ \\
@@ -215,9 +215,7 @@ Maximaler Fluss $f$ ($C(f) = 10$)
 \ncline{a}{e}\naput{1}
 \ncline{b}{e}\naput{1}
 \ncline{c}{f}\naput{4}
-\ncline{e}{d}\naput{2}
 \ncline{d}{g}\naput{4}
-\ncline{f}{e}\naput{6}
 \ncline{f}{t}\naput{4}
 \ncline{e}{g}\naput{2}
 \ncline{g}{t}\naput{6}
