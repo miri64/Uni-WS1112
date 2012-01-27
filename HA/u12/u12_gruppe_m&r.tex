@@ -64,7 +64,9 @@
 \section{Flüsse, Paarungen, Knotenüberdeckungen}
 \begin{enumerate}
 \item
-\item
+\item Aus der Bipartitheit folgt, dass man den Graph in zwei Teilgraphen $X$ und $Y$ zerlegen kann, so dass es keine Kante gibt, die zwei Knoten aus der gleichen Teilmenge verbindet. Ersetze die ungerichteten Kanten durch gerichtete Kanten von $X$ nach $Y$ mit dem Gewicht 1. Füge dann den Startknoten $s$ zu $X$ und den Zielknoten $t$ zu $Y$. Erstelle von $t$ zu jedem Knoten in $X$  und von jedem Knoten in $Y$ nach $t$ eine gerichtete Kante mit dem Gewicht 1. So hat jeder Knoten in $X$ nur eine eingehende Kante, kann für den maximalen Fluss also auch nur eine ausgehende Kante verwenden. Daher hat jede Kante von $X$ nach $Y$ einen eigenen Knoten in $X$. Analog gilt für jeden Knoten in $Y$, dass sie nur eine ausgehende Kante haben und daher auch nur eine eingehende Kante verwenden können. Somit hat jede Kante von $X$ nach $Y$ auch einen eigenen Knoten in $Y$. Somit hat jede Kante von $X$ nach $Y$ keine gemeinsamen Knoten. $H$ bestimmt sich nun aus den Kanten des maximalen Flusses in diesem Graph ohne die Kanten von $s$ aus und nach $t$.
+
+Die Laufzeit ist $O(|E|)$ für das Ersetzen der ungerichteten Kanten durch gerichtete plus $O(|V|)$ für das Hinzufügen von $s$ und $t$ samt zugehöriger Kanten plus der Laufzeit, den optimalen Fluss zu finden.
 \item
 \end{enumerate}
 
