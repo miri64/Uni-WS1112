@@ -221,7 +221,7 @@ Maximaler Fluss $f$ ($k(f) = 10$)
 \ncline{g}{t}\naput{6}
 \end{center}
 
-
+\pagebreak
 
 \section{Flüsse, Paarungen, Knotenüberdeckungen}
 \begin{enumerate}
@@ -231,6 +231,8 @@ Maximaler Fluss $f$ ($k(f) = 10$)
 Die Laufzeit ist $O(|E|)$ für das Ersetzen der ungerichteten Kanten durch gerichtete plus $O(|V|)$ für das Hinzufügen von $s$ und $t$ samt zugehöriger Kanten plus der Laufzeit, den optimalen Fluss zu finden.
 \item
 \end{enumerate}
+
+\pagebreak
 
 \section{Kantenzusammenhang}
 Damit wir überhaupt Flüsse in G finden können, muss dieser in einen gerichteten Graphen umgewandelt werden. Dafür ersetzen wir jede (ungerichtete) Kante durch zwei gerichtete Kanten, die die benachbarten Knoten miteinander verbinden. Die Kanten erhalten dabei ein Gewicht von 1. So ist die Kapazität eines Flusses gleichzeitig die minimale Anzahl an Kanten in diesem Fluss. Ebenso kann jede Kante nur einmal verwendet werden, sodass jeder Knoten des Flusses genauso viele eingehende wie ausgehende Kanten hat. Nach Berechnen des maximalen Flusses kann man dessen Kapazität anhand der Anzahl der eingehenden Kanten am Zielknoten direkt bestimmen. Die Kapazität eines maximalen Flusses ist also die maximale Anzahl der Pfade zwischen zwei Knoten, die keine gleichen Kanten verwenden.
