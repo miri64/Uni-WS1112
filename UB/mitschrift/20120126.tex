@@ -1,0 +1,58 @@
+\subsection{Deklarationen und Zuweisung relativer Adressen}
+\begin{itemize}
+ \item Die aktuelle \emph{Umgebung} (Symboltabelle) unter \emph{top}
+ \item Die Ausführung top.put(id.lexeme, $T$.type, offset)
+     \begin{align*}
+      P &\to \{\text{offset} = 0;\}DS \\
+      D &\to T \text{id}; \{\text{top.put(id.lexeme, $T$.type, offset); offset = offset + $T$.width;}\}D\ |\ \varepsilon \\
+      S &\to ...
+     \end{align*}
+\end{itemize}
+
+\subsection{Felder (Attribute, Komponenten) in Records und Klassen}
+\begin{align*}
+    T \to \text{record\ \{}D\text{\}}
+\end{align*}
+\begin{itemize}
+\item Annahme: In jedmen Record kommen von einander verschiedene Variablen vor.
+\item Die relativen Adressen werden in Bezug zur Adresse des Records fesgelegt.
+\end{itemize}
+\Bsp
+\begin{verbatim}
+float x;
+record {float x; float y;} p;
+record {int tag; float x; float y;} q;
+\end{verbatim}
+\begin{itemize}
+ \item Es ist zweckmäßig, den Typkonstruktor record anzuwenden auf Umgebungen, z. B. record($s$) wenn $s$ eine Umgebung (Symboltabelle ist).
+ \begin{align*}
+  T &\to \text{record\ \{} \{\text{Env.push(top); top = new Env(); Stack.push(offset); offset = 0;}\} \\
+  &D \text{\} \{$T$.type = record(top); $T$.width = offset; top = Env.pop(); offset = stack.pop();\}} 
+ \end{align*}
+ \item die Klasse Env implementiert Symboltabellen
+ \item der Aufruf Env.push(top) legt die aktuelle Symboltabelle auf einen Stack.
+ \item Stack zum Speichern des jeweiligen offsets
+\end{itemize}
+
+\section{Erzeugung von Drei-Adress-Code für Ausdrücke}
+\begin{itemize}
+ \item Hilfsfunktion zur Erzeugung jeweils neuer Hilfsvariablen: new T();
+ \item Der Aufruf top.get(id.lexeme) liefert die zu verwendende Adresse für den Bezeichner id
+ \item Die Hilfsfunktion gen generiert Drei-Adresss.Befehle aus den benötigten Komponenten
+ \item Verwende das Attribut code für die Folge von Drei-Adress-Befehlen zur Ausführung einer Anweisung bzw. zur Berechnung des Wertes eine Ausdrucks.
+ \item Verwende Attribut addr zur Speicherung der Adresse, in der der Wert eines Ausdrucks abgelegt wird
+\end{itemize}
+\begin{center}
+\begin{tabular}{l|p{16cm}}
+    Produktion & semantische Regel \\\hline
+    $S \to \text{id} = E;$ & $S.\text{code} = E.\text{code} \| \underbrace{\text{top.get(id.lexeme) = $E$.addr}}_{\text{salopp\footnote{gen($E$.addr, \textquotesingle = \textquotesingle, $E_1$.addr)}}}$\\
+    $E \to E_1 + E_2$ & $E.\text{addr} = \text{new}\ T();$ \newline $E.\text{code} = E_1.\text{code} \| E_2.\text{code} \| \underbrace{E.\text{addr} = E_1.\text{addr} + E_2.\text{addr}}$\\
+    $E \to -E_1$ & $E.\text{addr} = \text{new}\ T(); E.\text{code} = E_1.\text{code} = E_1.\text{code} \| \underbrace{E.\text{addr} = \text{minus} E_1.\text{addr}}$\\
+    $E \to (E_1)$ & $E.\text{addr} = E_1.\text{addr}; E.\text{code} = E_1.\text{code}$\\
+    $E \to \text{id}$ & $E.\text{addr} = \text{top.get(id.lexeme)}; E.\text{code} = $\textquotesingle\textquotesingle
+\end{tabular}
+\end{center}
+
+
+
+

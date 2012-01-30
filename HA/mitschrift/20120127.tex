@@ -1,0 +1,79 @@
+\paragraph*{Terminiert Simplex?}
+\begin{itemize}
+ \item Es gibt nut endlich viele Ecken $\left(\leq \dbinom{m}{n}, \text{mit $m$: \#Nebenbedingung, $n$: \#Variablen}\right)$
+ \item "`In jedem Schritt erhöht sich die Zielfunktion"' 
+ \begin{itemize}
+  \item Wirklich? 
+  \item Nein! Problem: degeneracies (spezielle Lage): mehr als $n$ Bedingungen/Hyperebenen schneiden sich in einer Ecke
+  \item Kommen beim Pivotschritt nicht vorwärts (Stalling/Leerlauf)
+  \item Problem bei ungeschickter Wahl der neuen Hyperebene kann es zu endlosschleifen kommen (Cycling)
+  \item Aber: es gibt Pivot-Regeln (z. B. Bland-Regel), die Cycling verhindern
+ \end{itemize}
+\end{itemize}
+
+\paragraph*{Laufzeit}
+\begin{itemize}
+ \item Für viele bekannte Pivot-Regeln existieren, die $2^n$ Schritte benötigen (Klee-Minty-Würfel)
+ \item Frage: $\exists$Pivot-Regel, die polynomielle Laufzeit garanziert? Unbekannt
+ \item Frage: Ist das prinzipiell möglich? Unbekannt (Hirsch-Vermutung)
+ \item In der Praxis hat Simplex sehr gute Laufzeit\\
+     Warum? Smoothes Analysis (Spielman-Teng)
+     \begin{description}
+      \item Average case analyse von Simplex 
+      \item Wackeln liefert erwartete Polynomialzeit
+      \item worst-case Eingaben sind selten und dünn gesät
+     \end{description}
+ \item Geht LP in Polynomialzeit? Ja! 1979 (Khachian): Ellipsoid-Algorithmus
+     \begin{itemize}
+      \item pollynomiell in \#Ungleichungen, \#Variablen, \#Bits für die Zahlen
+      \item Karmarkar: innere Punkt-Methode
+     \end{itemize}
+ \item Ist LP stark polynomiell lösbar? Unbekannt
+\end{itemize}
+
+\paragraph*{Woher kommt die Startecke?}
+Durch ein LP!
+\begin{itemize}
+ \item Schreibe LP als
+end{} \[(*) Ax \leq b \tag{ersetze $x_i$ durch $x_i^+ - x_i^-, x_i^+, x_i^- \geq 0$}\]
+ \item Betrachte LP: $\min y_1 + y_2 + ... + y_m$, wobei
+ \[Ax - \begin{pmatrix} 1 & 0 & \hdots & 0 & 0 \\ 0 & 1 & \hdots & 0 & 0 \\ \vdots & \vdots & \ddots & \vdots & \vdots \\ 0 & 0 & \hdots & 1 & 0 \\ 0 & 0 & \hdots & 0 & 1 \end{pmatrix} \cdot \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_m\end{pmatrix} \leq n, x \geq 0, y_i \geq 0 \tag{**}\]
+ \item Startecke: $x \equiv 0; y_i = \max\{0, -b_i\}$.
+ \item Löse (**)
+     \begin{align*}
+      \text{OPT}_{**} > 0 & \Rightarrow \text{$(x)$ ist zuverlässig} \\
+      \text{OPT}_{**} = 0 & \Rightarrow \text{nimm optimale Ecke von (**) ohne $y$-Koordinaten als Startecke (*).}
+     \end{align*}
+\end{itemize}
+
+\subsection{Dualität}
+Betrachte folgendes LP $\max 7x_1 + x_2 + 5x_3$, wobei
+\begin{align*}
+ 8x_1 + 2x_2 + 6x_3 &\leq 10 \tag{1} \\
+ -x_1 - x_3 &\leq -1 \tag{2} \\
+ x_1, x_2, x_3 &\geq 0
+\end{align*}
+Was können wir über $\text{OPT}_\approx$ sagen?
+\paragraph*{Beobachtung:} $\text{OPT}_\approx \leq 10$
+\[\underbrace{7x_1 + x_2 + 5x_3}_{\text{Zf.}} \leq 8x_1 + 2x_2 + 6x_3 \overset{(1)}{\leq} 10\]
+Besser:
+\begin{align*}
+ \underbrace{7x_1 + x_2 + 5x_3}_{\text{Zf.}} &\leq (8x_1 + 2x_2 + 6x_3) + (-x_1 - x_3) \\
+         &\overset{(1),(2)}{\leq} 10 - 1 \leq 9
+\end{align*}
+Geht es noch besser? Idee: Multipliziere Nebenbedingung mit Faktoren $\geq 0$. Suche bestmögliche obere Schranke für Zf.
+\begin{align*}
+ 7x_1 - x_2 + 5x_3 &\leq y_1 \cdot \underbrace{(8x_1 + 2x_2 + 6x_3)}_{(1)} + y_2\underbrace{(-x_1 - x_3)}_{(2)}
+     &= (8y_1 + y_2)x_1 + 2y_1x_2 + (6y_1 - y_2) x_3 \\
+     &\leq x_1 \cdot 10 + y_2 (-1)
+\end{align*}
+Wollen: $\min 19y_1 - y_2$ wobei
+\begin{align*}
+ 8y_1 - y_2 \geq 7 \\
+ 2y_1 \geq 1 \\
+ 6y_1 - y_2 &\geq 5 \\
+ y_1, y_2, y_3 &\geq 0
+\end{align*}
+\Defi Sei $\begin{matrix}\max c^T x \\ Ax \leq b \\ x \geq 0\end{matrix} (*)$ lineqres Programm. \\
+Dann heißt: $\min b^Ty$, wobei $A_Ty \geq c, y \geq 0$ orales LP zu (*).
+\Lemma Es gilt immer $OPT_P \leq OPT_D$
