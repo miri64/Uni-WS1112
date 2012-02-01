@@ -3,19 +3,13 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
 \usepackage[ngerman]{babel}
-\usepackage{listingsutf8}
-\usepackage{color}
 \usepackage{geometry}
-\usepackage{graphicx}
-\usepackage{multicol}
-\usepackage{pstricks,pst-node,pstricks-add}
 \usepackage{algorithmic}
-\usepackage{cancel}
 
 \geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
 
-\newcommand{\Authors}{Martin Lenders (Di. 14-16), Ralf M\"uller-Zimmermann (Di. 14-16)}
-\title{H\"ohere Algorithmik - 13. \"Ubungsblatt}
+\newcommand{\Authors}{Martin Lenders (Di. 14-16), Ralf Müller-Zimmermann (Di. 14-16)}
+\title{Höhere Algorithmik - 13. Übungsblatt}
 \author{\Authors}
 \date{\today}
 
@@ -27,42 +21,261 @@
 \renewcommand{\labelenumii}{(\theenumii)}
 \renewcommand{\theenumii}{\roman{enumii}}
 
-\definecolor{lgray}{gray}{0.95}
-\definecolor{purple}{rgb}{0.498,0,0.3333}
-\definecolor{identifier}{rgb}{0,0,0.1}
-\definecolor{string}{rgb}{0.192,0,1}
-\definecolor{comment}{rgb}{0.25,0.5,0.37}
+\renewcommand{\algorithmicrequire}{\textbf{Eingabe:}}
+\renewcommand{\algorithmicensure}{\textbf{Ausgabe:}}
+\renewcommand{\algorithmiccomment}[1]{\textit{//\ #1}}
 
 \pagestyle{myheadings}
 \oddsidemargin\oddsidemargin
 \markright{\Authors}
-
-\lstset{
-	tabsize=4, 
-	basicstyle=\footnotesize\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont,
-	breaklines=true,
-	numbers=left,
-	emphstyle=\textit, 
-	language=Java,
-	keywordstyle=\color{purple}\textbf, 
-	identifierstyle=\color{identifier},
-	stringstyle=\color{string},
-	showstringspaces=false,
-	escapeinside={((*}{*))},
-	commentstyle=\color{comment},
-	extendedchars=true,
-	inputencoding=utf8/latin1
-}
 
 \begin{document}
 
 \maketitle
 
 \section{Simplex}
+Wir gehen bei beiden Aufgaben nach dem Vorgehen im Cormen \cite[S. 793ff]{cormen} vor. Der Simplex-Algorithmus sei hier kurz umrissen:
+\begin{center}
+\begin{minipage}{\textwidth}
+    $\textsc{Simplex}(A, b, c)$
+    \begin{algorithmic}[1]
+        \REQUIRE $A \in \mathbb{R}^{m \times n}, b \in \mathbb{R}^{m}, c \in \mathbb{R}^{n}$
+        \ENSURE $\bar x \in \mathbb{R}^{n}$, wobei $\bar x$ die Funktion $c^T \bar x$ mit $A\bar x \leq b, \bar x \geq 0$ maximiert
+        \STATE $(A,b,c,N,B,v) \gets \textsc{Schlupfform}(A,b,c)$
+        \WHILE{$\exists j \in N{:}\ c_j > 0$}
+            \STATE wähle $e \in N$ mit $c_e > 0$
+            \FOR{$i \in B$}
+                \IF{$a_{ie} > 0$}
+                    \STATE $\Delta_i \gets \frac{b_i}{b_{ie}}$
+                \ELSE
+                    \STATE $\Delta_i \gets \infty$
+                \ENDIF
+            \ENDFOR
+            \STATE wähle $l \in N$, sodass $\Delta_l = \min\limits_i \Delta_i$
+            \IF{$\Delta_l = \infty$}
+                \RETURN "`unbeschränkt"'
+            \ELSE
+                \STATE $(A,b,c,N,B,v) \gets \textsc{Pivot}(A,b,c,N,B,v,l,e)$
+            \ENDIF
+        \ENDWHILE
+        \FOR{$i \in \{1, ..., n\}$}
+            \IF{$i \in B$}
+                \STATE $\bar x_i \gets b_i$
+            \ELSE
+                \STATE $\bar x_i \gets 0$
+            \ENDIF
+        \ENDFOR
+        \RETURN ($\bar x_1, ..., \bar x_n$)
+    \end{algorithmic}
+\end{minipage}
+\end{center}
+Wobei \textsc{Schlupfform} eine spezielle Schreibweise des LPs zurückgibt mit $A = (a_{n+i,j}), b = (b_{n+i}), c = (c_i), $
+$N = \{1, ..., n\}, B = \{n+1, ..., m{+}n\}, N \cap B = \emptyset, v \in \mathbb{R}$ (fgwl. mit 0 initialisiert). $B$ entspricht dabei den "`Ecken"' des in der VL vorgestellten Verfahrens, wenn man die Zeilenindizes in der Matrix jeweils als Bezeichner für die Ungleichung sieht. \textsc{Pivot} ist wie folgt implementiert (s. nächste Seite):
+\begin{center}
+\begin{minipage}{\textwidth}
+    $\textsc{Pivot}(A,b,c,N,B,v,l,e)$
+    \begin{algorithmic}
+        \REQUIRE $A \in \mathbb{R}^{m \times n}, b \in \mathbb{R}^{m}, c \in \mathbb{R}^{n}, N, B \subseteq \{1, ..., m{+}n\},N \cap B = \emptyset, v \in \mathbb{R}, l \in B, e \in N$
+        \ENSURE transformierte Schlupfform mit $B$ als neue "`Ecke"'.
+        \STATE \COMMENT{Berechne die Koeffizienten der Nebenbedingungen}
+        \STATE $b'_e \gets \frac{b_l}{a_{le}}$
+        \FOR{$j \in N - \{e\}$}
+            \STATE $a'_{ej} \gets \frac{a_{lj}}{a_{le}}$ 
+        \ENDFOR
+        \STATE $a'_{el} \gets \frac{1}{a_{le}}$
+        \FOR{$i \in B \setminus \{l\}$}
+            \STATE $b'_i \gets b_i - a_{ie}b'_e$
+            \FOR{$j \in N \setminus \{e\}$}
+                \STATE $a'_{ij} \gets a_{ij} - a_{ie}a'_{ej}$
+            \ENDFOR
+            \STATE $a_{il} \gets -a_{ie}a'_{el}$
+        \ENDFOR
+        \STATE \COMMENT{Berechne die Koeffizienten der Zielfunktion}
+        \STATE $v' \gets v + c_e b'_e$
+        \FOR{$j \in N \setminus \{e\}$}
+            \STATE $c'_j \gets c_j - c_ea'_{ej}$
+        \ENDFOR
+        \STATE $c'_l \gets c_e a'_{el}$
+        \STATE \COMMENT{Neuberechungn der Mengen $N$ und $B$}
+        \STATE $N' \gets N \setminus \{e\} \cup \{l\}$
+        \STATE $B' \gets B \setminus \{l\} \cup \{e\}$
+        \RETURN $(A',b',c',N',B',v')$
+    \end{algorithmic}
+\end{minipage}
+\end{center}
+Für die genaue Analyse dieses Vorgehens sei bitte \cite{cormen} zu Rate zu ziehen, da dies sonst den Rahmen dieses Übungsblattes sprengen würde.
+\begin{enumerate}
+\item   \begin{itemize}
+        \item   Wir überführen das Programm zunächst in die Schlupfform
+                \begin{align*}
+                    z   &=     3x_1 + 2x_2 + 4x_3 \\
+                    x_4 &= 4 -  x_1 -  x_2 -  x_3 \\
+                    x_5 &= 5 - 2x_1        - 3x_3 \\
+                    x_6 &= 7 - 2x_1 -  x_2 - 3x_3 \\
+                      0 &\leq x_1, x_2, x_3, x_4, x_5, x_6 
+                \end{align*}
+                $\Rightarrow N = \{1,2,3\}, B = \{4,5,6\}, v = 0,$
+                \[
+                 A = \begin{pmatrix}
+                        a_{41} & a_{42} & a_{43} \\
+                        a_{51} & a_{52} & a_{53} \\
+                        a_{61} & a_{62} & a_{63}
+                     \end{pmatrix}
+                   = \begin{pmatrix}
+                        1 & 1 & 2 \\
+                        2 & 0 & 3 \\
+                        2 & 1 & 3
+                     \end{pmatrix}, 
+                 b = \begin{pmatrix}b_4 \\ b_5 \\ b_6 \end{pmatrix} 
+                   = \begin{pmatrix}4 \\ 5 \\ 7 \end{pmatrix},
+                 c = \begin{pmatrix}c_1 \\ c_2 \\ c_3 \end{pmatrix} 
+                   = \begin{pmatrix}3 \\ 2 \\ 1 \end{pmatrix}
+                \]
+        \item   Wähle $e := 1$ aus $N$ (da $c_1 = 3 > 0$)
+                \begin{align*}
+                    \Delta_4 &:= \frac{b_4}{a_{41}} = 4 \\
+                    \Delta_5 &:= \frac{b_5}{a_{51}} = \frac{5}{2} \\
+                    \Delta_6 &:= \frac{b_6}{a_{61}} = \frac{7}{2} \\
+                \end{align*}
+        \item   Wähle $\Delta_l = \min\{\Delta_i\ |\ i \in B\} = \Delta_5$
+        \item   Berechne transformierte Schlupfform mit $(N',B',A',b',c',v') = \textsc{Pivot}(N,B,A,b,c,v,l,e)$
+                \begin{itemize}
+                \item   Berechne neue Koeffizienten für $x'_1$ und die übrigen Nebenbedingungen
+                \begin{align*}
+                    b'_1    &= \frac{b_5}{a_{51}} = \frac{5}{2}    & a'_{12} &= \frac{a_{52}}{a_{51}} = 0 \\
+                    a'_{13} &= \frac{a_{53}}{a_{51}} = \frac{3}{2} & a'_{15} &= \frac{1}{a_{51}} = \frac{1}{2} \\
+                    \hline
+                    b'_4    &= b_4 - a_{41}b'_1 = \frac{3}{2}      & b'_6    &= b_6 - a_{61}b'_1 = 2 \\
+                    a'_{42} &= a_{42} - a_{41}a'_{12} = 1          & a'_{62} &= a_{62} - a_{61}a'_{12} = 1 \\
+                    a'_{43} &= a_{43} - a_{41}a'_{13} = \frac{1}{2}& a'_{63} &= a_{63} - a_{61}a'_{13} = 0 \\
+                    a'_{45} &= -a_{41}a'_{15} = -\frac{1}{2}       & a'_{65} &= -a_{61}a'_{15} = -1        \\
+                \end{align*}
+                \item   Berechne neue Zielfunktion
+                \begin{align*}
+                    v'   &= v + c_1b'_{1} = \frac{15}{2}             & c'_2 &= c_2 - c_1a'_{12} = 2 \\
+                    c'_3 &= c_3 - c_1a'_{13} = -\frac{7}{2}          & c'_5 &= -c_1a'_{15} = -\frac{3}{2}
+                \end{align*}
+                \item   Damit sind:
+                        $N' = \{2,3,5\}, B' = \{1,4,6\}, v' = \dfrac{15}{2},$
+                        \[
+                        A' = \begin{pmatrix}
+                                a'_{12} & a'_{13} & a'_{15} \\
+                                a'_{42} & a'_{43} & a'_{45} \\
+                                a'_{62} & a'_{63} & a'_{65}
+                            \end{pmatrix}
+                        = \begin{pmatrix}
+                                0 & \frac{3}{2} & \frac{1}{2} \\
+                                1 & \frac{1}{2} & -\frac{1}{2} \\
+                                1 & 0           & -1
+                            \end{pmatrix}, 
+                        b' = \begin{pmatrix}b'_1 \\ b'_4 \\ b'_6 \end{pmatrix} 
+                           = \begin{pmatrix}\frac{5}{2} \\ \frac{3}{2} \\ 2 \end{pmatrix},
+                        c' = \begin{pmatrix}c'_2 \\ c'_3 \\ c'_5 \end{pmatrix} 
+                           = \begin{pmatrix}2 \\ -\frac{7}{2} \\ -\frac{3}{2} \end{pmatrix}
+                        \]
+                \end{itemize}
+        \item   Setze $e := 2$, da $c'_2 = 2 > 0$
+                \begin{align*}
+                    \Delta_1 &:= \infty\\
+                    \Delta_4 &:= \frac{b'_4}{a'_{42}} = \frac{3}{2}\\
+                    \Delta_6 &:= \frac{b'_6}{a'_{62}} = 2\\
+                                &\Rightarrow l := 4
+                \end{align*}
+                $N'' = \{3,4,5\}, B'' = \{1,2,6\}, v'' = \frac{21}{2},$
+                \[
+                A'' = \begin{pmatrix}
+                        a''_{13} & a''_{14} & a''_{15} \\
+                        a''_{23} & a''_{24} & a''_{25} \\
+                        a''_{63} & a''_{64} & a''_{65}
+                    \end{pmatrix}
+                = \begin{pmatrix}
+                        \frac{3}{2} & 0 & \frac{1}{2} \\
+                        \frac{1}{2} & 1 & -\frac{1}{2} \\
+                        -\frac{1}{2} & -1 & -\frac{1}{2}
+                    \end{pmatrix}, 
+                b'' = \begin{pmatrix}b''_1 \\ b''_2 \\ b''_6 \end{pmatrix} 
+                    = \begin{pmatrix}\frac{5}{2} \\ \frac{3}{2} \\ \frac{1}{2} \end{pmatrix},
+                c'' = \begin{pmatrix}c''_3 \\ c''_4 \\ c''_5 \end{pmatrix} 
+                    = \begin{pmatrix}-\frac{9}{2} \\ -2 \\ -\frac{1}{2}  \end{pmatrix}
+                \]
+        \item   Simplex terminiert, da kein $j \in N''$ mit $c_j > 0$\\
+                $\Rightarrow$ Ergebnisvektor $\bar x = \begin{pmatrix}b''_1 \\ b''_2 \\ 0\end{pmatrix} = \begin{pmatrix}\frac{5}{2} \\ \frac{3}{2} \\ 0\end{pmatrix}$
+        \end{itemize}
+\item   \begin{itemize}
+        \item   Wir überführen das Programm zunächst wieder in die Schlupfform
+                \begin{align*}
+                    z   &=     5x_1 + 6x_2 + 9x_3 + 8x_4 \\
+                    x_5 &= 5 -  x_1 - 2x_2 - 3x_3 -  x_4 \\
+                    x_6 &= 3 -  x_1 -  x_2 - 2x_3 - 3x_4 \\
+                      0 &\leq x_1, x_2, x_3, x_4, x_5, x_6 
+                \end{align*}
+                $\Rightarrow N = \{1,2,3,4\}, B = \{5,6\}, v = 0,$
+                \[
+                 A = \begin{pmatrix}
+                        a_{51} & a_{52} & a_{53} & a_{54}\\
+                        a_{61} & a_{62} & a_{63} & a_{64}
+                     \end{pmatrix}
+                   = \begin{pmatrix}
+                        1 & 2 & 3 & 1 \\
+                        1 & 1 & 2 & 3
+                     \end{pmatrix}, 
+                 b = \begin{pmatrix}b_5 \\ b_6 \end{pmatrix} 
+                   = \begin{pmatrix}5 \\ 3 \end{pmatrix},
+                 c = \begin{pmatrix}c_1 \\ c_2 \\ c_3 \\ c_4\end{pmatrix} 
+                   = \begin{pmatrix}5 \\ 6 \\ 9 \\ 8 \end{pmatrix}
+                \]
+        \item   Setze $e := 1$, da $c_1 = 3 > 0$
+                \begin{align*}
+                    \Delta_5 &:= 5\\
+                    \Delta_6 &:= 3 & \Rightarrow l := 6
+                \end{align*}
+                $\Rightarrow N' = \{2,3,4,6\}, B' = \{1,5\}, v' = 15,$
+                \[
+                 A' = \begin{pmatrix}
+                        a'_{12} & a'_{13} & a'_{14} & a'_{16}\\
+                        a'_{52} & a'_{53} & a'_{54} & a'_{56}
+                     \end{pmatrix}
+                   = \begin{pmatrix}
+                        1 & 2 &  3 &  1 \\
+                        1 & 1 & -2 & -1
+                     \end{pmatrix}, 
+                 b' = \begin{pmatrix}b'_1 \\ b'_5 \end{pmatrix} 
+                   = \begin{pmatrix}3 \\ 2\end{pmatrix},
+                 c' = \begin{pmatrix}c'_2 \\ c'_3 \\ c'_4 \\ c'_6\end{pmatrix} 
+                   = \begin{pmatrix}1 \\ -1 \\ -7 \\ -5 \end{pmatrix}
+                \]
+        \item   Setze $e := 2$, da $c'_2 = 1 > 0$
+                \begin{align*}
+                    \Delta_1 &:= 3\\
+                    \Delta_5 &:= 2 & \Rightarrow l := 5
+                \end{align*}
+                $\Rightarrow N'' = \{3,4,5,6\}, B'' = \{1,2\}, v'' = 17,$
+                \[
+                 A'' = \begin{pmatrix}
+                        a''_{13} & a''_{14} & a''_{15} & a''_{16}\\
+                        a''_{23} & a''_{24} & a''_{25} & a''_{26}
+                     \end{pmatrix}
+                   = \begin{pmatrix}
+                        1 &  5 & -1 &  2 \\
+                        1 & -2 &  1 & -1
+                     \end{pmatrix}, 
+                 b'' = \begin{pmatrix}b''_1 \\ b''_2 \end{pmatrix} 
+                   = \begin{pmatrix}1 \\ 2\end{pmatrix},
+                 c'' = \begin{pmatrix}c''_3 \\ c''_4 \\ c''_5 \\ c''_6\end{pmatrix} 
+                   = \begin{pmatrix}-2 \\ -5 \\ -1 \\ -3 \end{pmatrix}
+                \]
+        \item   Simplex terminiert, da kein $j \in N''$ mit $c_j > 0$\\
+                $\Rightarrow$ Ergebnisvektor $\bar x = \begin{pmatrix}b''_1 \\ b''_2 \\ 0 \\ 0\end{pmatrix} = \begin{pmatrix}1 \\ 2 \\ 0 \\ 0\end{pmatrix}$
+        \end{itemize}
+\end{enumerate}
+
+\bibliographystyle{abbrv}
+\bibliography{u13_gruppe_m&r}
 
 
-\section{L\"osbarkeit von LPen}
+\section{Lösbarkeit von LPen}
 
 
 \section{Modellieren mit LPen}
 
+\end{document}
