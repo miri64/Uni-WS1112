@@ -277,6 +277,112 @@ Für die genaue Analyse dieses Vorgehens sei bitte \cite{cormen} zu Rate zu zieh
 \end{enumerate}
 
 \section{Modellieren mit LPen}
+\begin{enumerate}
+\item   Sei $x_1$ Anzahl der Flüge pro Woche von Typ $A$. Sei $x_2$ Anzahl der Flüge pro Woche von Typ $B$. $(i)$ gibt jeweilst an durch welche Rahmenbedingung (nummeriert von oben nach unten mit 1-4) die Ungleichung begründet ist.
+        \begin{align*}
+            \max 3x_1 + 2x_2 &          \tag{4}\\
+                x_1 +  x_2 &\leq 44   \tag{1}\\
+                2x_1 +  x_2 &\leq 64   \tag{2}\\
+                9x_1 + 5x_2 &\leq 300  \tag{3}\\
+                x_1,   x_2 &\geq 0
+        \end{align*}
+        Zur Lösung des LPs verwenden wir das gleiche Vorgehen wie in Aufgabe 1. Wir überführen das Programm zunächst in die Schlupfform:
+        \begin{align*}
+            z   &=       3x_1 + 2x_2 \\
+            x_3 &=  44 -  x_1 -  x_2 \\
+            x_4 &=  64 - 2x_1 -  x_2 \\
+            x_5 &= 300 - 9x_1 - 5x_2 \\
+                0 &\leq x_1, x_2, x_3, x_4, x_5
+        \end{align*}
+        $\Rightarrow N = \{1,2\}, B = \{3,4,5\}, v = 0,$
+        \[
+        A = \begin{pmatrix}
+                a_{31} & a_{32} \\
+                a_{41} & a_{42} \\
+                a_{51} & a_{52}
+            \end{pmatrix}
+        = \begin{pmatrix}
+                1 & 1 \\
+                2 & 1 \\
+                9 & 5
+            \end{pmatrix}, 
+        b = \begin{pmatrix}b_3 \\ b_4 \\ b_5 \end{pmatrix} 
+        = \begin{pmatrix}44 \\ 64 \\ 300\end{pmatrix},
+        c = \begin{pmatrix}c_1 \\ c_2\end{pmatrix} 
+        = \begin{pmatrix}3 \\ 2\end{pmatrix}
+        \]
+        \begin{itemize}
+        \item   Setze $e := 1$, da $c_1 = 3 > 0$
+                \begin{align*}
+                    \Delta_3 &:= 44 & \Delta_4 &:= 32 & \Delta_5 &:= \frac{100}{3} & \Rightarrow l := 4
+                \end{align*}
+                $\Rightarrow N' = \{2,4\}, B' = \{1,3,5\}, v' = 96,$
+                \[
+                A = \begin{pmatrix}
+                        a'_{12} & a'_{14} \\
+                        a'_{32} & a'_{34} \\
+                        a'_{52} & a'_{54}
+                    \end{pmatrix}
+                = \begin{pmatrix}
+                        \frac{1}{2} &  \frac{1}{2} \\
+                        \frac{1}{2} & -\frac{1}{2} \\
+                        \frac{1}{2} & -\frac{9}{2}
+                    \end{pmatrix}, 
+                b = \begin{pmatrix}b'_1 \\ b'_3 \\ b'_5 \end{pmatrix} 
+                = \begin{pmatrix}32 \\ 12 \\ 12\end{pmatrix},
+                c = \begin{pmatrix}c'_2 \\ c'_4\end{pmatrix} 
+                = \begin{pmatrix}\frac{1}{2} \\ -\frac{3}{2}\end{pmatrix}
+                \]
+        \item   Setze $e := 2$, da $c_2 = \frac{1}{2} > 0$
+                \begin{align*}
+                    \Delta_1 &:= 64 & \Delta_3 &:= 24 & \Delta_5 &:= 24 & \Rightarrow l := 3
+                \end{align*}
+                $\Rightarrow N'' = \{3,4\}, B'' = \{1,2,5\}, v'' = 108,$
+                \[
+                A = \begin{pmatrix}
+                        a''_{13} & a''_{14} \\
+                        a''_{23} & a''_{24} \\
+                        a''_{53} & a''_{54}
+                    \end{pmatrix}
+                = \begin{pmatrix}
+                        -1 &  1 \\
+                        2 & -1 \\
+                        -1 & -4
+                    \end{pmatrix}, 
+                b = \begin{pmatrix}b''_1 \\ b''_2 \\ b''_5 \end{pmatrix} 
+                = \begin{pmatrix}20 \\ 24 \\ 0\end{pmatrix},
+                c = \begin{pmatrix}c''_3 \\ c''_4\end{pmatrix} 
+                = \begin{pmatrix}-1 \\ -1\end{pmatrix}
+                \]
+        \item   Simplex terminiert, da kein $j \in N''$ mit $c''_j > 0$\\
+                $\Rightarrow$ Ergebnisvektor $\bar x = \begin{pmatrix}b''_1 \\ b''_2\end{pmatrix} = \begin{pmatrix}20 \\ 24\end{pmatrix}$
+        \end{itemize}
+\item   Ein \emph{Flussnetzwerke} $(G, s, t, c)$ ist definiert durch:
+        \renewcommand{\labelenumii}{(\theenumii)}
+        \renewcommand{\theenumii}{\alph{enumi}.\arabic{enumii}}
+        \begin{enumerate}
+        \item   Einen gerichteten Graphen $G = (V,E)$ mit $E \subseteq V \times V$,
+        \item   die Quelle $s \in V$ und Senke $t \in V$, mit $s \neq t$ und
+        \item   einer Kapazität $c{:}\ V \times V \to \mathbb{R}_0^+$, mit $(u,v) \notin E \Rightarrow c(u,v)$.
+        \end{enumerate}
+        Ein \emph{Fluss} in $G$ ist eine Funktion $f{:}\ V \times V \to \mathbb{R}$ für die gilt
+        \begin{enumerate}
+        \setcounter{enumii}{3}
+        \item   $\forall u,v \in V{:}\ f(u,v) \leq c(u,v)$,
+        \item   $\forall u,v \in V{:}\ f(u,v) = -f(v,u)$ und
+        \item   $\forall u \in V \setminus \{s,t\}{:}\ \sum\limits_{v \in V} f(u,v) = 0  $.
+        \end{enumerate}
+        Der \emph{Wert des Flusses} $|f|$ ist definiert mit
+        \[|f| = \sum\limits_{v \in V} f(s,v)\]
+        Der \emph{maximale Fluss} ist nun für die der Wert des Flusses maximiert, d. h. unsere Zielfunktion mit $a_{sv} = f(s,v)$ ist
+        \[ \max \sum\limits_{v \in V} a_{sv} \]
+        Die Funktion $f$ wird im Maximalen-Fluss-Problem lediglich durch ihre Definition beschränkt, damit sind unsere Nebenbedingungen:
+        \begin{align*}
+                                              \forall u,v \in V{:}\ a_{uv}  &\leq c(u,v) \\
+                                              \forall u,v \in V{:}\ a_{uv}  &= -a_{vu} \\
+        \forall u \in V \setminus \{s,t\}{:}\ \sum\limits_{v \in V} a_{u,v}  &= 0 \\
+        \end{align*}
+\end{enumerate}
 
 \bibliographystyle{abbrv}
 \bibliography{u13_gruppe_m&r}
