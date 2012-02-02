@@ -270,10 +270,11 @@ Für die genaue Analyse dieses Vorgehens sei bitte \cite{cormen} zu Rate zu zieh
 
 \section{Lösbarkeit von LPen}
 \begin{enumerate}
-\item   
-\item   
-\item   Für alle $s,t < 0$ ist $sx_1 + tx_2$ immer $\leq 0$, da $x_1, x_2 \geq 0$, damit ist $\max x_1 + x_2$ unbeschränkt, 
-        da das Erfüllen der Nebenbedingung nicht mehr von $x_1, x_2$ abhängig ist.
+\item   Für alle $s > 0$ und $t > 0$ existiert für das LP eine optimale Lösung, da so immer mindestens ein $x_1 \geq 0$ und ein $x_2 \geq 0$ gefunden werden kann, dass die Nebenbedingung erfüllt.
+\item   Da es neben den beschränkenden Nebenbedingungen $x_1, x_2 \geq 0$ es nur noch die Nebenbedingung $sx_1 + tx_2 \leq 1$ gibt, kann für jedes beliebige $s, t$ eine Lösung für $x_1, x_2 \geq 0$ in den Nebenbedingungen gefunden werden. Damit gibt es kein $s,t$ für das es keine Nebenbedingung gibt. 
+\item   Wenn $s \leq 0$ oder $t \leq 0$ lassen sich immer zumindest ein beliebig großes $x_1$ oder $x_2$ für $x_1, x_2 \geq 0$ in 
+        $sx_1 + tx_2 \leq 0$ finden. Damit ist $\max x_1 + x_2$ unbeschränkt, 
+        da $x_1, x_2$ durch die Nebenbedingungem nicht mehr nach oben beschränkt sind.
 \end{enumerate}
 
 \section{Modellieren mit LPen}
