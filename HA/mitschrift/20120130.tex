@@ -1,0 +1,38 @@
+\begin{center}
+\begin{tabular}{ll}
+ Primales lineares Programm & Duales lineares Programm \\
+ \circlenode{x}{P} $\max c^Tx$, wobei & \circlenode{x}{D} $\max b^Ty$, wobei \\
+  $Ax \leq b$ & $A^Ty \leq c$ \\
+  $x \geq 0$ & $y \geq 0$ \\
+  $x \in \mathbb{R}^n, A \in \mathbb{R}^{m \times n}$ & $y \in \mathbb{R}^m$
+\end{tabular}
+\end{center}
+
+\Lemma (schwache Dualität) Sei $x \in \mathbb{R}^n$ zulässig für \circlenode{x}{P} und $y \in \mathbb{R}^m$ zulässig für \circlenode{x}{D}, dann gilt:
+\[c^T x \leq b^Ty\]
+\Bew (durch Notation):
+\[c^T \underset{\underset{A^Ty \geq c}{x \geq 0}}{\leq} (A^T y)^T x \underset{(AB)^T = B^T A^T}{=} y^T(Ax) \underset{\underset{y \geq 0}{Ax \leq b}}{\leq} y^T b = b^T y \qquad \square \]
+\Satz (starke Dualität) Wenn \circlenode{x}{P} optimale Lösung hat, so hat auch \circlenode{x}{D} optimale Lösung, und es gilt:
+\[\text{OPT}_\text{P} = \text{OPT}_\text{D}\]
+\Bew gibt es ganz viele \hfill$\square$ \\[1em]
+Dualität ist ein wichtiges Werkzeug beim Verstehen von LPs, beim Entwickeln von Algorithmen und beim Beweis von Sätzen.
+
+\Bsp Minimax-Theorem: 2 Spieler, Nullsummenspiel.\\[1em]
+Es gibt eine Menge von Strategien für Spieler 1 und eine Menge von Strategien für Spieler 2. 
+Spieler 1 und Spieler 2 wählen Strategie, dann wird gespielt.
+Dann $\rightarrow$ Payoff (Dargestellt durch eine Matrix)
+\begin{center}
+\begin{tabular}{r|c|c|c}
+        & Papier & Stein & Schere \\\hline
+Papier  & 0      & 1     & -1     \\\hline
+Stein   & -1     & 0     & 1      \\\hline
+Schere  & 1      & -1    & 0      \\\hline
+\end{tabular}
+\end{center}
+Payoff-Matrix $A = (a_ij)$ ist Gewinn aus Sicht des Zeilenspielers.
+\paragraph{Modell} Zeilenspielers und Spaltenspieler haben jeweils eine Wahscheinlichkeitsverteilung $p$ bzw. $q$ auf den Strategien. Wählen gemäß $p$ bzw. $q$ ihre Strategie.
+\[E[\text{Gewinn des Zeilenspielers}] = \sum\limits_{i = 1}^{m}\sum\limits_{j = 1}^{n} p_i \cdot a_{ij} \cdot q_j = p^TAq \]
+Zeilenspieler will den erwarteten Gewinn maximieren.
+\[\max\limits_q\min\limits_p p^TAq\]
+\Satz (\textsc{von Neumann}s Minimax-Theorem) Es gilt:
+\[\max\limits_p\min\limits_q p^TAq = \min\limits_q\max\limits_p p^TAq\]
