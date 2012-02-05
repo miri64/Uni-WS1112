@@ -1,0 +1,114 @@
+\section{Kontrollfluss}
+\begin{itemize}
+ \item Boolesche Ausdrücke -- Naheliegende Behandlung analog zu arithmetischen Ausdrücken (logische Operationen auf der Ebene des Drei-Adress-Codes). Für $b$ boolsche Variable, lässt sich $b = \underset{B}{............}$ übersetzen in Drei-Adress-Code
+ \[B \to B \lor B\ |\ B \land B\ |\ \neg B\ |\ \textbf{true}\ |\ \textbf{false}\ |\ id\]
+ log. Operationen $\lor$ und $\land$ sind linksassoziativ. Prioritäten aufsteigend: $\lor$, $\land$, $\neg$
+ \item Steuerung der Kontrolle exemplarisch:
+     \begin{align*}
+      S &\to \textbf{if} (B) S \\
+      S &\to \textit{if} (B) S \textbf{else} S \\
+      S &\to \textbf{while} (B) S
+     \end{align*}
+ \item \emph{naiver Zugang:} Ein ererbtes Attribut next zum Nichtterminal $S$, dessen Wert ein Label ist, das hinter $S$ gesetzt wird.
+ \item Idee: $S.\text{code}$
+         \begin{verbatim}
+begin   B.code
+        ifFalse (B.addr) goto S.next
+        C.code
+        goto begin
+S.next  ...
+         \end{verbatim}
+ \item \emph{Tiefere Einsicht:} Boolesche Ausdrücke im Kontext von Kontrollflussanweisungen spielen ausschließlich die Rolle der Steuerung des Kontrollflusses. 
+ \item Anstelle von Wertberechnung berechnen wir Sprungadressen $B.\text{true}$ bzw. $B.\text{false}$ \emph{Short-Circuit-Code} (Jumping Code, Spring-Code)
+ \Bsp  \lstinline[language=Java]$if (x < 100 || x > 200 && x != y) x = 0;$
+     \begin{itemize}
+      \item Unterlege \emph{nicht-strikte Semantik} der boolschen Operatoren, d. h. wenn $B_1$ \textbf{true} ergibt, dann ergibt auch $B_1$ \texttt{||} $B_2$ für beliebige $B_2$ den Wert \textbf{true} und aus $B_1$ ergibt \textbf{false} folgt $B_1$ \verb!&&! $B_2$ ergibt \textbf{false}
+      \item in strikter Semantik:
+      \begin{center}
+       \begin{tabular}{r|c|c|c}
+        \texttt{||}    & \textbf{true} & \textbf{false} & \textbf{undef} \\\hline\hline
+        \textbf{true}  & \textbf{true} & \textbf{true}  & \textbf{true}  \\\hline
+        \textbf{false} & \textbf{true} & \textbf{false} & \textbf{undef} \\\hline
+        \textbf{undef} & \textbf{true} & \textbf{undef} & \textbf{undef} \\
+       \end{tabular}
+      \end{center}
+     \end{itemize}
+    Drei-Adress-Code zum Beispiel:
+    \begin{verbatim}
+    if x < 100 goto L2
+    ifFalse x > 200 goto L1
+    ifFalse x != y goto L1
+L2: x = 0
+L1: ...
+    \end{verbatim}
+\end{itemize}
+\subsection{Schemata zur Übersetzung von Kontrollflussanweisungen unter Verwendung von Spring-Code}
+\subsubsection{if-Anweisung}
+\[S \to \textbf{if} (B) S_1\]
+\begin{verbatim}
+        B.code      // berechnet B.true und B.false
+B.true  S.code
+B.false ...
+\end{verbatim}
+
+\subsubsection{if-else-Anweisung}
+\[S \to \textbf{if} (B) S_1\ \textbf{else}\ S_2\]
+\begin{verbatim}
+        B.code      // berechnet B.true und B.false
+B.true  S_1.code
+        goto S.next
+B.false S_2.code
+S.next  ...
+\end{verbatim}
+
+\subsubsection{while-Schleife}
+\[S \to \textbf{while} (B) S_1\]
+\begin{verbatim}
+begin   B.code      // berechnet B.true und B.false
+B.true  S_1.code
+        goto begin
+B.false ...
+\end{verbatim}
+
+\begin{itemize}
+ \item Hilfsfunktionen newL und newT zur Erzeugung voin Labeln und Hilfsvariablen
+ \item Das eererbte Attribut next von $S$ mit Wert eines Labels, das hinter $S$ steht.
+ \item Die Attribute B.true und B.false erhalten die Sprungadressen ...
+ \item Marken werden im Drei-Adress-Code inline geschrieben, d. h. \texttt{L: x=y+z} wird durch die Befehle $\underset{\texttt{x=y+z}}{\text{Label $L$}}$ kodiert.
+\end{itemize}
+
+Übersetzung einer einfachen höheren Programmiersprache in Drei-Adress-Code
+\begin{center}
+\begin{tabular}{l|p{12.5cm}}
+\textbf{Produktion}   & \textbf{semantische Regeln} \\\hline
+$P \to S$             & \lstinline$S.next = newL(); P.code = S.code ++ Label S.next ++ stop$ \\\hline
+$S \to \text{id} + E$ & \lstinline$S.code = E.code ++ id.lexeme = E.addr$ \\\hline
+... Prod. zu $E$ ...  & ... \\\hline
+$S \to S_1 S_2$       & \lstinline$S_1.next = newL(); S_2.next = S.nextM;$ \newline
+                        \lstinline$        S.code = S_1.code ++ Label S_1.next ++ S_2.code$ \\\hline
+$S \to \textbf{if}(B) S_1$ & \lstinline$B.true = newL(); B.false = S.next;$ \newline
+                        \lstinline$        S.code = B.code ++ Label B.true ++ S_1.code$ \\\hline
+$S \to \textbf{if}(B) S_1\ \textbf{else}\ S_2$ & \lstinline$B.true = newL(); B.false = newL(); S_1.next = S_2.next = S.next;$ \newline
+                        \lstinline$S.code = B.code ++ Label B.true ++ S_1.code ++ goto S.next$\newline
+                        \lstinline$          ++ Label B.false ++ S_2.code$ \\\hline
+$S \to \textbf{while}(B) S_1$ &  \lstinline$B.true = newL(); B.false = S.next; begin = newL(); S.next = begin;$ \newline
+                        \lstinline$S.code = Label begin ++ B.code ++ Label B.true ++ S_1.code ++ goto begin$\\\hline
+\end{tabular}
+\end{center}
+\subsubsection{Übersetzung boolescher Ausdrücke in Sprungcode}
+\begin{center}
+ \begin{tabular}{l|p{12.5cm}}
+\textbf{Produktion}   & \textbf{semantische Regeln} \\\hline
+$B \to B_1 \| B_2$    & \lstinline$B_1.true = B.true; B_1.false = newL();$\newline
+                        \lstinline$B_2.true = B.true; B_2.false = B.false;$\newline
+                        \lstinline$B.code = B_1.code ++ Label B_1.false ++ B_2.code$ \\\hline
+$B \to B_1 \&\& B_2$  & \lstinline$B_1.true = newL(); B_1.false = B.false;$\newline
+                        \lstinline$B_2.true = B.true; B_2.false = B.false;$\newline
+                        \lstinline$B.code = B_1.code ++ Label B_1.true ++ B_2.code$ \\\hline
+$B \to \neg B_1$      & \lstinline$B_1.true = newL(); B_1.false = B.true; B.code = B_1.code$\\
+$B \to E_1 \text{rel} E_2$ &
+ \end{tabular}
+
+\end{center}
+
+
