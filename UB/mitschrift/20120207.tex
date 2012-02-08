@@ -1,0 +1,117 @@
+\chapter{Code-Erzeugung}
+\subsection{Architekturarten}
+\begin{tabular}{c|c|c}
+ RISC & CISC & Stack-basierte Architektur \\\hline
+ \begin{minipage}{0.3\linewidth}
+  \begin{itemize}
+   \item einfacher Befehlssatz
+   \item Drei-Adress-Befehle
+   \item Befehle fester Länge
+   \item \emph{$\Rightarrow$ Beispielarchitektur für diese VL}
+  \end{itemize}
+ \end{minipage} &
+ \begin{minipage}{0.3\linewidth}
+  \begin{itemize}
+   \item wenige Register
+   \item Großer Befehlssatz
+   \item Befehle variabler Länge
+  \end{itemize}
+ \end{minipage} &
+ \begin{minipage}{0.3\linewidth}
+  \begin{itemize}
+   \item Operandenstack
+   \item Operatoren auf Kellerspitze
+   \item oberste Stackelemente in Registern
+  \end{itemize}
+ \end{minipage}
+\end{tabular}
+
+\subsection{Primäre Aufgaben der Code-Erzeugung}
+\begin{itemize}
+ \item Erzeuge \emph{semantische äquivalenten} Code
+ \item Erzeuge effizienten Code (kurze Laufzeit), wenig Speicherbedarf
+ \item Befehlsauswahl
+ \item Registerzuweisung und -belegung
+ \item Befehlsanordnung
+\end{itemize}
+Heute Algorithmen zur automatischen Code-Erzeugung auf exemplarischer RISC-Architektur
+\begin{description}
+\item[Idee 1] Verwende "`Code-Templates"'. Ergebnis: Schlechter Code mit hohem Optimierungspotential
+    \Bsp Übersetze Befehle der Art \texttt{x = y + z} in folgende Code-Sequenz
+        \begin{verbatim}
+LD  R0,y
+ADD R0,R0,z
+ST  x,R0
+        \end{verbatim}
+    Intermediate Representation: \texttt{a = b + c; d = a + e} ergibt:
+    \begin{verbatim}
+LD  R0,b
+ADD R0,R0,c
+ST  a,R0     // vermeidbar, wenn der Wert in a keine spätere Verwendung hat
+LD  R0,a     // redundant
+ADD R0,R0,e
+ST  d,R0
+    \end{verbatim}
+    Charakterisiere Besonderheiten mit Blich auf Befehlssatz der Zielarchitektur
+    \Bsp \texttt{a = a + 1}
+        \begin{verbatim}
+LD  R0,a
+ADD R0,R0,#1
+ST  a,R0
+        \end{verbatim}
+        blöd, wenn \texttt{INC a} im Befehlssatz vorhanden ist!
+\end{description}
+
+\subsection{Probleme jenseits Templates}
+\Bsp Es gibt Architekturen, die Gleitkommamultiplikation und -division ausschließlich auf Registerpaaren erlauben (gerade/ungerade Paare)
+\begin{description}
+ \item[Multiplikationsbefehl] \texttt{MUL x,y}, wobei \texttt{x} im ungeraden Teil eines Registerpaares steht und Ergebnis im gesamten Registerpaar
+ \item[Divisionsbefehl] \texttt{DIV x,y}, wobei der Divident ein Registerpaar belegt. Das Ergebnis befindet sich im ungeraden Register, der Rest im geraden Register.
+\end{description}
+IR-Befehlssequenzen:
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumi}{\theenumi)}
+\begin{enumerate}
+ \item \begin{verbatim}
+t = a + b
+t = t * c
+t = t / d
+       \end{verbatim}
+ \item \begin{verbatim}
+t = a + b
+t = t + c
+t = t / d
+       \end{verbatim}
+\end{enumerate}
+Optimaler Code zu a)
+\begin{verbatim}
+LD  R1,a
+ADD R1,b
+MUL R0,c
+DIV R0,d
+ST  R1,t
+\end{verbatim}
+Optimaler Code zu a)
+\begin{verbatim}
+LD   R0,a
+ADD  R0,b
+ADD  R0,c
+SRDA R0,32
+DIV  R0,d
+ST   R1,t
+\end{verbatim}
+
+\subsection{Eine einfache RISC-Architektur zur Definintion des Codes}
+Drei-Adress-Befehle, Speicher ist Byte-adressierbar, universelle Register \texttt{R0...Rn}, alle Werte sind Integer-Werte, Befehle können durch Label markiert sein.
+\begin{itemize}
+ \item Lode-Befehle:       \texttt{LD r,x}           wobei \texttt{r} ein Register und \texttt{x} Speicherplatz oder Register ist.
+ \item Store-Befehle:      \texttt{ST x,r}           wobei \texttt{x} ein Speicherplatz ist 
+ \item Operationsbefehle:  \texttt{OP dst,src1,src2} bzw. \texttt{OP dst,src} wobei \texttt{dst} Registster oder Speicherplatz ist, \texttt{src1},... Register, Speicherplatz oder Konstante \#7
+ \item Unbedingte Sprünge: \texttt{BR L}             wobei \texttt{L} eine Marke ist
+ \item Bedingte Sprünge:   \texttt{Bcond r,L}        wobei \texttt{cond} ein Bezeichner für typische Tests auf Registerinhalte ist (z. B. \texttt{BLTZ r,L}, \emph{L}ess \emph{T}hen \emph{Z}ero)
+ \item Adressierungsarten: Symbolische Adressen, Register, Konstanten; zusätzlich: indizierte Adressen: z. B. \texttt{a(r)} wobei \texttt{a} ein Speicherplatz ist und \texttt{r} ein Register.
+\end{itemize}
+\begin{description}
+ \item[Einfaches Kostenmaß] Jeder Befehl hat Kosten 1 plus Kosten seiner Adressen, wobei Kosten eines Register 0 ist und sonst 1.
+ \item[Kosten Programm] Hinsichtlich Länge = Summe der Kosten aller Befehle
+\end{description}

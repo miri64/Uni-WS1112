@@ -1,0 +1,132 @@
+\chapter{Laufzeitumgebung}
+\begin{itemize}
+ \item Speicherverwaltung
+     \begin{itemize}
+     \item Der Übersetzer erzeugt Code für einen logischen Adressraum von $0$ bis $N$
+     \item Grobstruktur des Speichers (logischer Adressraum)
+        \begin{center}
+        \begin{tabular}{r|c|l}\cline{2-2}
+               0 & Code & ausführbares Maschinenprogram\\\cline{2-2}
+        $\vdots$ & Static & Daten, deren Anzahl und Größe zur Compilezeit bekannt sind \\\cline{2-2}
+         & Heap & Daten, die zur Laufzeit erzeugt werden \\\cline{2-2}
+         & $\downarrow$ & \\
+         & $\vdots$ & \\
+         & $\uparrow$ & \\\cline{2-2}
+        $N$ & Stack & Laufzeitkeller, für Aktivierungsrecords (frames) zu jedem Methodenaufruf \\\cline{2-2}
+        \end{tabular}
+        \end{center}
+        \begin{center}
+         statischer Speicher (zur Compilezeit) $\Leftrightarrow$ dynamischer Speicher (während der Ausführung)
+        \end{center}
+     \end{itemize}
+\end{itemize}
+\Bsp Sortierprogramm (fragmentarisch)
+\begin{lstlisting}[language=C]
+int a[11];
+void read_a() { /* liest Werte in a[1] bis a[9] */
+    int i;
+    ...
+}
+int part(int m, int n) { /* waehlt v aus und teilt 
+    a[m...n] auf, so dass a[m...p-1] <= v, a[p] - v, a[p+1...n] > v */
+    ...
+}
+void qs(int m, int n) {
+    int i;
+    if (n > m) {
+        i = part(m,n);
+        qs(m,i-1);
+        qs(i+1,n);
+    }
+}
+void main() {
+    read_a();
+    a[0] = -9999;
+    a[10] = 9999;
+    qs(1,9);
+}
+\end{lstlisting}
+
+\begin{verbatim}
+Betrete main()
+    Betrete read_a
+    Verlasse read_a
+    Betrete qs(1,9)
+        Betrete part(1,9)
+        Verlasse part(1,9)
+        Betrete qs(1,3)
+            ...
+        Verlasse qs(1,3)
+        Betrete qs(5,9)
+            ...
+        Verlasse qs(5,9)
+    Verlasse qs(1,9)
+Verlasse main()
+\end{verbatim}
+Ein \emph{Aktivierungsbaum} für unser Sortierprogramm:
+\begin{center}
+\pstree{\Tr{\texttt{main()}}}{
+    \Tr{\texttt{read\_a()}}
+    \pstree{\Tr{\texttt{qs(1,9)}}}{
+        \Tr{\texttt{part(1,9)}}
+        \pstree{\Tr{\texttt{qs(1,3)}}}{
+            \Tr{\texttt{part(1,3)}}
+            \Tr{\texttt{qs(1,0)}}
+            \pstree{\Tr{\texttt{qs(2,3)}}}{
+                \Tr{\texttt{part(2,3)}}
+                \Tr{\texttt{qs(2,1)}}
+                \Tr{\texttt{qs(3,3)}}
+            }
+        }
+        \pstree{\Tr{\texttt{qs(5,9)}}}{
+            \Tr{\texttt{part(5,9)}}
+            \Tr{\texttt{qs(5,5)}}
+            \pstree{\Tr{\texttt{qs(7,9)}}}{
+                \Tr{\texttt{part(7,9)}}
+                \Tr{\texttt{qs(7,7)}}
+                \Tr{\texttt{qs(9,9)}}
+            }
+        }
+    }
+}
+\end{center}
+Zu jeder Programmausführung gehört genau ein Aktivierungsbaum.
+\paragraph*{Struktur des Aktivierungscodes}
+\begin{center}
+\begin{tabular}{|c|l}\cline{1-1}
+    aktuelle Parameter & Speicherbereich für Eingabewerte (ggf. Registerverwendung) \\\cline{1-1}
+    Rückgabewerte & Speicherbereich für Ausgabewerte (ggf. Registerverwendung) \\\cline{1-1}
+    Kontrollverweis & Zeigt auf unteres Aktivierungselement einschl. program counter \\\cline{1-1}
+    Zugriffsverweis & Zugriff auf nicht-lokale Daten gemäß statischer Bindung \\\cline{1-1}
+    saved machine status & Registerbelegung, ggf. program counter \\\cline{1-1}
+    lokale Daten & \\\cline{1-1}
+    Temporaries & Hilfsvariablen, die bei der Übersetzung erzeugt werden \\\cline{1-1}
+\end{tabular}
+
+\begin{tabular}{cc}
+    \begin{minipage}{0.2\linewidth}
+            \centering
+            \Tr{\texttt{main()}}
+        \end{minipage} &
+        \begin{minipage}{0.5\linewidth}
+            \begin{tabular}{|c|}\hline
+                \texttt{main} \\\hline
+            \end{tabular}
+        \end{minipage} \\\hline
+    \begin{minipage}{0.2\linewidth}
+            \centering
+            \pstree{\Tr{\texttt{main()}}}{
+                \Tr{\texttt{read\_a()}}
+            }
+        \end{minipage} &
+        \begin{minipage}{0.5\linewidth}
+            \begin{tabular}{|c|}\hline
+                \texttt{main} \\\hline
+                \texttt{read\_a} \\
+                \texttt{int i} \\\hline
+            \end{tabular}
+        \end{minipage} \\\hline
+\end{tabular}
+
+
+\end{center}

@@ -1,0 +1,186 @@
+\begin{itemize}
+ \item "`effiziente"' Akgorithmen Polynomialzeitalgorithmen
+ \item Sind alle Probleme effizient lösbar? Natürlich nicht, z. B. Halteproblem, PKP, ...
+ \item Wie kann man das feststellen? Nicht viel ist sicher bekannt, aber es existiert einegroße Klasse von Problemen, die eng zusammenhängen und die wahrscheinlich nicht effizient lösbar sind.
+\end{itemize}
+\Bsp
+\begin{itemize}
+\item   \emph{Einkaufsproblem (Knapsack)}
+        \Geg $n$ Artikel, Preise $p_1, ..., p_n$, Werte $w_1, ..., w_n$, Budget $B$
+        \Ges Teilmenge von Artikeln m it maximalem Wert, die Budget einhält
+\item   \emph{TSP}
+        \Geg $n$ Städte mit Abstand $d(i,j)$
+        \Ges Rundreise minimaler Länge
+\item   \emph{Rudrata-Pfad (Hamilton-Pfad)}
+        \Geg Graph $G = (V,E)$
+        \Ges Pfad, der jeden Knoten genau einmal besucht
+\item   \emph{Partition}
+        \Geg $n$ Zahlen $x_1,...,x_n$
+        \Ges $I \subseteq \{1, ..., n\}$, so dass
+            \[\sum\limits_{i \in I} x_i = \sum\limits_{j \in \{1, ..., n\} \setminus I} x_j\]
+\item   \emph{Subset-Sum}
+        \Geg $n$ Zahlen $x_1,...,x_n$. Weitere Zahl $X$
+        \Ges $I \subseteq \{1, ..., n\}$, so dass
+            \[\sum\limits_{i \in I} x_i = X\]
+\end{itemize}
+Alle diese Probleme sind NP-vollständig, d. h. wenn ein effizienter Algorithmus für ein Problem existiert, dann existieren effiziente Algorithmen für alle obigen Probleme.
+\par Was heißt das genau?
+\begin{enumerate}
+ \item NP-Vollständigkeitstheorie betrachtet nur Entscheidungsprobleme, d. h. die Ausgabe ist immer nur ein Bit (\emph{ja} oder \emph{nein}) (= Sprache)
+ 
+ Zu jedem Optimierungsproblem existiert ein zugehöriges Entscheidungsproblem (existiert eine Lösung mit Wert $\gtreqless x$?). Oft ist es so, dass man mit binärer Suche o. ä. das Optimierungsproblem effizient lösen kann, wenn man das Entscheidungsproblem effizient lösen kann.
+
+ Von nun an betrachten wir nur Entscheidungsprobleme.
+ \item Für alle obigen Probleme gilt: Wenn eine Antwort gegeben ist, so lässt sie sich effizient nachprüfen
+ 
+ Es gilt: für alle obigen Probleme gibt es einen kurzen Beweis (= Zertifikat), dass die Antwort des Entscheidungsproblems \emph{ja} ist. Das Zertifikat kann man effizient überprüfen
+ 
+ \Defi \emph{NP} (Nichtdeterministisch polynomiell) ist eine Komplexitätsklasse (Menge an Sprachen).
+     Sei $L \subseteq \{0,1\}^*$ eine Sprache. $L$ ist in $NP$ gdw. $\exists$ Konstante $c \geq 0$, Turingmaschine. $M$ mit zwei Eingaben, so dass
+     \renewcommand{\labelenumii}{(\theenumii)}
+     \renewcommand{\theenumii}{\roman{enumii}}
+     \begin{enumerate}
+     \item Laufzeit von $M(x,y)$ ist $O((|x|+|y|)^c)$
+     \item $\forall x \in \Sigma^*{:}\ x \in L \Leftrightarrow \exists y \in \Sigma^*{:}\ |y| \leq |x|^c \land M(x,y) = 1$
+     \end{enumerate}
+     $M$ ist Verifizierer für $L$.
+\end{enumerate}
+\begin{itemize}
+ \item Offensichtlich: $P \subseteq NP$
+ \item Frage: $P = NP$? Wie könnte man das beweisen?
+ \item Idee: Finde ein Problem in NP, das "`so schwer wie möglich"' ist. Problem $L \in$ NP, so dass gilt, wenn $L \in P$, so ist $P = NP$
+     \par Wie geht das?
+     \par Polynomialzeitreduktion (Karp-Reduktion)
+     \par Seien $L_1, L_2$ zwei Sprachen.
+         Wir sagen $L_1 \leq_P L_2$ ($L_1$ reduziert in Polynomialzeit auf $L_2$) gdw. $\exists$ Funktion $f{:}\ \Sigma^* \to \Sigma^*$, so dass
+         \begin{itemize}
+          \item $f$ in Polynomialzeit berechenbar ist
+          \item $x \in L_1 \Leftrightarrow f(x) \in L_2$
+         \end{itemize}
+         \textbf{Beobachtungen}
+         \begin{enumerate}
+          \item $\leq_P$ ist transitiv. Wenn $L_1 \leq_P L_2$ und $L_2 \leq_P L_3$, dann $L_1 \leq_P L_3$
+          \item Wenn $L_1 \leq_P L_2$ und $L_2 \in P$, dann $L_1 \in P$
+          \item Wenn $L_1 \leq_P L_2$ und $L_1 \notin P$, dann $L_2 \notin P$.
+         \end{enumerate}
+\end{itemize}
+\Bsp IND-SET:
+\Geg $G = (V,E), i$
+\Ges $\exists i$ Knoten in $G$, die paarweise nicht adjazent sind?\\[1.5em]
+\par betrachten Vertex-Cover VERTEX-COVER
+\Geg Graph $G = (V,E), c$
+\Ges $\exists$ Knoten $c$, so dass jede Kante inzident zu einem Knoten $C$ ist?
+
+\paragraph*{Behauptung} IND-SET $\leq_P$ VERTEX-COVER\\
+$f$: Eingabe: $G = (V,E), i$; Ausgabe: $G = (V,E), |V| - i$
+\par z. z. $G$ hat unabhängige Menge der Größe $i$ gdw. $G$ hat Vertex-Cover der Größe $|V|-i$
+\begin{align*}
+ v \supseteq I\text{ ist IND-SET} &\Leftrightarrow \forall e \in E{:}\ |I \cap \{e\}| \leq 1 \\
+              &\Leftrightarrow \forall e \in E{:}\ |(V \setminus I) \cap \{e\}| \geq 1 \\
+              &\Leftrightarrow V \setminus I\ \text{VEREX-COVER}
+\end{align*}\hfill$\square$
+
+\Defi $L \subseteq \{0,1\}^*$ heißt NP-vollständig, wenn
+\renewcommand{\labelenumi}{(\theenumi)}
+\renewcommand{\theenumi}{\roman{enumi}}
+\begin{enumerate}
+ \item $L \in$ NP
+ \item $\forall L' \in \text{NP}{:}\ L' \leq_P L$
+\end{enumerate}
+\paragraph*{Bemerkungen}
+\begin{itemize}
+ \item $L$ NP-vollständig und $L \in \text{P} \Rightarrow \text{P} = \text{NP}$
+ \item $L$ NP-vollständig und $L \notin \text{P} \Rightarrow$ Kein NP-vollständiges Problem ist in P, also $\text{P} \neq \text{NP}$
+\end{itemize}
+\begin{description}
+ \item[Frage 1:] Existieren NP-vollständige Probleme?
+ \par Ja!
+ \begin{description}
+  \item[Eingabe] $M$ Turingmaschine. $x \in \{0,1\}^*$, $1^q$
+  \item[Ausgabe] $\exists y{:}\ |y| \leq |x|^q$, so dass $M(x,y) = 1$ in $q$ Schritten?
+ \end{description}
+ \item[Frage 2:] Existieren Probleme, die \emph{nicht} NP-vollständig sind?
+ \par Ja! $L = \emptyset$, $L = \{0,1\}$, Halteproblem
+ \item[Frage 3:] Existieren \emph{interessante} Probleme, die NP-vollständig sind?
+ \par Ja! CIRCUIT-SAT: Erfüllbarkeitsproblem für Schaltnetze
+     \begin{description}
+      \item[Eingabe] Schaltnetz (Gerichteter, azyklischer Graph mit $n$ Eingaben, 1 Ausgabe, innere Knoten haben Eingrad 1 oder 2 und entsprechen AND-Gatter, OR-Gatter oder NOT-Gatter)
+      \item[Frage] Existiert Belegung der Eingaben, so dass der Schaltkreis 1 liefert?
+      \item[Satz] (\textsc{Cook}-\textsc{Levin}): CIRCUIT-SAT ist NP-vollständig.
+      \item[Beweis] später
+     \end{description}
+\end{description}
+CIRCUIT-SAT eignet sich gut für Reduktion.
+\begin{description}
+ \item[CNF-SAT] Erfüllbarkeitsproblem für Aussage logischer Formeln in Konjunktiver Normalform = Konjunktion von Disjunktionen von Literalen
+ \[(x_1 \lor \neg x_2 \lor x_3) \land (x_2 \lor \neg x_3 \lor x_4) \land (\neg x_1)\]
+ Literal: $x_i$ oder $\neg x_i$
+ \begin{description}
+  \item[Frage] Existiert Belegung er Variablen, so dass Formel wahr ist?
+  \item[Satz] CNF-SAT ist NP-vollständig
+  \item[Beweis] CNF-SAT $\in$ NP
+  \begin{itemize}
+   \item Es genügt z. z. CIRCUIT-SAT $\leq_P$ CNF-SAT (denn CIRCUIT-SAT ist NP-vollständig und $\leq_P$ ist transitiv)
+   \item Brauchen $f$: Eingabe: Schaltnetz $C$, Ausgabe: $\Phi$ in KNF
+   \item Wollen $C$ erfüllbar $\Leftrightarrow$ $\Phi$ erfüllbar
+   \item Gegeben: Schaltnetz, führe ein: fpr jede Kante $v_1, v_2, ...$
+   \item Klausel n: 1 Klausel für die Ausgabe:
+           \[v_m \leftarrow\text{ Variable an der Ausgabekante}\]
+       Betrachte jeden Knoten (Gatter)
+   \item Betrachte Fall mit nur einer Ausgabe ($v_1$ und $v_2$ gehen durch AND-Gatter in $v_3$)
+   \item Menge von Klauseln, die genau dann alle wahr sind, wenn $v_3 \equiv v_1 \land v_2$ ist
+       \[
+        \begin{array}{ccc|cr}
+            v_1 & v_2 & v_3 & v_3 \equiv v_1 \land v_2 \\\cline{1-4}\cline{1-4}
+            0   & 0   & 0   & 1\\\cline{1-4}
+            0   & 0   & 1   & 0 & (v_1 \lor v_2 \lor \neg v_3) \\\cline{1-4}
+            0   & 1   & 0   & 1 \\\cline{1-4}
+            0   & 1   & 1   & 0 & \land (v_1 \lor \neg v_2 \lor \neg v_3) \\\cline{1-4} 
+            1   & 0   & 0   & 1 \\\cline{1-4}
+            1   & 0   & 1   & 0 & \land (\neg v_1 \lor v_2 \lor \neg v_3) \\\cline{1-4} 
+            1   & 1   & 0   & 0 & \land (\neg v_1 \lor \neg v_2 \lor v_3) \\\cline{1-4} 
+            1   & 1   & 1   & 1 \\\cline{1-4}
+        \end{array}
+       \]
+   \item Wiederhole für jedes Gatter und jeden Ausgang eines Gatters
+   \item $\Phi = 1$ alle Klauseln, die so entstanden sind.
+   \item Polyzeit: Machen konstante Arbeit per Ausgabekante aus einem Gatter $\Rightarrow$ $O$(\#{}Kanten)
+   \item Außerdem: $C$ erfüllbar
+       \begin{description}
+       \item $\Leftrightarrow$ $\exists$ Bits an den Kanten, die Gatter respektieren und Ausgabe 1 liefern
+       \item $\Leftrightarrow$ $\exists$ Belegung der $v_i$, die alle Klauseln wahr macht
+       \item $\Leftrightarrow$ $\emptyset$ erfüllbar \hfill $\square$
+       \end{description}
+  \end{itemize}
+ \end{description}
+ \item[3-SAT] CNF-SAT, aber alle Klauseln enthalten nur 3 Literale
+     \begin{description}
+      \item[Satz] 3-SAT ist NP-vollständig
+      \item[Beweis]
+      \begin{itemize}
+       \item 3-SAT $\in$ NP-vollständig (wie bei CNF-SAT)
+       \item CNF-SAT $\leq_P$ 3-SAT
+       \item Wollen $f:$
+           \begin{description}
+            \item[Eingabe] $\Phi$ in KNF
+            \item[Ausgabe] $\Phi'$ in 3-KNF, si dass $\Phi$ erfüllbar gdw. $\Phi'$ erfüllbar
+           \end{description}
+       \item $f$ benutzt lokales Ersetzen, ersetze die Klauseln von $\Phi$ einzeln
+       \renewcommand{\theenumi}{\arabic{enumi}}
+       \begin{enumerate}
+        \item Klauseln $\{l\}$, Ersetze $\{l\}$ durch $\{l \lor a \lor b\}\{l \lor \neg a \lor b\}\{l \lor a \lor \neg b\}\{l \lor \neg a \lor \neg b\}$, $a,b$ neue Variablen
+        \par Es gilt: $\{l\}$ ist wahr $\Leftrightarrow$ alle neuen Klauseln sind war
+        \item Klauseln: $\{l_1 \lor l_2\}$ Ersetze durch $\{l_1 \lor l_2 \lor a\}, \{l_1 \lor l_2 \lor \neg a\}$
+        \item Klauseln: $\{l_1 \lor l_2 \lor l_3\}$ nichts zu tun
+        \item Klauseln: $\{l_1 \lor l_2 \lor ... \lor l_n\}, k > 3$ Ersetze durch $\{l_1 \lor l_2 \lor a_1\}\{\neg a \lor l_3 \lor a_2\}\{\neg a_1 \lor l_4 \lor a_3\}...$ $a_i$ neu.
+       \end{enumerate}
+      \end{itemize}
+     \end{description}
+
+\end{description}
+
+
+
+
+
+
