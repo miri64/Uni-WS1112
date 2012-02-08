@@ -1,0 +1,442 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pst-tree}
+\usepackage{lscape}
+\usepackage{textcomp}
+\usepackage{arydshln}
+\usepackage{multicol}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 13}
+\author{Christian Cikryt (4285814; Tutorium: Mo. 16-18 Uhr)\\
+  Robert Fels (4210496; Tutorium: Mi. 8-10 Uhr)\\
+  Martin Lenders (4206090; Tutorium: Mi. 10-12 Uhr)
+  }
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Christian Cikrit, Robert Fels, Martin Lenders}
+
+\lstset{
+	tabsize=4, 
+	frame=tlrb, 
+	basicstyle=\footnotesize\changefont{pcr}{m}{n},
+	breaklines=true,
+	numbers=left,
+	emphstyle=\textit, 
+	language=Python,
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	inputencoding=utf8/latin1
+}
+\psset{nodesep=2pt,levelsep=2em,treesep=2em}
+
+\makeatletter
+\newcommand{\Rm}[1]{\textrm{\expandafter\@slowromancap\romannumeral #1@}}
+\makeatother
+\newcommand{\print}[1]{\{\texttt{print(\dq #1\dq})\}}
+\newcommand{\add}[1]{\{\texttt{s += #1})\}}
+\newcommand{\FIRST}{\operatorname{FIRST}}
+\newcommand{\FOLLOW}{\operatorname{FOLLOW}}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+\begin{lstlisting}[language=,keywords={ifFalse,goto,end},emph={while,loop,ifTrue,ifFals,post}]
+        max := 0;
+        i := 0;
+while:  ifFalse i < 1 goto post;
+        t1 := a[i];
+        ifFalse t1 > max goto ifFals;
+        max := t1;
+ifFals: i := i+1;
+        goto while;
+post:   end;
+\end{lstlisting}
+\section{}
+\begin{center}
+	\begin{tabular}{rl|p{.6\linewidth}}
+		& \textbf{Produktion} & \textbf{syntaxgerichtete Definition} \\\cline{2-3}\cline{2-3}
+		a) & \texttt{S $\to$ repeat S1 while B} & 
+			\texttt{B}.true = newlabel() \newline
+			\texttt{B}.false = \texttt{S1}.next = \texttt{S}.next \newline
+			\texttt{S}.code = label(\texttt{B}.true) $\|$ \texttt{S1}.code $\|$ \texttt{B}.code \\\cline{2-3}
+		b) & \texttt{S $\to$ repeat S1 until B} & 
+			\texttt{B}.true = \texttt{S1}.next = \texttt{S}.next \newline
+			\texttt{B}.false = newlabel() \newline
+			\texttt{S}.code = label(\texttt{B}.false) $\|$ \texttt{S1}.code $\|$ \texttt{B}.code \\\cline{2-3}
+		c) & \texttt{S $\to$ for (S1;B;S2) S3} & 
+			begin = newlabel() \newline
+			\texttt{B}.true = newlabel() \newline
+			\texttt{B}.false = \texttt{S}.next \newline
+			\texttt{S2}.next = begin \newline
+			\texttt{S}.code = \texttt{S1}.code $\|$ label(begin) $\|$ \texttt{B}.code $\|$ label(\texttt{B}.true) $\|$ \texttt{S3}.code $\|$ \texttt{S2}.code
+	\end{tabular}
+\end{center}\newpage
+
+\begin{landscape}
+\section{}
+Mithilfe der SDDs aus dem Drachenbuch generierter Parsebaum:
+\begin{center}
+	\newcommand{\Ttr}[2]{\Tr{\texttt{#1}}\nput[labelsep=2.8mm]{0}{\pssucc}{%
+						\begin{minipage}{2cm}\tiny\color{blue}%
+							\setlength{\parindent}{-2mm}
+						    #2%
+						\end{minipage}%
+					}}
+	\newcommand{\psttree}[3]{\pstree{\Ttr{#1}{#2}}{#3}}
+	\psset{treesep=2.3cm,levelsep=2cm,linecolor=gray!50}
+	\psttree{P}{
+		\rnode{P1_code}{code} = \textbf{if} \texttt{a} \texttt{==} \texttt{b} \textbf{goto} \texttt{B1True}; \textbf{goto} \texttt{next}; \texttt{B1True:} \textbf{if} \texttt{c} \texttt{==} \texttt{d} \textbf{goto} \texttt{B5True}; \textbf{goto} \texttt{B2Fals}; \texttt{B2Fals:} \textbf{if} \texttt{e} \texttt{==} \texttt{f} \textbf{goto} \texttt{B5True};
+				\textbf{goto} \texttt{next}; \texttt{B5True: x = 1}; \texttt{next:}
+	}{
+		\psttree{S}{
+			\rnode{S2_next}{next} = \texttt{"next"} \par
+			\rnode{S2_code}{code} = \textbf{if} \texttt{a} \texttt{==} \texttt{b} \textbf{goto} \texttt{B1True}; \textbf{goto} \texttt{next}; \texttt{B1True:} \textbf{if} \texttt{c} \texttt{==} \texttt{d} \textbf{goto} \texttt{B5True}; \textbf{goto} \texttt{B2Fals}; \texttt{B2Fals:} \textbf{if} \texttt{e} \texttt{==} \texttt{f} \textbf{goto} \texttt{B5True};
+				\textbf{goto} \texttt{next}; \texttt{B5True: x = 1} \par
+		}{
+			\Ttr{if}{}
+			\Ttr{(}{}
+			\psttree{B}{
+				\rnode{B5_code}{code} = \textbf{if} \texttt{a} \texttt{==} \texttt{b} \textbf{goto} \texttt{B1True}; \textbf{goto} \texttt{next}; \texttt{B1True:} \textbf{if} \texttt{c} \texttt{==} \texttt{d} \textbf{goto} \texttt{B5True}; \textbf{goto} \texttt{B2Fals}; \texttt{B2Fals:} \textbf{if} \texttt{e} \texttt{==} \texttt{f} \textbf{goto} \texttt{B5True};
+				\textbf{goto} \texttt{next}; \par
+				\rnode{B5_true}{true} = \texttt{"B5True"} \par
+				\rnode{B5_false}{false} = \texttt{"next"} 
+			}{
+				\psttree{B}{
+					\rnode{B1_code}{code} = \textbf{if} \texttt{a} \texttt{==} \texttt{b} \textbf{goto} \texttt{B1True}; \textbf{goto} \texttt{next} \par
+					\rnode{B1_true}{true} = \texttt{"B1True"}\par
+					\rnode{B1_false}{false} = \texttt{"next"} 
+				}{
+					\psttree{E}{
+						\rnode{E1_addr}{addr} = \texttt{a} \par
+						\rnode{E1_code}{code} = \texttt{"{}"}
+					}{
+						\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+							\begin{minipage}{1.3cm}\tiny\color{blue}
+								\rnode{id1_lexeme}{lexeme} = \texttt{"{}a"}
+							\end{minipage}
+						}
+					}
+					\Tr{\textbf{rel}}\nput[labelsep=0px]{0}{\pssucc}{
+						\begin{minipage}{1.3cm}\tiny\color{blue}
+							\rnode{rel1_op}{op = \texttt{"{==}"}}
+						\end{minipage}
+					}
+					\psttree{E}{
+						\rnode{E2_addr}{addr} = \texttt{b} \par
+						\rnode{E2_code}{code} = \texttt{"{}"}
+					}{
+						\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+							\begin{minipage}{1.3cm}\tiny\color{blue}
+								\rnode{id2_lexeme}{lexeme} = \texttt{"b"}
+							\end{minipage}
+						}
+					}
+				}
+				\Ttr{\&\&}{}
+				\psttree{B}{
+					\rnode{B4_code}{code} = \textbf{if} \texttt{c} \texttt{==} \texttt{d} \textbf{goto} \texttt{B5True}; \textbf{goto} \texttt{B2Fals}; \texttt{B2Fals:} \textbf{if} \texttt{e} \texttt{==} \texttt{f} \textbf{goto} \texttt{B5True}; \textbf{goto} \texttt{next} \par
+					\rnode{B4_true}{true} = \texttt{"B5True"} \par
+					\rnode{B4_false}{false} = \texttt{"next"} 
+				}{
+					\psttree{B}{
+						\rnode{B2_code}{code} = \textbf{if} \texttt{c} \texttt{==} \texttt{d} \textbf{goto} \texttt{B5True}; \textbf{goto} \texttt{B2Fals}; \par
+						\rnode{B2_true}{true} = \texttt{"B5True"} \par
+						\rnode{B2_false}{false} = \texttt{"B2Fals"}
+					}{
+						\psttree{E}{
+							\rnode{E3_addr}{addr} = \texttt{c} \par
+							\rnode{E3_code}{code} = \texttt{"{}"}
+						}{
+							\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+								\begin{minipage}{1.3cm}\tiny\color{blue}
+									\rnode{id3_lexeme}{lexeme = \texttt{"c"}}
+								\end{minipage}
+							}
+						}
+						\Tr{\textbf{rel}}\nput[labelsep=0px]{0}{\pssucc}{
+							\begin{minipage}{1.3cm}\tiny\color{blue}
+								\rnode{rel2_op}{op = \texttt{"{==}"}}
+							\end{minipage}
+						}
+						\psttree{E}{
+							\rnode{E4_addr}{addr} = \texttt{d} \par
+							\rnode{E4_code}{code} = \texttt{"{}"}
+						}{
+							\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+								\begin{minipage}{1.3cm}\tiny\color{blue}
+									\rnode{id4_lexeme}{lexeme = \texttt{"d"}}
+								\end{minipage}
+							}
+						}
+					}
+					\Ttr{||}{}
+					\psttree{B}{
+						\rnode{B3_code}{code} = \textbf{if} \texttt{e} \texttt{==} \texttt{f} \textbf{goto} \texttt{B5True}; \textbf{goto} \texttt{next} \par
+						\rnode{B3_true}{true} = \texttt{"B5True"} \par
+						\rnode{B3_false}{false} = \texttt{"next"} 
+					}{
+						\psttree{E}{
+							\rnode{E5_addr}{addr} = \texttt{e} \par
+							\rnode{E5_addr}{code} = \texttt{"{}"}
+						}{
+							\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+								\begin{minipage}{1.3cm}\tiny\color{blue}
+									\rnode{id5_lexeme}{lexeme = \texttt{"e"}}
+								\end{minipage}
+							}
+						}
+						\Tr{\textbf{rel}}\nput[labelsep=0px]{0}{\pssucc}{
+							\begin{minipage}{1.5cm}\tiny\color{blue}
+								\rnode{rel3_op}{op = \texttt{"{==}"}}
+							\end{minipage}
+						}
+						\psttree{E}{
+							\rnode{E6_addr}{addr} = \texttt{f} \par
+							\rnode{E6_addr}{code} = \texttt{"{}"}
+						}{
+							\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+								\begin{minipage}{1.3cm}\tiny\color{blue}
+									\rnode{id6_lexeme}{lexeme = \texttt{"f"}}
+								\end{minipage}
+							}
+						}
+					}
+				}
+			}
+			\Ttr{)}{}
+			\psttree{S}{
+				\rnode{S1_next}{next} = \texttt{"next"} \par
+				\rnode{S1_code}{code} = \texttt{x = 1}
+			}{
+				\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+					\begin{minipage}{1.3cm}\tiny\color{blue}
+						\rnode{id7_lexeme}{lexeme = \texttt{"x"}}
+					\end{minipage}
+				}
+				\Ttr{=}{}
+				\psttree{E}{
+					addr = \texttt{"1"} \par
+					code = \texttt{"{}"}
+				}{
+					\Tr{\textbf{id}}\nput[labelsep=0px]{0}{\pssucc}{
+						\begin{minipage}{1.3cm}\tiny\color{blue}
+							\rnode{id8_lexeme}{lexeme = \texttt{"1"}}
+						\end{minipage}
+					}
+				}
+				\Ttr{;}{}
+			}
+		}
+	}
+	\psset{linecolor=red,arrows=<-,angleA=170,angleB=-170,ncurv=1,nodesep=0px}
+	\nccurve{id1_lexeme}{E1_addr}
+	\nccurve{id2_lexeme}{E2_addr}
+	\nccurve{E1_addr}{B1_code}
+	\nccurve{rel1_op}{B1_code}
+	\nccurve{E2_addr}{B1_code}
+	\nccurve[ncurv=2]{B1_false}{B1_code}
+	\nccurve[ncurv=2]{B1_true}{B1_code}
+	\nccurve{id3_lexeme}{E3_addr}
+	\nccurve{id4_lexeme}{E4_addr}
+	\nccurve{E3_addr}{B2_code}
+	\nccurve{rel2_op}{B2_code}
+	\nccurve{E4_addr}{B2_code}
+	\nccurve[ncurv=2]{B2_false}{B2_code}
+	\nccurve[ncurv=2]{B2_true}{B2_code}
+	\nccurve{id5_lexeme}{E5_addr}
+	\nccurve{id6_lexeme}{E6_addr}
+	\nccurve{E5_addr}{B3_code}
+	\nccurve{rel3_op}{B3_code}
+	\nccurve{E6_addr}{B3_code}
+	\nccurve[ncurv=2]{B3_false}{B3_code}
+	\nccurve[ncurv=2]{B3_true}{B3_code}
+	\nccurve[angleA=-160,angleB=160]{B4_true}{B2_true}
+	\nccurve[angleA=-160,angleB=160]{B4_true}{B3_true}
+	\nccurve[angleA=-160,angleB=160]{B4_false}{B3_false}
+	\nccurve{B2_code}{B4_code}
+	\nccurve{B2_false}{B4_code}
+	\nccurve{B3_code}{B4_code}
+	\nccurve[angleA=-160,angleB=160]{B5_false}{B1_false}
+	\nccurve[angleA=-160,angleB=160]{B5_true}{B4_true}
+	\nccurve[angleA=-160,angleB=160]{B5_false}{B4_false}
+	\nccurve[angleA=90]{id7_lexeme}{S1_code}
+	\nccurve{id8_lexeme}{S1_code}
+	\nccurve{B5_code}{S2_code}
+	\nccurve[angleA=135]{B5_true}{S2_code}
+	\nccurve{S1_code}{S2_code}
+	\nccurve[angleA=-150,angleB=160]{S2_next}{S1_next}
+	\nccurve[angleA=-180,angleB=160]{S2_next}{B5_false}
+	\nccurve{S2_code}{P1_code}
+	\nccurve{S2_next}{P1_code}
+\end{center}
+\end{landscape}
+Der generierte Code nochmal sauber:
+\begin{lstlisting}[language=,keywords={if,goto,end},emph={B1True,B2Fals,B5True,next}]
+        if a == b goto B1True; 
+        goto next;
+B1True: if c == d goto B5True; 
+        goto B2Fals; 
+B2Fals: if e == f goto B5True;
+        goto next; 
+B5True: x = 1; 
+next:   end;
+\end{lstlisting}
+Überflüssige Gotos und Labels entfernen:
+\begin{lstlisting}[language=,keywords={if,ifFalse,goto,end},emph={B1True,B2Fals,B5True,next}]
+        ifFalse a == b goto next; 
+        if c == d goto B5True;
+        ifFalse e == f goto next;
+B5True: x = 1; 
+next:   end;
+\end{lstlisting}
+
+\section{}
+\begin{enumerate}
+\item	\hfill
+		\begin{center}
+		\newcommand{\Ttr}[1]{\Tr{\texttt{#1}}}
+		\newcommand{\psttree}[2]{\pstree{\Ttr{#1}}{#2}}
+		\psttree{f(5)}{
+			\psttree{f(4)}{
+				\psttree{f(3)}{
+					\psttree{f(2)}{
+						\Ttr{f(1)}
+						\Ttr{f(0)}
+					}
+					\Ttr{f(1)}
+				}
+				\psttree{f(2)}{
+					\Ttr{f(1)}
+					\Ttr{f(0)}
+				}
+			}
+			\psttree{f(3)}{
+				\psttree{f(2)}{
+					\Ttr{f(1)}
+					\Ttr{f(0)}
+				}
+				\Ttr{f(1)}
+			}
+		}
+		\end{center}
+\item	\hfill
+		\begin{center}
+		\begin{minipage}{0.5\linewidth}
+		\begin{multicols}{2}
+			\begin{center}
+				\psset{levelsep=4em}
+				\newcommand{\Ttr}[1]{\Tr{\texttt{#1}}}
+				\newcommand{\psttree}[2]{\pstree{\Ttr{#1}}{#2}}
+				\psttree{f(5)}{
+					\psttree{f(4)}{
+						\psttree{f(3)}{
+							\psttree{f(2)}{
+								\Ttr{f(1)}
+							}
+						}
+					}
+				}
+			\end{center}
+			\begin{center}
+				\begin{tabular}{|c|}\hline\hline
+					integer n\\\hdashline
+					f(5) \\\hdashline
+					integer s, t\\\hline
+					integer n\\\hdashline
+					f(4) \\\hdashline
+					integer s, t\\\hline
+					integer n\\\hdashline
+					f(3) \\\hdashline
+					integer s, t\\\hline
+					integer n\\\hdashline
+					f(2) \\\hdashline
+					integer s, t\\\hline
+					integer n\\\hdashline
+					f(1) \\\hdashline
+					integer s, t\\\hline
+				\end{tabular}
+			\end{center}
+		\end{multicols}
+		\end{minipage}
+		\end{center}\pagebreak
+\item	\hfill
+		\begin{center}
+		\begin{multicols}{2}
+			\begin{center}
+				\psset{levelsep=4em}
+				\newcommand{\dedge}{\ncline[linestyle=dashed]}
+				\newcommand{\Ttr}[1]{\Tr{\texttt{#1}}}
+				\newcommand{\psttree}[2]{\pstree{\Ttr{#1}}{#2}}
+				\newcommand{\Tdtr}[1]{\Tr[edge=\dedge]{\texttt{#1}}}
+				\newcommand{\pstdtree}[2]{\pstree{\Tdtr{#1}}{#2}}
+				\psttree{f(5)}{
+					\pstdtree{f(4)}{
+						\pstdtree{f(3)}{
+							\pstdtree{f(2)}{ 
+								\Tdtr{f(1)}
+								\Tdtr{f(0)}
+							}
+							\Tdtr{f(1)}
+						}
+						\pstdtree{f(2)}{
+							\Tdtr{f(1)}
+							\Tdtr{f(0)}
+						}
+					}
+					\psttree{f(3)}{
+						\pstdtree{f(2)}{
+							\Tdtr{f(1)}
+							\Tdtr{f(0)}
+						}
+						\Ttr{f(1)}
+					}
+				}
+			\end{center}
+			\begin{center}
+			\begin{tabular}{|c|}\hline\hline
+				integer n\\\hdashline
+				f(5) \\\hdashline
+				integer s, t\\\hline
+				integer n\\\hdashline
+				f(3) \\\hdashline
+				integer s, t\\\hline
+				integer n\\\hdashline
+				f(1) \\\hdashline
+				integer s, t\\\hline
+			\end{tabular}
+			\end{center}
+		\end{multicols}
+		\end{center}
+\end{enumerate}
+\end{document}
