@@ -1,0 +1,95 @@
+\section{Grundblöcke und Flussgraphen}
+Optimierung der Grundblöcke
+\begin{itemize}
+ \item Zerlege das IR-Programm (Zwischencode) in Grundblöcke (einfache Befehlsfolgen, die stets gemeinsam, hintereinander ausgeführt werden)
+\end{itemize}
+\subsection{Algorithmus zur Zerlegun eines IR-Programmes im Grundblock}
+\begin{enumerate}
+ \item Bestimme alle \emph{Anführer} (jeweils erster Befehl in einen anderen Grundblock):
+     \begin{itemize}
+      \item Der erste Befehl ist ein Anführer
+      \item Jeder Befehl, der Ziel einer Sprunganweisung ist, ist Anführer
+      \item Jeder Befehl, der unmittelbar hinter einem Sprungbefehl steht, ist Anführer
+     \end{itemize}
+ \item Definiere die Grundblöcke jeweils als Anführer zusammen mit allen folgenden Befehlen bis zum nächsten Anführer
+\end{enumerate}
+(Anführer: \%)
+ \begin{verbatim}
+B1 | %    i = 1
+
+B2 | %L1: j = 1
+
+B3 | %L2: t1 = 10 * i
+   |      t2 = t1 + j
+   |      t3 = 8 * 12
+   |      t4 = t3 - 88
+   |      a[t4] = 0.0
+   |      j = j+1
+   |      if j <= 10 goto -L2- B3
+
+B4 | %    i = i + 1
+   |      if i <= 10 goto -L1- B2
+
+B5 | %    i = 1
+
+B6 | %L3: t5 = i - 1
+   |      t6 = 88 * t5
+   |      a[t6] = 1.0
+   |      i = i + 1
+   |      if i <= 10 goto -L3- B6
+ \end{verbatim}
+
+\subsection{Flussgraph für globale Analyse}
+\begin{itemize}
+\item Jeder Jeder Grundblock ist ein Knoten des Flussgraphen zu gegebenem IR-Programm
+\item Es gibt eine gerichtete Kante von $B$ nach $C$, wenn die Kontrolle vom Block $B$ zum Block $C$ gehen kann
+    \begin{itemize}
+     \item Es gibt einen Sprungbefehl von $B$ nach $C$
+     \item Block $C$ steht unmittelbar hinter $B$ und $B$ endet \emph{nicht} mit einem unbedingtem Sprung
+    \end{itemize}
+\item $B$ heißt \emph{Vorgänger} von $C$ und $C$ \emph{Nachfolger} von $B$
+\item Man fügt einen Eingangsknoten \emph{Entry} und einen Ausgangsknoten \emph{Exit} hinzu
+\item Eine Kante von \emph{Entry} nach $B_1$
+\item Eine Kante von $B$ nach \emph{Exit}, wenn $B$ als letzter Block ausgeführt werden kann
+\end{itemize}
+\begin{center}
+\begin{psmatrix}[rowsep=0.5cm]
+    [name=Entry]\frame{Entry}\\
+    [name=B1]\frame{$B_1$}\\
+    [name=B2]\frame{$B_2$}\\
+    [name=B3]\frame{$B_3$}\\
+    [name=B4]\frame{$B_4$}\\
+    [name=B5]\frame{$B_5$}\\
+    [name=B6]\frame{$B_6$}\\
+    [name=Exit]\frame{Exit}
+    \ncline{->}{Entry}{B1}
+    \ncline{->}{B1}{B2}
+    \ncline{->}{B2}{B3}
+    \nccurve[ncurv=2,angleA=-45,angleB=45]{->}{B3}{B3}
+    \ncline{->}{B3}{B4}
+    \ncline{->}{B4}{B5}
+    \nccurve[angleA=-45,angleB=45]{->}{B4}{B2}
+    \ncline{->}{B5}{B6}
+    \nccurve[ncurv=2,angleA=-45,angleB=45]{->}{B6}{B6}
+    \ncline{->}{B6}{Exit}
+\end{psmatrix}
+\end{center}
+
+Implementiere Flussgraphen, z. B. mit Adjazenzmatrix \\
+Implementiere Inf. in Knoten, z. B. durch verkettete Liste
+\Defi Eine Menge $\mathcal{S}$ von Grundblöcke heißt Schleife, gdw. $\mathcal{S}$ einen Block $E$ (genannt Eingang) enthält, kein anderer Bloch außer $E$ von $\mathcal{S}$ kann von außen von außen betreten werden und für jeden Block $G$ in $\mathcal{S}$ gibt es einen nichtleeren Pfad von $G$ nach $E$.
+
+\subsection{Information zu Lebendigkeit und nächste Verwendung innerhalb con Grundblöcken}
+\paragraph{Algorithmus:} 
+\begin{description}
+ \item[Eingabe] Ein Grundblock $B$ und die Symboltabelle, in der zu jeder Variable "`lebendig (l.)"' eingetragen.
+ \item[Ausgabe] Grundblock $B$, in dem zu jeder Anweisung und jeder enthaltenenen Variable, deren Info bzgl. Lebendigkeit und nächster Verweis enthalten ist
+ \item[Verfahren]
+     \begin{enumerate}
+      \item Beginne mit dem \emph{letzten} Befehl von $B$ (Sei dieser $i{:} x = y \text{op} z$)
+      \item Übernehme alle Infos zu den vorhandenen Variablen aus der Symboltabelle
+      \item Trage in der Symboltabelle zu $x$ "`nicht lebendig (n.l.)"' ein.
+      \item Trage in der Symboltabelle zu $y$ und $z$ "`lebendig (l.)"' ein und "`nächste Verwendung in $i$ (nV\_$i$)"'
+      \item Fahre fort mit 2. un nächsten Befehl oberhalb von $i$, falls $i$ nicht der erste Befehl von $B$ ist.
+     \end{enumerate}
+\end{description}
