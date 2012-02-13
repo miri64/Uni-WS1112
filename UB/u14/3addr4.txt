@@ -1,0 +1,10 @@
+    p = 0;
+    i = 0;
+L1: ifFalse i < n goto L2;
+    t1 = a[i];
+    t2 = b[i];
+    t1 = t1 * t2;
+    p = p + t1;
+    i = i + 1;
+    goto L1;
+L2: stop;

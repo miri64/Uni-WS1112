@@ -1,0 +1,249 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage[ngerman]{babel}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{pstricks,pstricks-add,pst-node}
+\usepackage{lscape}
+\usepackage{textcomp}
+\usepackage{arydshln}
+\usepackage{multicol}
+
+\geometry{a4paper, left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\title{Übersetzerbau - Übungsblatt 14}
+\author{Christian Cikryt (4285814; Tutorium: Mo. 16-18 Uhr)\\
+  Robert Fels (4210496; Tutorium: Mi. 8-10 Uhr)\\
+  Martin Lenders (4206090; Tutorium: Mi. 10-12 Uhr)
+  }
+\date{\today}
+
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+
+\renewcommand{\thesection}{Aufgabe \arabic{section}}
+\renewcommand{\labelenumi}{\theenumi)}
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\definecolor{lgray}{gray}{0.95}
+\definecolor{purple}{rgb}{0.498,0,0.3333}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+
+\pagestyle{myheadings}
+\oddsidemargin\oddsidemargin
+\markright{Christian Cikrit, Robert Fels, Martin Lenders}
+
+\lstset{
+	tabsize=4, 
+	basicstyle=\changefont{pcr}{m}{n},
+	breaklines=true,
+	emphstyle=\textit, 
+	keywordstyle=\color{purple}\textbf, 
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	backgroundcolor=\color{lgray},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	keywords={LD,MUL,ADD,ST,SUB,BLTZ,BR},
+	inputencoding=utf8/latin1
+}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+\begin{enumerate}
+\item   \begin{lstlisting}
+LD  R0,b
+LD  R1,c
+MUL R0,R0,R1
+LD  R1,a
+ADD R1,R1,R0
+ST  y,R1
+\end{lstlisting}
+
+\item   \begin{lstlisting}
+LD  R0,i
+LD  R1,a(R0)
+LD  R2,j
+LD  R3,a(R2)
+ST  a(R0),R3
+ST  a(R2),R1
+\end{lstlisting}
+
+\item   \begin{lstlisting}
+LD  R0,i
+LD  R1,a(R0)
+LD  R2,b(R0)
+LD  R3,a(R2)
+ST  a(R0),R3
+ST  a(R2),R1
+\end{lstlisting}
+
+\item   \begin{lstlisting}
+LD  R0,q
+LD  R1,*R0
+ADD R0,R0,#4
+ST  q,R0
+LD  R0,p
+ST  *R0,R1
+ADD R0,R0,#4
+ST  p,R0
+\end{lstlisting}
+
+\item   \begin{lstlisting}[emph={L1,L2}]
+    SUB  R0,x,y
+    BLTZ R0,L1
+    LD   R0,#0
+    ST   z,R0
+    BR   L2
+L1: LD   R0,#1
+    ST   z,R0
+\end{lstlisting}
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+\item   \begin{itemize}
+        \item   \texttt{LD R0, y}: 2 = 1+0+1
+        \item   \texttt{LD R1, z}: 2 = 1+0+1
+        \item   \texttt{ADD R0,R0,R1}: 1 = 1+0+0+0
+        \item   \texttt{ST x,R0}: 2 = 1+1+0
+        \item   $\Rightarrow$ Gesamtkosten: 7
+        \end{itemize}
+\item   \begin{itemize}
+        \item   \texttt{LD R0, i}: 2 = 1+0+1
+        \item   \texttt{MUL R0, R0, \#8}: 2 = 1+0+0+1
+        \item   \texttt{LD R1,a(R0)}: 2 = 1+0+1+(0)
+        \item   \texttt{ST b,R1}: 2 = 1+1+0
+        \item   $\Rightarrow$ Gesamtkosten: 8
+        \end{itemize}
+\item   \begin{itemize}
+        \item   \texttt{LD R0, x}: 2 = 1+0+1
+        \item   \texttt{LD R1, y}: 2 = 1+0+1
+        \item   \texttt{SUB R0, R0, R1}: 1 = 1+0+0+0
+        \item   \texttt{BLTZ *R3,R0}: 2 = 1+0+0
+        \item   $\Rightarrow$ Gesamtkosten: 7
+        \end{itemize}
+\end{enumerate}
+
+\section{}
+\begin{itemize}
+ \item Eingabe:
+\begin{center}
+\begin{tabular}{c|c|c}
+ Symbol     & Lebendigkeit & nächste Verwendung \\\hline
+ \texttt{x} & l            &                    \\
+ \texttt{y} & l            &                    \\
+ \texttt{z} & l            &                    \\
+\end{tabular}
+\end{center}
+ \item $i = 16$:
+\begin{center}
+\begin{tabular}{c|c|c}
+ Symbol     & Lebendigkeit & nächste Verwendung \\\hline
+ \texttt{x} & nl           &                    \\
+ \texttt{y} & l            & 16                 \\
+ \texttt{z} & l            & 16                 \\
+\end{tabular}
+\end{center}
+ \item $i = 15$:
+\begin{center}
+\begin{tabular}{c|c|c}
+ Symbol     & Lebendigkeit & nächste Verwendung \\\hline
+ \texttt{x} & nl           &                    \\
+ \texttt{y} & l            & 15                 \\
+ \texttt{z} & nl           & 16                 \\
+\end{tabular}
+\end{center}
+ \item $i = 14$:
+\begin{center}
+\begin{tabular}{c|c|c}
+ Symbol     & Lebendigkeit & nächste Verwendung \\\hline
+ \texttt{x} & nl           &                    \\
+ \texttt{y} & l            & 14                 \\
+ \texttt{z} & nl           & 16                 \\
+\end{tabular}
+\end{center}
+ \item $i = 13$:
+\begin{center}
+\begin{tabular}{c|c|c}
+ Symbol     & Lebendigkeit & nächste Verwendung \\\hline
+ \texttt{x} & nl           &                    \\
+ \texttt{y} & l            & 13                 \\
+ \texttt{z} & nl           & 16                 \\
+\end{tabular}
+\end{center}
+\end{itemize}
+
+\section{}
+\lstset{keywords={goto,ifFalse,stop}}
+\begin{enumerate}
+\item   \hspace{0em}\lstinputlisting[numbers=left]{3addr4.txt}
+\item   Anführer: Befehle in Zeile 1, 3 und 9
+		\begin{center}
+			\begin{psmatrix}[rowsep=0.5cm]
+				[name=Entry] \fbox{Entry} \\
+				[name=B1] { $B_1$\hspace{1em}\begin{minipage}[t]{6cm}%
+						\lstinputlisting[linerange={1-2},frame=tblr]{3addr4.txt}%
+					\end{minipage}}\\
+				[name=B2] { $B_2$\hspace{1em}\begin{minipage}[t]{6cm}%
+						\lstinputlisting[linerange={3-9},frame=tblr]{3addr4.txt}%
+					\end{minipage}} \\
+				[name=B3] { $B_3$\hspace{1em}\begin{minipage}[t]{6cm}%
+						\lstinputlisting[linerange={10},frame=tblr]{3addr4.txt}%
+					\end{minipage}} \\
+				[name=Exit] \fbox{Exit}
+			\end{psmatrix}
+			\ncline{->}{Entry}{B1}
+			\ncline{->}{B1}{B2}
+			\nccurve[angleA=-45,angleB=0,arm=2,offsetB=5px]{->}{B2}{B2}
+			\ncline{->}{B2}{B3}
+			\ncline{->}{B3}{Exit}
+		\end{center}
+\item   $L = \{B_2\}$ ist eine Schleife
+\end{enumerate}
+
+\section{}
+\renewcommand{\labelenumi}{\theenumi.}
+\renewcommand{\theenumi}{\arabic{enumi}}
+\renewcommand{\theenumii}{\arabic{enumi}.\arabic{enumii}}
+\begin{enumerate}
+\item   Beginne mit \emph{letzten} Befehl in $B$
+\item   Übernehme alle Informationen zu den vorhandenen Variablen aus der Symboltabelle
+\item   Wenn Befehl $i$ der Form \texttt{i:\ x = y op z}:
+	\begin{enumerate}
+	\item   Trage in der Symboltabelle zu \texttt{x} "`nicht lebendig (n. l.)"' ein.
+	\item   Trage in der Symboltabelle zu \texttt{y} und \texttt{z} "`lebendig (n. l.)"' und "`nächste Verwendung in $i$ (nV\_$i$)"' ein.
+	\end{enumerate}
+\item   Wenn Befehl $i$ der Form \texttt{i:\ a[j] = b}:
+	\begin{enumerate}
+	\item   Trage in der Symboltabelle zu \texttt{a}, \texttt{b} und \texttt{j} "`lebendig (n. l.)"' und "`nächste Verwendung in $i$ (nV\_$i$)"' ein.
+	\end{enumerate}
+\item   Wenn Befehl $i$ der Form \texttt{i:\ a = b[j]}:
+	\begin{enumerate}
+	\item   Trage in der Symboltabelle zu \texttt{a} "`nicht lebendig (n. l.)"' ein.
+	\item   Trage in der Symboltabelle zu \texttt{b} und \texttt{j} "`lebendig (n. l.)"' und "`nächste Verwendung in $i$ (nV\_$i$)"' ein.
+	\end{enumerate}
+\item   Wenn Befehl $i$ der Form \texttt{i:\ a = *b}:
+	\begin{enumerate}
+	\item   Trage in der Symboltabelle zu \texttt{a} "`nicht lebendig (n. l.)"' ein.
+	\item   Trage in der Symboltabelle zu \texttt{b} "`lebendig (n. l.)"' und "`nächste Verwendung in $i$ (nV\_$i$)"' ein.
+	\end{enumerate}
+\item   Wenn Befehl $i$ der Form \texttt{i:\ *a = b}:
+	\begin{enumerate}
+	\item   Trage in der Symboltabelle zu \texttt{a} und \texttt{b} "`lebendig (n. l.)"' und "`nächste Verwendung in $i$ (nV\_$i$)"' ein.
+	\end{enumerate}
+\item   Fahre fort mit 3. für den nächsten Befehl oberhalb von $i$, falls $i$ nicht erster Befehl von $B$
+\end{enumerate}
+
+
+\end{document}
