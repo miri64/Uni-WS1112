@@ -1,0 +1,120 @@
+\Satz SUBSET-SUM ist NBV
+\Bew SUBSET-SUM $\in$ NP (Zertifikat: Teilmenge)
+\begin{itemize}
+ \item 3-SAT $\leq_P$ SUBSET-SAT
+ \item wollen $f$ in Polyzeit; Eingabe: $\Phi$ 3-SAT-Formeln: $n$ Variablen, $m$ Klauseln; Ausgabe: Zahlen $x_1,...,x_k,x$,, 3 Teilmengen mit Summe $x$ gdw. $\Phi$ erfüllbar
+ \Bsp \hfill
+ \[\Phi = (z_1 \lor \neg z_2 \lor z_3) \land (z_2 \lor \neg z_3 \lor z_4)\]
+ Wie wählen wir die Zahlen? $2n+2m$ Zahlen; Format: n+m Ziffern
+ \begin{center}
+  \begin{tabular}{|c|c|c|c|c|c||c|c|c|c|c|c|}\hline
+   & & & & & & & & & & & \\\hline
+   \multicolumn{6}{|c|}{$n$ Variablenz.} & \multicolumn{6}{|c|}{$m$ Klauselz.}
+  \end{tabular}
+ \end{center}
+\end{itemize}
+Für jede Variable $z_i$ gibt es 2 Zahlen:
+ \begin{center}
+  \begin{tabular}{c|c|c|c||c|c|c|c|c|c|c|}\cline{2-11}
+   $x_i^+ $& 0 & 1 & 0 & 0 & 1 & 0 & 1 & 0 & 1 & 0 \\\cline{2-11}
+   & \multicolumn{3}{c}{$i$-te Ziffer} & \multicolumn{7}{p{3.8cm}}{1 für jede Klausel, in der $z_i$ als Literal vorkommt}\\\cline{2-11}
+   $x_i^- $& 0 & 1 & 0 & 0 & 1 & 0 & 1 & 0 & 1 & 0 \\\cline{2-11}
+   & \multicolumn{3}{c}{$i$-te Ziffer} & \multicolumn{7}{p{3.8cm}}{1 für jede Klausel, in der $\neg z_i$ als Literal vorkommt}
+  \end{tabular}
+ \end{center}
+ Für jede Klausel $j$, gibt es 2 Zahlen: Füllzahlen 
+ \begin{center}
+  \begin{tabular}{c|c|c|c|c|}\cline{2-5}
+   $f_j^1 $& 0 & 0 & 1 & 0 \\\cline{2-5}
+   & \multicolumn{4}{c}{$j$-te Pos.}\\\cline{2-5}
+   $x_j^2 $& 0 & 0 & 2 & 0 \\\cline{2-5}
+   & \multicolumn{4}{c}{$j$-te Pos.}
+  \end{tabular}
+ \end{center}
+ \[x = \underbrace{1111...1}_{n}\underbrace{44...4}_{m}\]
+ \Bsp \hfill
+ \begin{center}
+  \begin{tabular}{ccccccc|ccccccc}
+   $x_1^+$ & 1 & 0 & 0 & 0 & 1 & 0 & $f_1^1$ & 0 & 0 & 0 & 0 & 1 & 0 \\
+   $x_1^-$ & 1 & 0 & 0 & 0 & 0 & 0 & $f_1^1$ & 0 & 0 & 0 & 0 & 2 & 0 \\
+   $x_2^+$ & 0 & 1 & 0 & 0 & 0 & 1 & $f_2^1$ & 0 & 0 & 0 & 0 & 0 & 1 \\
+   $x_2^-$ & 0 & 1 & 0 & 0 & 1 & 0 & $f_2^2$ & 0 & 0 & 0 & 0 & 0 & 2 \\
+   $x_3^+$ & 0 & 0 & 1 & 0 & 1 & 0 & $x$     & 1 & 1 & 1 & 1 & 4 & 4 \\
+   $x_3^+$ & 0 & 0 & 1 & 0 & 1 & 0 & \\
+   $x_4^+$ & 0 & 0 & 0 & 1 & 0 & 1 & \\
+   $x_4^+$ & 0 & 0 & 0 & 1 & 0 & 1 & 
+  \end{tabular}
+ \end{center}
+
+ $\Phi$ efüllbar $\Rightarrow \exists$Belegung $b$ die Variablen, so dass jede Klausel min. ein wahres Literal enthält.\\
+ $\Rightarrow$ Konstruiere Teilmenge $I$ von Zahlen
+ \begin{align*}
+  \text{Wenn } b(z_i) &= \textbf{true}, &\text{nimm $x_i^+$} \\
+  \text{Wenn } b(z_i) &= \textbf{false}, &\text{nimm $x_i^-$}
+ \end{align*}
+ Wissen: Summe hat folgende Eigenschaften
+ \begin{itemize}
+  \item $v$ Ziffen, alle 1
+  \item $k$ Ziffern sind 1, 2 oder 3
+ \end{itemize}
+ 
+Wähle Füllziffern für jede Klausel, so dass 4 als Summe herauskommt.\\
+$\Rightarrow$ Teilmenge mit Summe $1111...144...4.$ \\
+$\exists$ Teilmenge $S$ mit Summe $X$ $\Rightarrow$ für jede Variable $z_i$ muss $S$ genau eine der Zahlen $x_i^+$ oder $x_i^-$ enthalten.
+\begin{tabbing}
+Setze: \=$z_i := T$, wenn $x_i^+ \in S$ \\
+       \>$z_i := F$, wenn $x_i^- \in S$
+\end{tabbing}
+Es muss für jede Klausel $j$ eine Variablenzahl in $S$ geben, so dass die entsprechende Klauselziffer für $j$ 1 ist\\
+$\Rightarrow$ Nach Konstruktion ist dann das entsprechende Literal in Klausel $j$ wahr. \\
+$\Rightarrow$ $\Phi$ erfüllbar
+\Satz (Cook-Levin): CIRCUIT-SAT ist NP-vollständig
+\Bew CIRCUIT-SAT $\in$ NP-vollstand\\
+\[\forall L' \in \text{NP gilt: }L' \leq_P \text{CIRCUIT-SAT}\]
+\begin{itemize}
+ \item $L' \in \text{NP} \Rightarrow c \geq 0$ und Turingmaschine $M$, so dass
+ \item Laufzeiten $m$ $M(x,y)$ ist höchsten $(|x| + |y|)^c$
+ \item $\forall x \in \{0,1\}^*{:}\ x \in L' \Rightarrow \exists y \in \{0,1\}^*, |y| \leq |x|^c, M(x,y) = 1$
+ \item Wollen $f$ in Polyzeit in $|x|$: Eingabe $x \in \{0,1\}^*$; Ausgabe: Schaltnetz $C$, so dass $C$ erfüllbar, gdw. $x \in L'$
+\end{itemize}
+\begin{description}
+ \item[Idee] Simuliere Berechnung von $M(x,y)$ durch Schaltkreis $C$ mit Eingabe $y$ ($x$ fest in $C$ verlötet)
+\end{description}
+Annahme über $M$:
+\begin{itemize}
+ \item Das Band von $M$ geht nur nach rechts
+ \item Nach der Berechnung fährt $M$ wieder zur Ausgangsposition zurück und geht in $q_{j1}$ oder $q_{n,\text{fin}}$
+\end{itemize}
+\paragraph*{Tableau-Methode}
+\begin{center}
+ \begin{tabular}{c|c|c|c|c|c|c|c|}\cline{2-8}
+    & & & & & & & \\\cline{2-8}
+    & & & & & & & \\\cline{2-8}
+    & & & & & & & \\\cline{2-8}
+    $|x|^{c'}$ & & & & & & & \\\cline{2-8}
+    & & & & & & & \\\cline{2-8}
+    & & & & & & & \\\cline{2-8}
+    & & & & & & & \\\cline{2-8}
+    \multicolumn{1}{c}{\ } & \multicolumn{7}{c}{$|x|^{c'}$}
+ \end{tabular}
+\end{center}
+$c'$ ist so gewählt, dass $|x|^{c'} \geq (|x| + |y|)^c$ ist fpr alle $|y| \leq |x|^c$.
+\begin{itemize}
+ \item Zeilen entsprechen der Zeit
+     \begin{itemize}
+     \item Zeile $t$: Konfiguriration von $M$ zum Zeitpunkt $t$
+     \end{itemize}
+ \item Zelle $(t,i)$ speichert
+     \begin{itemize}
+     \item Bandinhalt an pos $i$ zum Zeitpunkt $t$
+     \item Kopf?: 1 wenn Kopf von $M$ zum Zeitpunkt $t$ bei $i$ ist. 0, sonst.
+     \item Zustand: Wenn Kopf? = 1: dann speichern wir den Aktuellen Zustand von $M$; $\perp$, sonst
+     \end{itemize}
+ \item Tableau ist groß genug, weil $M$ Polyzeit beschränkt ist
+ \item Tableau ist lokal
+\end{itemize}
+
+
+
+
+
