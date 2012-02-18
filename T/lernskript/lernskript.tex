@@ -83,46 +83,82 @@
 \maketitle
 \tableofcontents
 \section{ISO-/OSI-Modell}
+% Unterschiede ISO-/OSI <-> TCP/IP
+% Netzwerkklassen (PAN, LAN, WAN, ...)
 
 \section{Schicht 1 -- Bitübertragungsschicht}
+% synchrone/asynchrone Übertragung
+% simplex, duplex, halb-duplex
+% Übertragungsmedien
+\subsection{Allgemeine Begriffe}
+% Overhead, Bandbreite, Throughput, goodput, Paket delivery ratio
+% Signal, Data, overhearing, eavesdropping, crosstalk, last mile problem
 \subsection{Signalstufen}
 \subsubsection{Einheiten}
 % bps, baud
 \subsubsection{Das Shannon- und Nyquist-Theorem}
 \subsection{Codierung}
 \subsection{Modulation}
+% Constellation diagrams, Frequency Shift Keying
 
 \section{Schicht 2 -- Sicherungsschicht}
+\subsection{Allgemeine Begriffe}
+% multiplexing, multiple access, packet switching, cell switching, circuit switching
 \subsection{Fehlererkennung}
 % CRC
 \subsection{Fehlerkorrektur}
-% FEC / ARQ
+% FEC / ARQ, Hamming-Code
 \subsection{Flusskontrolle}
 \subsection{Rahmenerkennung}
 % Bit-/Byte-Stuffing, HDLC, PPP, LLC
 \subsection{Medium Access}
+% ALOHA, CSMA, Kollisionserkennung (CSMA/CD), Kollisionsfreie Protokolle
+\subsection{Ethernet}
+% IEEE 802.1d, Spanning Tree Protocol, IEEE 802.1q, IEEE 802.2
+\subsection{ATM}
+% SVC, PVC, VPI, VCI, ATM checksum
+\subsection{SDH}
+% add drop multiplexer
+\subsection{Netzwerk-Infrastruktur}
+% Repeater, Hub, Bridges, Switches, Router, Gateway
 \subsection{VLANs}
 
 \section{MPLS}
+% FEC
 
 \section{Schicht 3 -- Vermittlungsschicht}
+\subsection{Allgemeine Begriffe}
+% RIR, IXP, Peering, default free zone
 \subsection{Aufbau des Internets}
 \subsection{Internet Protocol}
+% Fragmentierung, Internet Checksum, Multicast (+ Ethernet), Multicast Routing, multihomed hosts
 \subsubsection{Adressklassen, Subnetze und CIDR}
 \subsubsection{IPv4}
+% TOS (DSCP/ECN, historische Nutzung)
 \subsubsection{IPv6}
+% Privacy Extension, 
 \subsubsection{Hilfsprotokolle}
+% DHCP, ARP, Stateless Address Auto Configuration (NDP), ICMP, IGMP
 \subsection{Routing}
-% Routing, Verfahren, Tabellen, BGP
+% Routing, Metriken, Verfahren, Tabellen, BGP, Policy Routing, Symmetrische/Asymmetrische Pfade
+\subsection{NAT}
 
 \section{Schicht 4 -- Transportschicht}
 \subsection{Grundlagen}
-% Ports -> NATs
+% Ports
 \subsection{UDP}
 \subsection{TCP}
+% Fast Retransmit, Fast Recovery, Karn's Algorithmus, Nagle's Algorithmus, Selective and Forward Acknowledgements,
+% TCP for networks with high bandwidth-delay product
+% Angriffsmöglichkeiten
+% Checksum
 \subsubsection{Verbindungskontrolle}
 \subsubsection{Flusskontrolle}
 \subsubsection{Staukontrolle}
+% Slow Start
+% Congestion Avoidance
+% Proactive Congestion Control
+% Explicit Congestion Control
 \subsection{SCTP}
 \subsection{DCCP}
 
@@ -136,6 +172,7 @@
 \subsubsection{Proxies}
 \subsubsection{HTML}
 \subsection{SNMP}
+% Public/Private MIB
 \subsection{P2P}
 % Skalierbarkeit
 \subsubsection{DHT}
