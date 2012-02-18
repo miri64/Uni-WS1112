@@ -1,0 +1,92 @@
+\documentclass[a4paper,10pt]{scrartcl}
+
+% Seitenlayout
+\usepackage[a4paper,top=1.5cm,right=2.0cm,bottom=2cm,left=2.0cm]{geometry}
+\usepackage{fancyhdr}
+
+% Zeichen
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{marvosym}
+\usepackage[gen]{eurosym}
+
+% Zeichensatz
+\usepackage[colorlinks,%
+	    citecolor=black,%
+	    filecolor=black,%
+	    linkcolor=black,%
+	    urlcolor=black,%
+	    pdftitle = {Mitschrift - CB},%
+	    pdfauthor = {Martin Lenders}%
+	]{hyperref}
+\usepackage{listings}
+\usepackage{hyperref}
+
+% Grafik
+\usepackage{xcolor}
+
+% Color definitions
+\definecolor{lgray}{gray}{0.95}
+\definecolor{save}{rgb}{0.498,0,0}
+\definecolor{identifier}{rgb}{0,0,0.1}
+\definecolor{string}{rgb}{0.192,0,1}
+\definecolor{comment}{rgb}{0.25,0.5,0.37}
+\definecolor{yellow}{rgb}{1,1,0}
+\definecolor{sand}{rgb}{1,1,.75}
+\definecolor{red}{rgb}{1,0,0}
+\definecolor{melon}{rgb}{1,0.6,.5}
+\definecolor{green}{rgb}{0,1,0}
+\definecolor{lime}{rgb}{.75,1,.75}
+\definecolor{blue}{rgb}{0,0,1}
+\definecolor{azure}{rgb}{.75,.75,1}
+
+% Einstellungen für Pakete
+\lstset{
+	tabsize=8,
+	frame=,
+	basicstyle=\changefont{pcr}{m}{n},
+	emphstyle=\textit,
+	numberstyle=\tiny\textsf,
+	numbersep=5pt,
+	numbers=none,
+	keywordstyle=\color{save}\textbf,
+	identifierstyle=\color{identifier},
+	stringstyle=\color{string},
+	showstringspaces=false,
+	commentstyle=\color{comment},
+	extendedchars=true,
+	xleftmargin=1em,
+	inputencoding=utf8,
+	mathescape=true;
+}
+
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[LE,RO]{\sffamily\thepage}
+\fancyhead[LE]{\footnotesize\sffamily\bfseries\leftmark}
+\fancyhead[RO]{\footnotesize\sffamily\rightmark} 
+
+% Eigene Befehle
+\newcommand{\changefont}[3]{\fontfamily{#1}\fontseries{#2}\fontshape{#3}\selectfont}
+
+% Neudefinitionen
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+
+\setlength{\parindent}{0pt}
+
+\title{Lernskript\\\LARGE{}Telematik}
+\author{Martin Lenders}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Schicht 1 -- Bitübertragungsschicht}
+\section{Schicht 2 -- Sicherungsschicht}
+\section{MPLS}
+\section{Schicht 3 -- Vermittlungsschicht}
+\section{Schicht 4 -- Transportschicht}
+\section{Schicht 5-7 -- Anwendungsprotokolle}
+
+\end{document}
