@@ -25,6 +25,7 @@
 
 % Grafik
 \usepackage{xcolor}
+\usepackage{graphicx}
 
 % Color definitions
 \definecolor{lgray}{gray}{0.95}
@@ -124,6 +125,61 @@
 \subsection{VLANs}
 
 \section{MPLS}
+\begin{itemize}
+\item   \emph{M}ulti\emph{p}rotocol \emph{L}abel \emph{S}witching
+\item   Bündelung von IP und ATM
+\item   Weiterleitung von Datenpaketen basiert auf Labels statt Adressen
+\item   Unterstützt PPP/Ethernet, ATM, Frame Relay, ...
+\item   Unabhängig von Schicht-2- und Schicht-3-Protokollen
+\item   Klassifizierung von Paketen beim Betreten einer MPLS-Domäne anhand von
+    \begin{itemize}
+    \item   Zieladresse, Zielnetzwerk
+    \item   QoS
+    \item   Anwendung
+    \item   VPN
+    \item   Multicast-Gruppe
+    \item   ...
+    \end{itemize}
+    $\Rightarrow$ Abbildung zu einer Forward Equivalence Class (FEC)
+    \begin{itemize}
+    \item   Gruppe von Paketen, die in gleicher Art und Weise über den selben Pfad behandelt werden
+    \item   Klassifikation wird nur beim Betreten der MPLS-Domäne im Label codiert
+    \end{itemize}
+\item   IP-Routing außerhalb einer MPLS-Domäne, Label-Switching innerhalb
+        $\Rightarrow$ MPLS-Netzwerk sieht von außen aus wie ein großer IP Router
+\item   Komponenten von MPLS:
+    \begin{itemize}
+    \item   FEC: Forward Equivalence Class
+    \item   LSR: Label Switching Router
+    \item   LER: Label Edge Router
+    \item   LSP: Label Switched Path
+    \item   LDP: Label Distribution Protocol
+    \end{itemize}
+    \begin{center}
+    \includegraphics[width=\linewidth]{./MPLS_Components}
+    \end{center} 
+\item   Explicitly Routed LSP: Netzwerk Provider kann Route genau auswählen $\Rightarrow$ QoS 
+\end{itemize}
+
+\subsection{Label}
+\begin{itemize}
+\item   Label werden aus bestehenden Adressierungselementen gebildet / umbenannt:
+    \begin{itemize}
+    \item   ATM $\Rightarrow$ VPI/VCI, in jeder Zelle
+    \item   Frame Relay $\Rightarrow$ DLCI, in jedem Frame
+    \item   ...
+    \end{itemize}
+\item   Nur lokal gültig
+\item   Label können verschiedene Formate haben
+\item   Labels können gestapelt werden, nur das höchste wird beachtet, das unterste wird speziell markiert
+\item   Generelles Format: 4 Byte
+        \begin{itemize}
+        \item   20 Bit Label
+        \item   3 Bit Experimental (benutzt für QoS)
+        \item   1 Bit Bottom Label
+        \item   8 Bit TTL
+        \end{itemize}
+\end{itemize}
 % FEC
 
 \section{Schicht 3 -- Vermittlungsschicht}
