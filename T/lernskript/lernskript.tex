@@ -22,6 +22,7 @@
 	]{hyperref}
 \usepackage{listings}
 \usepackage{hyperref}
+\usepackage{multirow}
 
 % Grafik
 \usepackage{xcolor}
@@ -83,9 +84,44 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\section{ISO-/OSI-Modell}
-% Unterschiede ISO-/OSI <-> TCP/IP
-% Netzwerkklassen (PAN, LAN, WAN, ...)
+\section{Einführung}
+\subsection{ISO/OSI-Modell}
+\begin{center}
+    \begin{tabular}{|c|lc|c|}
+    \multicolumn{1}{c}{\textbf{ISO/OSI}} & \multicolumn{2}{c}{\hspace{2cm}} & \multicolumn{1}{c}{\textbf{TCP/IP}}\\\cline{1-1}\cline{4-4}
+    \multirow{2}{*}{Anwendung} && & \multirow{5}{*}{Anwendung} \\
+     & && \\\cline{1-1}
+    \multirow{2}{*}{Präsentation} && & \\
+     & && \\\cline{1-1}
+    \multirow{2}{*}{Sitzung} && & \\\cline{4-4}
+     & && \multirow{3}{*}{Transport} \\\cline{1-1}
+    \multirow{2}{*}{Transport} && & \\
+     & && \\\cline{1-1}\cline{4-4}
+    \multirow{2}{*}{Vermittlung} && & \multirow{2}{*}{Netzwerk} \\
+     & && \\\cline{1-2}\cline{4-4}
+    \multirow{2}{*}{Sicherung} & Logical Link Control & & \multirow{4}{*}{Host-To-Network} \\\cline{2-2}
+     & Medium Access Control & & \\\cline{1-2}
+    \multirow{2}{*}{Bitübertragung} &&&\\
+    &&& \\\cline{1-1}\cline{4-4}
+    \end{tabular}
+\end{center}
+\begin{itemize}
+\item TCP/IP-Modell entstand erst nachdem die Protokolle spezifiziert waren
+\end{itemize}
+
+\subsection{Netzwerkklassen}
+\begin{description}
+\item[PAN]   Personal Area Network
+\item[CAN]   Campus Area Network
+\item[LAN]   Local Area Network
+\item[MAN]   Metropolitan Area Network
+\item[WAN]   Wide Area Network \\
+\hrulefill
+\item[BAN]   Body Area Network
+\item[VANET] Vehicular Network
+\item[WSN]   Wireless Sensor Network
+\item[WMN]   Wireless Mesh Network
+\end{description}
 
 \section{Schicht 1 -- Bitübertragungsschicht}
 % synchrone/asynchrone Übertragung
