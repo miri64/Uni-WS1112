@@ -21,7 +21,6 @@
 	    pdfauthor = {Martin Lenders}%
 	]{hyperref}
 \usepackage{listings}
-\usepackage{hyperref}
 \usepackage{multirow}
 
 % Grafik
@@ -124,12 +123,27 @@
 \end{description}
 
 \section{Schicht 1 -- Bitübertragungsschicht}
-% synchrone/asynchrone Übertragung
-% simplex, duplex, halb-duplex
-% Übertragungsmedien
 \subsection{Allgemeine Begriffe}
-% Overhead, Bandbreite, Throughput, goodput, Paket delivery ratio
-% Signal, Data, overhearing, eavesdropping, crosstalk, last mile problem
+\paragraph{Übertragungskapazitäten:}
+\begin{description}
+\item[Simplex] Kommunikation geht nur in genau eine Richtung
+\item[Duplex] Kommunikation geht in beide Richtungen einer Ende-zu-Ende-Verbindung
+\item[Halbduplex] Kommunikation geht in beide Richtungen einer Ende-zu-Ende-Verbindung, aber immer nur eine Richtung gleichzeitig möglich
+\end{description}
+
+\begin{description}
+\item[Bandbreite] Die Bandbreite eines Mediums ist die Differenz der höchsten und niedrigsten möglichen Frequenz auf einem Medium. Diese Grenzfrequenzen sind meistens nicht scharf.
+\item[Durchsatz] Der Durchsatz (engl. \emph{Throughput}) ist die Anzahl an Daten pro Zeit, die durch ein Medium gesendet werden
+\item[Goodput] Der Goodput ist der die Anwendungsschicht-Daten-Throughput ohne jeglichen Protokoll-Overhead.
+\item[Packet Delivery Ratio] Anteil an empfangenen Paketen im Vergleich zu gesendeteten Paketen.
+\end{description}
+
+\begin{description}
+\item[Overhearing] Abhören ohne Einwilligung des Sprechenden 
+\item[Eavesdropping] Geheimes Abhören einer privaten Unterhaltung
+\item[Crosstalk] Unfreiwilliges Mithören einer Kommunikation aus einem anderen Kanal durch z. B. Elektromagnetische Interferenzen
+\end{description}
+
 \subsection{Signalstufen}
 \subsubsection{Einheiten}
 % bps, baud
