@@ -12,6 +12,7 @@
 \usepackage[gen]{eurosym}
 
 % Zeichensatz
+\usepackage{algorithmic}
 \usepackage[colorlinks,%
 	    citecolor=black,%
 	    filecolor=black,%
@@ -74,6 +75,9 @@
 
 % Neudefinitionen
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\renewcommand{\algorithmiccomment}[1]{// #1}
+\renewcommand{\algorithmicrequire}{\textbf{Eingabe:}}
+\renewcommand{\algorithmicensure}{\textbf{Ausgabe:}}
 
 \setlength{\parindent}{0pt}
 
@@ -245,7 +249,59 @@
 \subsubsection{Hilfsprotokolle}
 % DHCP, ARP, Stateless Address Auto Configuration (NDP), ICMP, IGMP
 \subsection{Routing}
-% Routing, Metriken, Verfahren, Tabellen, BGP, Policy Routing, Symmetrische/Asymmetrische Pfade
+% Routing, Metriken, Verfahren, Tabellen, BGP, Policy Routing
+\subsubsection{Shortest Path Routing}
+Dijkstra:
+\begin{algorithmic}
+\REQUIRE 
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item   gewichtete Adjazenzmatrix $D$ für den Graphen $G = (V,E)$ mit $d_{ij}$ Abstand von $v_i \in V$ zu $v_j \in V$
+\item   Quellknoten $s \in V$
+\item   Zielknoten $t \in V$
+\end{itemize}
+\ENSURE kürzester Pfad $p$ von $s$ nach $t$
+\STATE  \COMMENT{Alle Knoten haben die Attribute \textit{vorgänger}, \textit{länge} und \textit{label}}
+\STATE  \COMMENT{\textit{vorgänger} ist ein anderer Knoten}
+\STATE  \COMMENT{\textit{länge} ist der Abstand von $s$ bis zu diesem Knoten}
+\STATE  \COMMENT{\textit{label} kann die Werte \texttt{'permantent'} oder \texttt{'provisorisch'} annehmen}
+\STATE
+\STATE  \COMMENT{Initialisierung}
+\STATE  $\forall v_i \in V{:}\ v_i.\textit{vorgänger} = \emptyset, v_i.\textit{länge} = \infty, v_i.\textit{label} = \texttt{'provisorisch'}$
+\STATE  $t.\textit{länge} = 0$
+\STATE  $t.\textit{label} = \texttt{'permanent'}$
+\STATE  $v_k = t$
+\STATE  
+\COMMENT{Gibt es einen besseren Pfad von $v_k$ zu $t$?}
+\REPEAT
+    \FOR{$v_i \in V$}
+        \IF{$d_{ki} \neq 0 \land v_i.\textit{label} = \texttt{'provisorisch'}$}
+            \IF{$v_k.\textit{länge} + d_{ki} < v_i.\textit{länge}$}
+                \STATE  $v_i.\textit{vorgänger} = v_k$
+                \STATE  $v_i.\textit{länge} + d_{ki}$
+            \ENDIF
+        \ENDIF
+    \ENDFOR
+    \STATE
+    \COMMENT{Finde den als provisorisch markierten Knoten mit der kleinsten \textit{länge}}
+    $\min = \infty$
+    \FOR{$v_i \in V$}
+        \IF{$v_i.\textit{label} = \texttt{'provisorisch'} \land v_i.\textit{länge} < \min$}
+            \STATE  $\min = v_i.\textit{länge}$
+            \STATE  $v_k = v_i$
+        \ENDIF
+        \STATE  $v_k.\textit{label} = \texttt{'permanent'}$
+    \ENDFOR
+\UNTIL{$v_k = s$}
+\STATE  
+\COMMENT{Erstelle Pfad}
+\STATE  $v_k = s$
+\REPEAT
+    \STATE Füge $v_k$ zu $p$ hinzu
+    \STATE $v_k = v_k.\textit{vorgänger}$
+\UNTIL{$v_k = \emptyset$}
+\end{algorithmic}
+
 \subsection{NAT}
 
 \section{Schicht 4 -- Transportschicht}
